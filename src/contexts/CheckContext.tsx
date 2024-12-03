@@ -75,6 +75,7 @@ function CheckProvider({ children }: { children: React.ReactNode }) {
 }
 
   const addAllCheck = async (token: string) => {
+    try{
     const headers = headerToken(token)
     setLoading(true);
     const response = await  getCheckApi( 'cheques',  headers );
@@ -82,6 +83,7 @@ function CheckProvider({ children }: { children: React.ReactNode }) {
     setCheck(data);
     setLoading(false);
     console.log(error)
+    }catch (error) {console.log(error )}
   };
 
   const getOrders = async (token: string) => {
