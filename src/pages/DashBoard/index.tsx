@@ -38,7 +38,7 @@ const DashBoard = () => {
     if (authContext?.user?.token) {
        addAllCheck(authContext.user?.token)
       }
-    }, []); // Dependencia para volver a cargar cuando el contexto cambie
+    }, [authContext]); // Dependencia para volver a cargar cuando el contexto cambie
 
 
   return (
