@@ -53,7 +53,6 @@ export const postCheckApi = async (endpoint : string , headers :{ authorization:
 export const createOrderApi = async (endpoint : string , headers :{ authorization: string; } | undefined, data : Order) => { 
     try {
         const URLAPI = `${URL}/${endpoint}`
-        console.log(URLAPI , headers , data)
         const response = await apiService.post(`${URLAPI}`,data ,  { headers });
         return response 
     }catch (error : unknown  ) { 
@@ -62,8 +61,7 @@ export const createOrderApi = async (endpoint : string , headers :{ authorizatio
     }
 }
 
-
-export const getOrdersApi = async (endpoint : string , headers :{ authorization: string} ) => { 
+export const getApiData = async (endpoint : string , headers :{ authorization: string} ) => { 
     try {
         const response = await apiService.get(`${URL}/${endpoint}`, { headers });
         return response 

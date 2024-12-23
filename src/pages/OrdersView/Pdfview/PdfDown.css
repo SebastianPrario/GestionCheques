@@ -1,0 +1,11 @@
+.pdf-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+  }
+  
+  .pdf-viewer {
+    width: 1000px;
+    height: 100%;
+  }

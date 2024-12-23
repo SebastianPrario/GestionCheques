@@ -1,23 +1,43 @@
-import {  useContext, useEffect} from 'react';
-import { CheckContext, Order } from '../../contexts/CheckContext';
+import {  useContext, useEffect, useState} from 'react';
+import { Check, CheckContext, Order } from '../../contexts/CheckContext';
 import Styled from './styles';
 import { AuthContext } from '../../contexts/AuthContext';
 import Table from 'react-bootstrap/Table';
 import NavBar from '../NavBar/NavBar';
 import { Button } from 'react-bootstrap';
+import { headerToken } from '../../librery/helpers';
+import { getApiData } from '../../services/apiService';
+import PdfOrder from './Pdfview/PdfDown';
+import { number } from 'zod';
+import ReactDOM from 'react-dom';
+
 
 const OrdersView = () => {
     const authContext = useContext(AuthContext);
+    const token = authContext && authContext.user?.token 
     const { getOrders , orders  } = useContext(CheckContext);
-    
-  useEffect(() => {
+    const handleDownloadClick = (id: number) => {
+      const newWindow = window.open('', '');
+      if (newWindow) {
+          newWindow.document.write('<div id="pdf-order-root"></div>');
+          newWindow.document.title = "PDF Order";
+          newWindow.document.close();
+          ReactDOM.render(<PdfOrder
+             id={id}
+             token={token} />,
+          newWindow.document.getElementById('pdf-order-root'));
+      }
+  };
+      
+ 
+    useEffect(() => {
     if (authContext?.user?.token) {
         getOrders(authContext.user?.token)
        }
-  }, [authContext?.user?.token, getOrders])
-  
-  console.log(orders)
-  return (
+    }, [authContext])
+    
+
+   return (
     <div className=''>
       <Styled.Nav>
       <NavBar checkSelection={[]}/>
@@ -36,21 +56,19 @@ const OrdersView = () => {
         <div></div>
         <tbody>
           {orders ? (
-            orders?.map((elem: Order) => {
+            orders?.map((order: Order) => {
               return (
-                <tr className='text-end' key={elem.id}>
-                  <td className='text-center col-2'> {elem.id} </td>
-                  <td> {elem.destination} </td>
-                  <td> {elem.totalAmount} </td>
-                  <td> {elem.creationDate} </td>
+                <tr className='text-end' key={order.id}>
+                  <td className='text-center col-2'> {order.id} </td>
+                  <td> {order.destination} </td>
+                  <td> {order.totalAmount} </td>
+                  <td> {order.creationDate} </td>
                   <td className='d- justify-content-between'>
-                  <Button  className='me-2'variant="primary">
-                      ver
-                  </Button>
-                  <Button variant="primary">
-                      descargar
-                  </Button>
-
+                    <div> 
+                      <Button variant="primary" onClick={() => order.id && handleDownloadClick(order.id)}> 
+                        Mostrar 
+                      </Button> 
+                    </div>
                   </td>
                 </tr>
               );
@@ -61,7 +79,8 @@ const OrdersView = () => {
         </tbody>
       </Table>
       </div>
-
+     
+      
     </div>
   );
 };

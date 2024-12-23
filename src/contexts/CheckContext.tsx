@@ -1,6 +1,6 @@
 import React, { createContext, useState } from 'react';
 import Swal from 'sweetalert2';
-import { deleteCheckApi, getCheckApi, getOrdersApi, postCheckApi } from '../services/apiService';
+import { deleteCheckApi, getCheckApi, getApiData, postCheckApi } from '../services/apiService';
 import { headerToken } from '../librery/helpers';
 
 export interface Check {
@@ -89,7 +89,7 @@ function CheckProvider({ children }: { children: React.ReactNode }) {
   const getOrders = async (token: string) => {
     const headers = headerToken(token)
     setLoading(true);
-    const response = await  getOrdersApi( 'order/allorders',  headers );
+    const response = await  getApiData( 'order/allorders',  headers );
     const data: Order[] = response?.data;
     setOrders(data);
     setLoading(false);

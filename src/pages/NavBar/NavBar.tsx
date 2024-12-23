@@ -13,11 +13,11 @@ import { Check } from '../../contexts/CheckContext';
 
 interface NavBarProps {
   checkSelection : Check[]
- 
+  setCheckedSelection : React.Dispatch<React.SetStateAction<Check[]|[]>>;
 }
 
 
-const  NavBar : React.FC<NavBarProps> = ( { checkSelection })  => {
+const  NavBar : React.FC<NavBarProps> = ( { checkSelection , setCheckedSelection })  => {
 
   const { signOutUser } = useAuth()
   const navigate = useNavigate()
@@ -55,6 +55,7 @@ const  NavBar : React.FC<NavBarProps> = ( { checkSelection })  => {
               show={modalOrder}
               onClose={onCloseOrder}
               checkSelection = {checkSelection}
+              setCheckedSelection = { setCheckedSelection }
             />
           </Col>
            <Col xs="auto">

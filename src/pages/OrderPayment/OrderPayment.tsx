@@ -1,8 +1,6 @@
 import { useContext, useState } from 'react';
 import { Button, Container, Modal } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import { Check, CheckContext } from '../../contexts/CheckContext';
 import { AuthContext } from '../../contexts/AuthContext';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -11,23 +9,20 @@ import * as yup from 'yup';
 import { CustomModal } from '../CustomModal/CustomModal';
 import { createOrderApi } from '../../services/apiService';
 import { headerToken } from '../../librery/helpers';
-
+import { Check } from '../../contexts/CheckContext';
+import { CheckContext } from '../../contexts/CheckContext';
 
 interface EnterCheckProps {
   show: boolean;
   onClose: () => void;
   checkSelection : Check[];
+  setCheckedSelection : React.Dispatch<React.SetStateAction<Check[]|[]>>;
 }
 
-interface otherPayment  {
-  property: string;
-  number: number
-}
-
-export const OrderPayment: React.FC<EnterCheckProps> = ( { show , onClose, checkSelection} ) => {
+export const OrderPayment: React.FC<EnterCheckProps> = ( { show , onClose, checkSelection , setCheckedSelection} ) => {
   const [inputsProperty, setInputsProperty] = useState(Array(3).fill(''));
-  const [inputsNumber, setInputsNumber] = useState(Array(3).fill('-'));
-  const sumCheckAmount =  checkSelection.reduce( (total , check) => total + Number(check.importe),0)
+  const [inputsNumber, setInputsNumber] = useState(Array(3).fill(0));
+  const sumCheckAmount =  checkSelection.reduce( (total , check) => total + Number(check?.importe || 0),0)
   const formatoMoneda  = (value : number) => {
     return value.toLocaleString('es-AR', { style:'currency', currency:'ARS'})}
 
@@ -35,8 +30,10 @@ export const OrderPayment: React.FC<EnterCheckProps> = ( { show , onClose, check
   const { Formik } = formik;
   const authContext = useContext(AuthContext)
   const checkContext = useContext(CheckContext)
+  const addCheck = checkContext && checkContext.addAllCheck
   const user = authContext && authContext.user
 
+  //const addCheck = checkCheck && checkCheck.addAllCheck
   const schema = yup.object().shape({
     destination: yup
     .string()
@@ -62,13 +59,16 @@ export const OrderPayment: React.FC<EnterCheckProps> = ( { show , onClose, check
   const handleSubmit = async ( values, { resetForm } )=>{
     const updatedState = []
     for (let i = 0; i < inputsProperty.length; i += 2)
-      { if( inputsProperty[i]=='' || inputsNumber[i]=='-') console.log('no entra')
+      { if( inputsProperty[i]=='' || inputsNumber[i]==0) console.log('no entra')
         else { updatedState.push({ property: inputsProperty[i], number: parseInt(inputsNumber[i]) })}
     }
     values.otherPayment = updatedState
+    values.creationDate = new Date().toISOString()
     const headers = headerToken(user?.token)
+    console.log(values)
     await createOrderApi('order', headers , values)
     resetForm();
+    setCheckedSelection([])
     onClose()
   }
 
@@ -86,8 +86,8 @@ export const OrderPayment: React.FC<EnterCheckProps> = ( { show , onClose, check
         totalAmount: sumCheckAmount,
         destination: '',
         detail: '',
-        creationDate: '2024-04-04',
-        chequesId : checkSelection.map( check => check.id),
+        creationDate:'',
+        chequesId : checkSelection?.map( check => check.id) || 0,
         otherPayment: []
        
       }}
@@ -143,8 +143,11 @@ export const OrderPayment: React.FC<EnterCheckProps> = ( { show , onClose, check
               className="position-relative">
                   <Col md={6}>
                    {inputsProperty.map((input, index) => 
-                    ( 
-                      <Form.Group controlId="formInput1">
+                    (  
+                      <Form.Group 
+                      controlId="formInput1"
+                      key={`property-${index}`}
+                      >
                       <Form.Control
                       type="text"
                       value={input} 
@@ -156,7 +159,9 @@ export const OrderPayment: React.FC<EnterCheckProps> = ( { show , onClose, check
                   </Col>
                    <Col md={6}>
                    {inputsNumber.map((input, index) =>                     ( 
-                    <Form.Group controlId="formInput1">
+                    <Form.Group 
+                      controlId="formInput1"
+                      key={`number-${index}`}>
                     <Form.Control
                     type="number"
                     value={input} 
@@ -169,8 +174,8 @@ export const OrderPayment: React.FC<EnterCheckProps> = ( { show , onClose, check
             </Form.Group>
           <Row className="mb-3">
           <Row className='mt-4'>
-            <Col> Importe total {formatoMoneda(sumCheckAmount)}</Col>
-            <Col> Total Cheques  {checkSelection.length}</Col>
+            <Col> Importe Cheques {formatoMoneda(sumCheckAmount)}</Col>
+            <Col> Total Cheques  {checkSelection?.length || 0 }</Col>
           </Row>      
            
           </Row>

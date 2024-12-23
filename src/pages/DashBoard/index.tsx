@@ -14,37 +14,40 @@ const DashBoard = () => {
   
   const handleCheckboxSelection = (e :  React.ChangeEvent<HTMLInputElement>) => {
     const { name } = e.target
-    const numberCheck = Number(name)
+    const numberCheck = name && Number(name)
     const itemCheck = checkList?.filter( (check) => 
-     check.numero === numberCheck
+     check.id === numberCheck
     )
   
     if (itemCheck){
       if(e.target.checked){ setCheckedSelection([... checkedSelection,itemCheck[0] ] )
     }
-    else { console.log('entra')
-      setCheckedSelection( checkedSelection.filter( (check) => check.id !== itemCheck[0].id )) }
+    else {setCheckedSelection( checkedSelection.filter( (check) => check.id !== itemCheck[0].id )) }
     }
   }
+  console.log(checkedSelection)
   const handleDeleteChange  =   (event: React.MouseEvent<HTMLButtonElement>): void => {
     const token = authContext && authContext.user?.token 
     const id = Number((event.target as HTMLButtonElement).name);
     if (token) {deleteCheck(id, token)}
   }
  
-
+  
   
   useEffect(() => {
     if (authContext?.user?.token) {
        addAllCheck(authContext.user?.token)
       }
-    }, [authContext]); // Dependencia para volver a cargar cuando el contexto cambie
+    }, []); 
 
 
   return (
     <div className=''>
       <Styled.Nav>
-      <NavBar  checkSelection = {checkedSelection}/>
+      <NavBar  
+      checkSelection = {checkedSelection}
+      setCheckedSelection={setCheckedSelection}
+      />
       </Styled.Nav>
       <div>  
       <Table striped bordered hover variant="dark" className=''>
@@ -69,7 +72,7 @@ const DashBoard = () => {
                 <tr className='text-end' key={elem.id}>
                 <td>
                   <Form.Check 
-                  name={`${elem.numero}`}
+                  name={`${elem.id}`}
                   onChange={handleCheckboxSelection}
                   />
                 </td>  
