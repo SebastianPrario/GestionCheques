@@ -41,7 +41,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
   const signOutUser = () =>{
-    sessionStorage.removeItem('userGestionToken');
+    localStorage.clear();
     setUser(null)
   }
   return (

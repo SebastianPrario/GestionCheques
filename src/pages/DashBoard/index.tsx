@@ -8,10 +8,10 @@ import NavBar from '../NavBar/NavBar';
 
 
 const DashBoard = () => {
+  const authContext = useContext(AuthContext);
   const { checkList, addAllCheck, deleteCheck } = useContext(CheckContext);
   const [ checkedSelection, setCheckedSelection ] = useState < Check[] > ([]) // crea un objeto con los elementos seleccionado
-  const authContext = useContext(AuthContext);
-  
+   
   const handleCheckboxSelection = (e :  React.ChangeEvent<HTMLInputElement>) => {
     const { name } = e.target
     const numberCheck = name && Number(name)
@@ -22,10 +22,10 @@ const DashBoard = () => {
     if (itemCheck){
       if(e.target.checked){ setCheckedSelection([... checkedSelection,itemCheck[0] ] )
     }
-    else {setCheckedSelection( checkedSelection.filter( (check) => check.id !== itemCheck[0].id )) }
+    else {setCheckedSelection( checkedSelection?.filter( (check) => check.id !== itemCheck[0].id )) }
     }
   }
-  console.log(checkedSelection)
+ 
   const handleDeleteChange  =   (event: React.MouseEvent<HTMLButtonElement>): void => {
     const token = authContext && authContext.user?.token 
     const id = Number((event.target as HTMLButtonElement).name);

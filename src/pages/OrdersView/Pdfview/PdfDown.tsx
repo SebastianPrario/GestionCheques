@@ -49,6 +49,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  text: {
+    fontSize: 15,
+    marginBottom: 10,
+    fontWeight: 'bold',
+    textAlign: 'left',
+  },
   table: {
     display: 'flex',
     width: 'auto',
@@ -129,20 +135,22 @@ const styles = StyleSheet.create({
 
 export const OrderPDF = (data : any) => {
   const {data: datos } =  data 
+  let { creationDate } = datos ? datos : 'no hay fecha'
+  creationDate  = creationDate && new Date(creationDate).toLocaleString('es-AR')
   return (
     data ? (
       <Document style={styles.page}>
         <Page size="A4" style={styles.page}>
           <View style={styles.section}>
             <Text style={styles.header}>Orden de Pago</Text>
-            <Text>Destino: {datos?.destination}</Text>
-            <Text>Detalle: {datos?.detail}</Text>
-            <Text>Fecha: {datos?.creationDate}</Text>
+            <Text style={styles.text}>Destino: {datos?.destination}</Text>
+            <Text style={styles.text}>Detalle: {datos?.detail}</Text>
+            <Text style={styles.text}>Fecha: {creationDate}</Text>
           
-            <Text style={styles.totalAmount}>Importe Total: $ {datos?.totalAmount}</Text>
+            <Text style={styles.totalAmount}>Total Orden de Pago: $ {datos?.totalAmount}</Text>
           </View>
           <View style={styles.section}>
-            <Text style={styles.header}>Cheques Utilizados</Text>
+            <Text style={styles.header}>Cheques</Text>
             <View style={styles.table}>
               <View style={[styles.tableRow, styles.tableHeader]}>
                 <Text style={styles.tableCell2}>#</Text>
@@ -165,7 +173,7 @@ export const OrderPDF = (data : any) => {
                 )
               })}
             </View>
-          </View> <Text style={styles.otherPayment}>  Otros Pagos  </Text>
+          </View> <Text style={styles.otherPayment}>  Otros Valores y Retenciones  </Text>
           {datos?.otherPayment?.map((elem: any, index: number) => {
                 return (
                   <View style={styles.tableRow4} key={index}>

@@ -71,3 +71,14 @@ export const getApiData = async (endpoint : string , headers :{ authorization: s
         };
     }
 }
+
+export const deleteOrderApi = async (endpoint : string , headers :{ authorization: string; } | undefined, id : number) => { 
+    try {
+        const URLAPI = `${URL}/${endpoint}`
+        const response = await apiService.delete(`${URLAPI}/${id}`,  { headers });
+        return response 
+    }catch (error : unknown  ) { 
+        if (error instanceof Error) {
+            throw new Error(`error axios check: ${error.message}`)};
+    }
+}

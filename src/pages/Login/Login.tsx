@@ -12,10 +12,10 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormInput from '../components/FormInput';
+import FormInput from '../../components/FormInput';
 import styled from '@emotion/styled';
-import { postMethod } from '../librery/helpers';
-import { useAuth } from '../contexts/AuthContext';
+import { postMethod } from '../../librery/helpers';
+import { useAuth } from '../../contexts/AuthContext';
 
 // 👇 Styled React Route Dom Link Component
 export const LinkItem = styled(Link)`

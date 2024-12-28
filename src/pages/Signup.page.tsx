@@ -5,7 +5,7 @@ import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { boolean, object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormInput from '../components/FormInput';
-import { LinkItem } from './Login.page';
+import { LinkItem } from './Login/Login';
 import { signUp } from '../librery/helpers';
 import { useNavigate } from 'react-router-dom';
 

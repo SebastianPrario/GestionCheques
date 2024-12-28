@@ -6,16 +6,30 @@ import Table from 'react-bootstrap/Table';
 import NavBar from '../NavBar/NavBar';
 import { Button } from 'react-bootstrap';
 import { headerToken } from '../../librery/helpers';
-import { getApiData } from '../../services/apiService';
+import { deleteOrderApi, getApiData } from '../../services/apiService';
 import PdfOrder from './Pdfview/PdfDown';
 import { number } from 'zod';
 import ReactDOM from 'react-dom';
 
 
 const OrdersView = () => {
+    const [orders, setOrders] = useState<Order[] | null | undefined>(null);
     const authContext = useContext(AuthContext);
     const token = authContext && authContext.user?.token 
-    const { getOrders , orders  } = useContext(CheckContext);
+    const headers = headerToken(token)
+    
+    const getOrders = async (token: string) => {
+       
+       //tLoading(true);
+        const response = await  getApiData( 'order/allorders',  headers );
+        const data: Order[] = response?.data;
+        setOrders(data);
+        //setLoading(false);
+        console.log(response)
+    };
+    
+    
+    
     const handleDownloadClick = (id: number) => {
       const newWindow = window.open('', '');
       if (newWindow) {
@@ -29,13 +43,21 @@ const OrdersView = () => {
       }
   };
       
- 
-    useEffect(() => {
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteOrderApi('order', headers, id);
+      const response = await getApiData('order/allorders', headers);
+      setOrders(response?.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // al cargar la pagina se obtienen todas las ordenes y se muestran en el estado
+  useEffect(() => {
     if (authContext?.user?.token) {
-        getOrders(authContext.user?.token)
-       }
-    }, [authContext])
-    
+      getOrders(authContext.user?.token);
+    } 
+  }, [authContext]);  
 
    return (
     <div className=''>
@@ -65,6 +87,9 @@ const OrdersView = () => {
                   <td> {order.creationDate} </td>
                   <td className='d- justify-content-between'>
                     <div> 
+                    <Button className='me-2' variant="primary" onClick={() => order.id && handleDelete(order.id)}> 
+                        Eliminar 
+                      </Button> 
                       <Button variant="primary" onClick={() => order.id && handleDownloadClick(order.id)}> 
                         Mostrar 
                       </Button> 

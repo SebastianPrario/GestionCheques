@@ -18,21 +18,37 @@ interface EnterCheckProps {
   checkSelection : Check[];
   setCheckedSelection : React.Dispatch<React.SetStateAction<Check[]|[]>>;
 }
+interface UpdatedState {
+  property: string;
+  number: number; 
+}
+interface Values {
+  destination: string;
+  totalAmount: number;
+  detail: string;
+  creationDate: string;
+  chequesId: number[];
+  otherPayment: UpdatedState[];
+  [key: string]: any; // Para otros campos que puedan existir en values
+}
 
 export const OrderPayment: React.FC<EnterCheckProps> = ( { show , onClose, checkSelection , setCheckedSelection} ) => {
   const [inputsProperty, setInputsProperty] = useState(Array(3).fill(''));
   const [inputsNumber, setInputsNumber] = useState(Array(3).fill(0));
   const sumCheckAmount =  checkSelection.reduce( (total , check) => total + Number(check?.importe || 0),0)
   const formatoMoneda  = (value : number) => {
-    return value.toLocaleString('es-AR', { style:'currency', currency:'ARS'})}
-
-
+    return value.toLocaleString('es-AR', { style:'currency', currency:'ARS'})
+  }
+  
+  console.log(inputsNumber)
+  const totalAmount = inputsNumber.reduce( (total , number) => total + Number(number) ,0)
   const { Formik } = formik;
   const authContext = useContext(AuthContext)
   const checkContext = useContext(CheckContext)
   const addCheck = checkContext && checkContext.addAllCheck
   const user = authContext && authContext.user
 
+  console.log(totalAmount)
   //const addCheck = checkCheck && checkCheck.addAllCheck
   const schema = yup.object().shape({
     destination: yup
@@ -56,7 +72,8 @@ export const OrderPayment: React.FC<EnterCheckProps> = ( { show , onClose, check
         newInputs[index] = target.value; 
         setInputsNumber(newInputs); 
       };
-  const handleSubmit = async ( values, { resetForm } )=>{
+  const handleSubmit = async ( values : Values, { resetForm }: any )=>{
+    console.log('values',values)
     const updatedState = []
     for (let i = 0; i < inputsProperty.length; i += 2)
       { if( inputsProperty[i]=='' || inputsNumber[i]==0) console.log('no entra')
@@ -174,7 +191,7 @@ export const OrderPayment: React.FC<EnterCheckProps> = ( { show , onClose, check
             </Form.Group>
           <Row className="mb-3">
           <Row className='mt-4'>
-            <Col> Importe Cheques {formatoMoneda(sumCheckAmount)}</Col>
+            <Col> Total Pago {formatoMoneda(totalAmount+ sumCheckAmount)}</Col>
             <Col> Total Cheques  {checkSelection?.length || 0 }</Col>
           </Row>      
            
