@@ -4,21 +4,41 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Container, Nav } from 'react-bootstrap';
-import React from 'react';
+import React, { useState } from 'react';
 import {  useAuth } from '../../contexts/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import EnterCheck from '../EnterCheck/EnterCheck';
 import OrderPayment from '../OrderPayment/OrderPayment';
 import { Check } from '../../contexts/CheckContext';
+import { getCheckByNumber } from '../../services/apiService';
+import CheckModal from '../CheckModal/CheckModal';
+import { Order } from '../../contexts/CheckContext';
 
 interface NavBarProps {
   checkSelection : Check[]
   setCheckedSelection : React.Dispatch<React.SetStateAction<Check[]|[]>>;
 }
 
+export interface CheckData { 
+  id: number;
+  numero: number;
+  importe: number;
+  cliente: string;
+  librador: string;
+  fechaEmision: string;
+  fechaEntrega: string;
+  banco: string;
+  proveedor?: string;
+  estado?: string;
+  borrado?: boolean;
+  user?: string;
+  order?:  Order | null;
+
+
+}
 
 const  NavBar : React.FC<NavBarProps> = ( { checkSelection , setCheckedSelection })  => {
-
+  const token = localStorage.getItem('token') 
   const { signOutUser } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -27,15 +47,40 @@ const  NavBar : React.FC<NavBarProps> = ( { checkSelection , setCheckedSelection
     signOutUser()
     navigate('/')
   }
-    
-  const [modalShow, setModalShow] = React.useState(false);
-  const [modalOrder, setModalOrder] = React.useState(false);
+  const [searchValue, setSearchValue] = useState('');  
+  const [modalShow, setModalShow] = useState(false);
+  const [modalOrder, setModalOrder] = useState(false);
+  const [modalCheck, setModalCheck] = useState(false);
+  const [dataCheck, setDataCheck] = useState< CheckData | null> (null)
   const onClose = () =>{
     setModalShow(false)
   }
   const onCloseOrder = () =>{
     setModalOrder(false)
   }
+  const onCloseCheck = () =>{
+    setModalCheck(false)
+  }
+  async function handleClickSearch(): Promise<any> {
+    try{
+      const foundCheck = await getCheckByNumber(Number(searchValue), token ? { authorization: `bear ${token}` } : { authorization: '' })
+      console.log(foundCheck)
+      const data = foundCheck?.data
+      console.log(data)
+      
+      if (foundCheck?.data =='Cheque no encontrado'){
+        window.alert('cheque no encontrado')
+      } else {
+        setDataCheck(data)
+        setModalCheck(true)
+        console.log(dataCheck)
+      }
+    }catch (error){ console.log(error)}
+    
+  }
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  };
   return (
     <Navbar className="bg-body-tertiary">
       <Container>
@@ -66,6 +111,11 @@ const  NavBar : React.FC<NavBarProps> = ( { checkSelection , setCheckedSelection
               show={modalShow}
               onClose={onClose}
             />
+            <CheckModal
+              show={modalCheck}
+              onClose={onCloseCheck}
+              data={dataCheck}
+            />
           </Col>
           <Col>
            <Button variant="primary" onClick={() => navigate('/orders')}>
@@ -75,16 +125,17 @@ const  NavBar : React.FC<NavBarProps> = ( { checkSelection , setCheckedSelection
         </Row>
       </Container>
       }
-      <Form>
-        <Row>
-          <Col xs="4">
-            <Form.Control
-              type="text"
-              className=" mr-sm-2"
-            />
-          </Col>
-          <Col xs="1">
-            <Button type="submit">Buscar</Button>
+      <Form className='col-2'>
+        <Row className='me-5 pe-1 d-flex justify-content-end'>
+          <Col className='d-flex  pe-4'>
+          <input  
+          type='number' 
+          name='searchbutton' 
+          className='form-control col-12' 
+          placeholder='N° Cheque'
+          value={searchValue}
+          onChange={handleInputChange}/>
+            <Button onClick={handleClickSearch}>Buscar</Button>
           </Col>
         </Row>
       </Form>

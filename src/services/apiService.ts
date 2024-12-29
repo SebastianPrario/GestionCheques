@@ -27,7 +27,18 @@ export const getCheckApi = async (endpoint : string , headers :{ authorization: 
         };
     }
 }
-
+export const getCheckByNumber = async (numberCheck : number , headers :{ authorization: string} ) => { 
+    console.log(numberCheck,headers)
+    try {
+        const response = await apiService.get(`${URL}/cheques/number?number=${numberCheck}`, { headers });
+        console.log(response)       
+        return response 
+    }catch (error : unknown  ) { 
+        if (error instanceof Error) {
+            console.log(error.message)
+        };
+    }
+}
 export const deleteCheckApi = async (endpoint : string , headers :{ authorization: string; }, id : number) => { 
     try {
         const URLAPI = `${URL}/${endpoint}`

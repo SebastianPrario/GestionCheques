@@ -10,6 +10,7 @@ import { deleteOrderApi, getApiData } from '../../services/apiService';
 import PdfOrder from './Pdfview/PdfDown';
 import { number } from 'zod';
 import ReactDOM from 'react-dom';
+import Swal from 'sweetalert2';
 
 
 const OrdersView = () => {
@@ -44,13 +45,31 @@ const OrdersView = () => {
   };
       
   const handleDelete = async (id: number) => {
-    try {
-      await deleteOrderApi('order', headers, id);
-      const response = await getApiData('order/allorders', headers);
-      setOrders(response?.data);
-    } catch (error) {
-      console.log(error);
-    }
+      const result = await Swal.fire({
+          title: '¿Estás seguro?',
+          text: "No podrás revertir esto.",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sí, eliminarlo',
+          cancelButtonText: 'Cancelar'
+      })
+      if (result.isConfirmed) {
+        try {
+          await deleteOrderApi('order', headers, id);
+           const response = await getApiData('order/allorders', headers);
+          if (response) {
+                  Swal.fire(
+                    '¡Eliminado!'
+                  );
+                  return  setOrders(response?.data);
+          }
+        } catch (error) 
+        {
+          console.log(error);
+        }
+      } 
   };
   // al cargar la pagina se obtienen todas las ordenes y se muestran en el estado
   useEffect(() => {
@@ -67,7 +86,7 @@ const OrdersView = () => {
       <div>  
       <Table striped bordered hover variant="dark" className=''>
           <thead>
-          <tr>
+          <tr className='text-center'>
             <th>Número</th>
             <th>Destino</th>
             <th>Importe</th>
@@ -85,12 +104,12 @@ const OrdersView = () => {
                   <td> {order.destination} </td>
                   <td> {order.totalAmount} </td>
                   <td> {order.creationDate} </td>
-                  <td className='d- justify-content-between'>
+                  <td className='justify-content-between'>
                     <div> 
                     <Button className='me-2' variant="primary" onClick={() => order.id && handleDelete(order.id)}> 
                         Eliminar 
                       </Button> 
-                      <Button variant="primary" onClick={() => order.id && handleDownloadClick(order.id)}> 
+                      <Button className='me-4' variant="primary" onClick={() => order.id && handleDownloadClick(order.id)}> 
                         Mostrar 
                       </Button> 
                     </div>
