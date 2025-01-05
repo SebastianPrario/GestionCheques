@@ -1,124 +1,83 @@
-import React, { createContext, useState } from 'react';
-import Swal from 'sweetalert2';
-import { deleteCheckApi, getCheckApi, getApiData, postCheckApi } from '../services/apiService';
-import { headerToken } from '../librery/helpers';
+import React, { createContext, useState } from 'react'
+import Swal from 'sweetalert2'
+import { deleteCheckApi } from '../services/apiService'
+import { headerToken } from '../librery/helpers'
 
 export interface Check {
-  // Define las propiedades del cheque
-  id?: number;
-  numero: number;
-  importe: number;
-  cliente: string;
-  librador: string;
-  fechaEmision: string;
-  fechaEntrega: string;
-  banco: string;
-  proveedor?: string;
-  estado?: string;
-  borrado?: boolean;
-  user?: string;
+    // Define las propiedades del cheque
+    id?: number
+    numero: number
+    importe: number
+    cliente: string
+    librador: string
+    fechaEmision: string
+    fechaEntrega: string
+    banco: string
+    proveedor?: string
+    estado?: string
+    borrado?: boolean
+    user?: string
 }
 export interface Order {
-  // Define las propiedades del cheque
-  id?: number;
-  destination: string;
-  totalAmount: string;
-  otherPayment: [];
-  creationDate: string;
-  delete: boolean;
-  user: string;
+    // Define las propiedades del cheque
+    id?: number
+    destination: string
+    totalAmount: string
+    otherPayment: []
+    creationDate: string
+    delete: boolean
+    user: string
 }
 
 interface CheckContextType {
-  checkList: Check[] | null | undefined;
-  addCheck: (data: Check , token: string) => Promise<Check[] | null| void>;
-  deleteCheck: (id: number , token: string) => Promise<Check[] | void | undefined| null> ;
-  addAllCheck: (token: string) => Promise<void | null>;
-  loading: boolean | null;
+    checkedSelection: Check[]
+    setCheckedSelection: (data: Check[]) => void
+    deleteCheck: (
+        id: number,
+        token: string
+    ) => Promise<Check[] | void | undefined | null>
 }
 
 export const CheckContext = createContext<CheckContextType>({
-  checkList: [],
-  addCheck:  async () => {},
-  deleteCheck:async () => {},
-  addAllCheck: async () => null,
-  loading: false,
-});
+    checkedSelection: [],
+    deleteCheck: async () => {},
+    setCheckedSelection: () => [],
+})
 
 function CheckProvider({ children }: { children: React.ReactNode }) {
-  const [checkList, setCheck] = useState<Check[] | null | undefined>(null);
-  const [loading, setLoading] = useState<boolean | null>(null);
-  const [error] = useState<Error | null>(null);
+    const [checkedSelection, setCheckedSelection] = useState<Check[]>([]) // crea un objeto con los elementos seleccionado
 
- 
-  
-  const addCheck = async (data: Check, token : string | undefined) => {
-      const headers = headerToken(token)
-      setLoading(true);
-    try {
-      await postCheckApi( 'cheques', headers , data)
-      if (  checkList ){
-        const newCheckList = [ ...checkList , data]
-        setCheck(newCheckList);
-        return newCheckList}
-      } catch (error: unknown) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-      
-  }
-}
+    const deleteCheck = async (id: number, token: string) => {
+        const headers = headerToken(token)
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'No podrás revertir esto.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminarlo',
+            cancelButtonText: 'Cancelar',
+        })
+        if (result.isConfirmed) {
+            if (URL) {
+                const response = await deleteCheckApi('cheques', headers, id)
 
-  const addAllCheck = async (token: string) => {
-    try{
-    const headers = headerToken(token)
-    setLoading(true);
-    const response = await  getCheckApi( 'cheques',  headers );
-    const data: Check[] = response?.data;
-    setCheck(data);
-    setLoading(false);
-    console.log(error)
-    }catch (error) {console.log(error )}
-  };
-
- 
-  const deleteCheck = async (id: number, token: string ) => {
-    const headers = headerToken(token)
-    const result = await Swal.fire({
-      title: '¿Estás seguro?',
-      text: "No podrás revertir esto.",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, eliminarlo',
-      cancelButtonText: 'Cancelar'
-    })
-    if (result.isConfirmed) {
-        if (URL) {
-            const response = await deleteCheckApi( 'cheques', headers , id)
-            const newCheckList = checkList?.filter( elem => elem?.id !== id )
-            setCheck(newCheckList)
-            ;
-            if (response) {
-              Swal.fire(
-                '¡Eliminado!'
-              );
-              return checkList;
+                if (response) {
+                    Swal.fire('¡Eliminado!')
+                    return
+                }
             }
-      } 
+        }
     }
-  };
-  const value = {
-    checkList,
-    addCheck,
-    addAllCheck,
-    deleteCheck,
-    loading,
-  };
-  return (
-    <CheckContext.Provider value={value}>{children}</CheckContext.Provider>
-  );
+    const value = {
+        checkedSelection,
+        deleteCheck,
+        setCheckedSelection,
+    }
+    return (
+        <CheckContext.Provider value={value}>{children}</CheckContext.Provider>
+    )
 }
 
-export default CheckProvider;
+export default CheckProvider

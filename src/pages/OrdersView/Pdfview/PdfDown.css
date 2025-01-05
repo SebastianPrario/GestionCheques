@@ -3,9 +3,9 @@
     justify-content: center;
     align-items: center;
     background-color: black;
-  }
-  
-  .pdf-viewer {
+}
+
+.pdf-viewer {
     width: 1000px;
     height: 100%;
-  }
+}
