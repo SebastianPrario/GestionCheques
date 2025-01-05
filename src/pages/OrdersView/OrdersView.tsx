@@ -59,7 +59,7 @@ const OrdersView = () => {
                     getOrders()
                     setLoading(false)
                     Swal.fire('¡Eliminado!')
-                }, 500)
+                }, 1000)
             }
         } catch (error) {
             console.log(error)
