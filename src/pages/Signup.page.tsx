@@ -67,9 +67,9 @@ const SignupPage: FC = () => {
     }
     return (
         <Container
-            maxWidth={false}
+            maxWidth='lg'
             sx={{
-                height: '100vh',
+                height: '100%',
                 backgroundColor: { xs: '#fff', md: '#f4f4f4' },
             }}
         >
