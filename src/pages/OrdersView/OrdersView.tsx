@@ -8,7 +8,6 @@ import { Button } from 'react-bootstrap'
 import { headerToken } from '../../librery/helpers'
 import { deleteOrderApi, getApiData } from '../../services/apiService'
 import PdfOrder from './Pdfview/PdfDown'
-import { number } from 'zod'
 import ReactDOM from 'react-dom'
 import Spinner from '../../components/Spinner/Spinner'
 import Swal from 'sweetalert2'
@@ -55,11 +54,9 @@ const OrdersView = () => {
             })
             if (result.isConfirmed) {
                 const response = await deleteOrderApi('order', headers, id)
-                setTimeout(() => {
-                    getOrders()
-                    setLoading(false)
-                    Swal.fire('¡Eliminado!')
-                }, 1000)
+                Swal.fire('¡Eliminado!')    
+                getOrders()
+                setLoading(false)
             }
         } catch (error) {
             console.log(error)
@@ -68,7 +65,7 @@ const OrdersView = () => {
     // al cargar la pagina se obtienen todas las ordenes y se muestran en el estado
     useEffect(() => {
         if (authContext?.user?.token) {
-            getOrders(authContext.user?.token)
+            getOrders()
         }
     }, [authContext])
 

@@ -62,11 +62,12 @@ const DashBoard = () => {
         })
         if (result.isConfirmed) {
             const response = await deleteCheckApi(header, id)
-            getAllCheck()
-            setLoading(true)
             if (response) {
                 Swal.fire('¡Eliminado!')
-            }
+            } 
+            getAllCheck()
+            setLoading(true)
+
         }
     }
     const handleDeleteChange = (
