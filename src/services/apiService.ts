@@ -13,13 +13,19 @@ interface Order {
     chequesId: number[]
     otherPayment?: [otherPayment]
 }
+
+
+export type OrderBy = 'numero' | 'importe' | 'cliente' | 'librador' | 'fechaEmision' | 'fechaEntrega' | 'banco';
+
 const URL = import.meta.env.VITE_API_URL
 
 export const apiService = axios.create({ baseURL: URL })
 
-export const getCheckApi = async (headers: {}) => {
+export const getCheckApi = async (headers: {}, order?: OrderBy, asc?: 'ASC' | 'DES') => {
     try {
-        const response = await apiService.get(`${URL}/cheques`, { headers })
+
+        const response = order ?  await apiService.get(`${URL}/cheques?orderBy=${order}${asc}`, { headers }):
+        await apiService.get(`${URL}/cheques`, { headers })
         return response
     } catch (error: unknown) {
         if (error instanceof Error) {

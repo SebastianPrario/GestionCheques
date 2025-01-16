@@ -5,7 +5,7 @@ import { AuthContext } from '../../contexts/AuthContext'
 import { Button, Form } from 'react-bootstrap'
 import Table from 'react-bootstrap/Table'
 import NavBar from '../NavBar/NavBar'
-import { deleteCheckApi, getCheckApi } from '../../services/apiService'
+import { deleteCheckApi, getCheckApi, OrderBy } from '../../services/apiService'
 import Swal from 'sweetalert2'
 import EnterCheck from '../EnterCheck/EnterCheck'
 import OrderPayment from '../OrderPayment/OrderPayment'
@@ -14,14 +14,15 @@ import Spinner from '../../components/Spinner/Spinner'
 const DashBoard = () => {
     const [checkList, setCheckList] = useState<Check[] | null | undefined>(null)
     const [checkedSelection, setCheckedSelection] = useState<Check[]>([]) // crea un objeto con los elementos seleccionado
-
+    const [orderBy, setOrderBy] = useState<{ order: string; asc: string } | null>(null)
     const [loading, setLoading] = useState<boolean | null>(null)
     const [modalShow, setModalShow] = useState(false)
     const [modalOrder, setModalOrder] = useState(false)
     const authContext = useContext(AuthContext)
     const token = authContext && authContext.user?.token
     const header = { authorization: `bear ${token}` }
-
+    console.log(orderBy)
+    console.log(checkList)
     const onClose = () => {
         setModalShow(false)
     }
@@ -79,10 +80,10 @@ const DashBoard = () => {
         }
     }
 
-    const getAllCheck = async () => {
+    const getAllCheck = async (order , asc ) => {
         try {
             setLoading(true)
-            const response = await getCheckApi(header || '')
+            const response = await getCheckApi(header || '', order , asc)
             const data: Check[] = response?.data
             setCheckList(data)
             setLoading(false)
@@ -91,11 +92,14 @@ const DashBoard = () => {
         }
     }
 
+    const setOrder = ( param : OrderBy ) => {
+        return  setOrderBy({ order: param , asc: (orderBy?.asc ==='ASC' ? 'DES': 'ASC')})
+    }
     useEffect(() => {
         if (authContext?.user?.token) {
-            getAllCheck()
+            getAllCheck(orderBy?.order,orderBy?.asc)
         }
-    }, [])
+    }, [orderBy])
 
     return (
         <div className="">
@@ -123,17 +127,17 @@ const DashBoard = () => {
             />
             <div>
                 <Table striped bordered hover variant="dark" className="">
-                    <thead>
+                    <thead className='text-center'>
                         <tr>
                             <th>Sel.</th>
-                            <th>Número de cheque</th>
-                            <th>Cliente</th>
-                            <th>Librador</th>
-                            <th>Fecha de Cobro</th>
-                            <th>Fecha de Emisión</th>
-                            <th>Importe</th>
-                            <th>Banco emisor</th>
-                            <th>Eliminar</th>
+                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('numero')}>Número de cheque   </Button></th>
+                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('cliente')}>Cliente</Button></th>
+                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('librador')}>Librador</Button></th>
+                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('fechaEntrega')}>Fecha de Cobro</Button></th>
+                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('fechaEmision')}>Fecha de Emisión</Button></th>
+                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('importe')}>Importe</Button></th>
+                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('banco')}>Banco emisor</Button></th>
+                            <th className='text-danger'>Eliminar</th>
                         </tr>
                     </thead>
                     <div></div>
@@ -158,7 +162,7 @@ const DashBoard = () => {
                                         <td> {elem.librador} </td>
                                         <td> {elem.fechaEntrega} </td>
                                         <td> {elem.fechaEmision} </td>
-                                        <td> {elem.importe} </td>
+                                        <td> $ {elem.importe} </td>
                                         <td> {elem.banco} </td>
                                         <td>
                                             <Button

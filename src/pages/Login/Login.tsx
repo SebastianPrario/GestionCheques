@@ -3,62 +3,20 @@ import {
     Grid,
     Box,
     Typography,
-    Stack,
-    Link as MuiLink,
+    Stack
+   
 } from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { FC, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
-import { Link, useNavigate } from 'react-router-dom'
-import { object, string, TypeOf } from 'zod'
+import { useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import FormInput from '../../components/FormInput'
-import styled from '@emotion/styled'
 import { postMethod } from '../../librery/helpers'
 import { useAuth } from '../../contexts/AuthContext'
 import Spinner from '../../components/Spinner/Spinner'
-
-// 👇 Styled React Route Dom Link Component
-export const LinkItem = styled(Link)`
-    text-decoration: none;
-    color: #3683dc;
-    &:hover {
-        text-decoration: underline;
-        color: #5ea1b6;
-    }
-`
-
-// 👇 Styled Material UI Link Component
-export const OauthMuiLink = styled(MuiLink)`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f5f6f7;
-    border-radius: 1;
-    padding: 0.6rem 0;
-    column-gap: 1rem;
-    text-decoration: none;
-    color: #393e45;
-    font-weight: 500;
-    cursor: pointer;
-
-    &:hover {
-        background-color: #fff;
-        box-shadow: 0 1px 13px 0 rgb(0 0 0 / 15%);
-    }
-`
-
-// 👇 Login Schema with Zod
-const loginSchema = object({
-    email: string().min(1, 'Email is required').email('Email is invalid'),
-    password: string()
-        .min(1, 'Password is required')
-        .min(8, 'Password must be more than 8 characters')
-        .max(32, 'Password must be less than 32 characters'),
-})
-
-// 👇 Infer the Schema to get the TS Type
-type ILogin = TypeOf<typeof loginSchema>
+import { ILogin, loginSchema } from './types'
+import Styles from './styles'
 
 const LoginPage: FC = () => {
     const navigate = useNavigate()
@@ -66,15 +24,14 @@ const LoginPage: FC = () => {
         handleSubmit,
         formState: { errors },
     } = useForm()
-    console.log(errors)
-    // 👇 Default Values
+   
+    
     const defaultValues: ILogin = {
         email: '',
         password: '',
     }
     const [loading, setIsLoading] = useState(false)
-    const { user, signInUser, setUser } = useAuth()
-    // 👇 The object returned from useForm Hook
+    const {  signInUser } = useAuth()
     const methods = useForm<ILogin>({
         resolver: zodResolver(loginSchema),
         defaultValues,
@@ -92,6 +49,7 @@ const LoginPage: FC = () => {
 
             // Realiza la llamada a la API aquí
             const response = await postMethod(data)
+           
             signInUser({
                 name: response.payload.sub,
                 userId: response.payload.userId,
@@ -99,6 +57,7 @@ const LoginPage: FC = () => {
                 token: response.token,
             })
             if (response.token) {
+                
                 navigate('/dashboard')
             }
         } catch (error) {
@@ -190,7 +149,7 @@ const LoginPage: FC = () => {
                                             label="Password"
                                             name="password"
                                             required
-                                            focused
+                                            
                                         />
 
                                         <LoadingButton
@@ -216,9 +175,9 @@ const LoginPage: FC = () => {
                                         sx={{ fontSize: '0.9rem', mb: '1rem' }}
                                     >
                                         crear usuario{' '}
-                                        <LinkItem to="/signup">
+                                        <Styles.LinkItem to="/signup">
                                             click aqui
-                                        </LinkItem>
+                                        </Styles.LinkItem>
                                     </Typography>
                                     {/* <Typography sx={{ fontSize: '0.9rem' }}>
                     Forgot your{' '}

@@ -1,24 +1,20 @@
 import Swal from 'sweetalert2'
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
+import { SignUp } from './types'
 
-interface SignUp {
-    name: string
-    email: string
-    password: string
-    role: boolean
-}
 
 export const postMethod = async (data: SignUp) => {
     const URL: string | undefined = import.meta.env.VITE_API_URL_SIGNIN
     try {
         if (URL) {
             const response = await axios.post(URL, data)
+            console.log(response.data)
             if (response.data === 'usuario o password incorrecta') {
                 Swal.fire({
                     title: 'Error!',
                     text: 'email o contraseña incorrecta',
                     icon: 'error',
-                    confirmButtonText: 'Cool',
+                    confirmButtonText: 'error',
                 })
             }
             localStorage.setItem('token', response.data?.token)
@@ -30,7 +26,7 @@ export const postMethod = async (data: SignUp) => {
             title: 'Error!',
             text: 'email o contraseña incorrecta',
             icon: 'error',
-            confirmButtonText: 'Cool',
+            confirmButtonText: 'aceptar',
         })
         return
     }
