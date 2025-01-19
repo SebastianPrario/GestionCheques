@@ -1,17 +1,17 @@
 import axios from 'axios'
 import { Check } from '../contexts/CheckContext'
 
-interface otherPayment {
+export interface otherPayment {
     property: string
     number: number
 }
-interface Order {
+export interface Order {
     destination: string
     totalAmount: number
     detail: string
     creationDate: string
     chequesId: number[]
-    otherPayment?: [otherPayment]
+    otherPayment?: otherPayment[]
 }
 
 

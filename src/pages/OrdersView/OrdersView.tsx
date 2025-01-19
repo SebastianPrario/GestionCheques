@@ -35,7 +35,7 @@ const OrdersView = () => {
             newWindow.document.title = 'PDF Order'
             newWindow.document.close()
             ReactDOM.render(
-                <PdfOrder id={id} token={token} />,
+                <PdfOrder id={id} token={token ?? undefined} />,
                 newWindow.document.getElementById('pdf-order-root')
             )
         }
@@ -54,12 +54,10 @@ const OrdersView = () => {
                 cancelButtonText: 'Cancelar',
             })
             if (result.isConfirmed) {
-                const response = await deleteOrderApi('order', headers, id)
-                setTimeout(() => {
-                    getOrders()
-                    setLoading(false)
-                    Swal.fire('¡Eliminado!')
-                }, 1000)
+                await deleteOrderApi('order', headers, id)
+                Swal.fire('¡Eliminado!') 
+                getOrders()
+                setLoading(false)
             }
         } catch (error) {
             console.log(error)
@@ -68,7 +66,7 @@ const OrdersView = () => {
     // al cargar la pagina se obtienen todas las ordenes y se muestran en el estado
     useEffect(() => {
         if (authContext?.user?.token) {
-            getOrders(authContext.user?.token)
+            getOrders()
         }
     }, [authContext])
 

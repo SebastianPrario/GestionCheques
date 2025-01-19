@@ -38,7 +38,7 @@ const LoginPage: FC = () => {
     })
 
     // 👇 Submit Handler
-    const onSubmit = async (values: any) => {
+    const onSubmit = async () => {
         setIsLoading(true)
         try {
             const { email, password } = methods.watch()

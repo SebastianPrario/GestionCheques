@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row'
 import * as formik from 'formik'
 import * as yup from 'yup'
 import { CustomModal } from '../CustomModal/CustomModal'
-import { createOrderApi } from '../../services/apiService'
+import { createOrderApi, Order } from '../../services/apiService'
 import { Check } from '../../contexts/CheckContext'
 
 interface EnterCheckProps {
@@ -17,19 +17,8 @@ interface EnterCheckProps {
     header: { authorization: string }
     getAllCheck: () => void
 }
-interface UpdatedState {
-    property: string
-    number: number
-}
-interface Values {
-    destination: string
-    totalAmount: number
-    detail: string
-    creationDate: string
-    chequesId: number[]
-    otherPayment: UpdatedState[]
-    [key: string]: any // Para otros campos que puedan existir en values
-}
+
+
 
 export const formatoMoneda = (value: number) => {
     return value.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })
@@ -71,7 +60,7 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
         setInput({ ...input, [name]: value })
     }
 
-    const handleSubmit = async (values: Values, { resetForm }: any) => {
+    const handleSubmit = async (values: Order, { resetForm }: any) => {
         const prop = [
             { property: input.p0, number: Number(input.p3) },
             { property: input.p1, number: Number(input.p4) },
@@ -79,8 +68,7 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
         ]
         values.otherPayment = prop
         values.creationDate = new Date().toISOString()
-        const response = await createOrderApi('order', header, values)
-        console.log(response)
+        await createOrderApi('order', header, values)
         resetForm()
         setCheckedSelection([])
         setInput({ p0: '', p1: '', p2: '', p3: 0, p4: 0, p5: 0 })

@@ -143,6 +143,7 @@ const DashBoard = () => {
                     <div></div>
                     <tbody>
                         {checkList ? (
+                            checkList.length>0 ?
                             checkList?.map((elem: Check) => {
                                 return (
                                     <tr className="text-end" key={elem.id}>
@@ -175,8 +176,8 @@ const DashBoard = () => {
                                         </td>
                                     </tr>
                                 )
-                            })
-                        ) : (
+                            }) : <div className='text-center'> no hay cheques en cartera</div>
+                        )  : (
                             <Spinner />
                         )}
                     </tbody>
