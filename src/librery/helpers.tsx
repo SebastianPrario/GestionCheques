@@ -8,7 +8,6 @@ export const postMethod = async (data: SignUp) => {
     try {
         if (URL) {
             const response = await axios.post(URL, data)
-            console.log(response.data)
             if (response.data === 'usuario o password incorrecta') {
                 Swal.fire({
                     title: 'Error!',

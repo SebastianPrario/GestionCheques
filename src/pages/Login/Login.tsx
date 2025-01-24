@@ -10,7 +10,6 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import { FC, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { zodResolver } from '@hookform/resolvers/zod'
 import FormInput from '../../components/FormInput'
 import { postMethod } from '../../librery/helpers'
 import { useAuth } from '../../contexts/AuthContext'
@@ -22,7 +21,6 @@ const LoginPage: FC = () => {
     const navigate = useNavigate()
     const {
         handleSubmit,
-        formState: { errors },
     } = useForm()
    
     
@@ -33,7 +31,6 @@ const LoginPage: FC = () => {
     const [loading, setIsLoading] = useState(false)
     const {  signInUser } = useAuth()
     const methods = useForm<ILogin>({
-        resolver: zodResolver(loginSchema),
         defaultValues,
     })
 
@@ -49,7 +46,7 @@ const LoginPage: FC = () => {
 
             // Realiza la llamada a la API aquí
             const response = await postMethod(data)
-           
+            console.log(response)
             signInUser({
                 name: response.payload.sub,
                 userId: response.payload.userId,

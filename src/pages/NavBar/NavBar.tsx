@@ -13,9 +13,9 @@ import CheckModal from '../CheckModal/CheckModal'
 import { Order } from '../../contexts/CheckContext'
 
 interface NavBarProps {
-    checkSelection: Check[] | []
-    setModalShow: React.Dispatch<React.SetStateAction<boolean>>
-    setModalOrder: React.Dispatch<React.SetStateAction<boolean>>
+    checkSelection?: Check[] | []
+    setModalShow?: React.Dispatch<React.SetStateAction<boolean>>
+    setModalOrder?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export interface CheckData {
@@ -35,7 +35,7 @@ export interface CheckData {
 }
 
 const NavBar: React.FC<NavBarProps> = ({
-    setModalShow,
+    setModalShow = undefined,
     setModalOrder,
     checkSelection,
 }) => {
@@ -99,8 +99,8 @@ const NavBar: React.FC<NavBarProps> = ({
                         <Col xs="auto">
                             <Button
                                 variant="primary"
-                                onClick={() => setModalOrder(true)}
-                                disabled={checkSelection.length < 1}
+                                onClick={() => setModalOrder && setModalOrder(true)}
+                                disabled={checkSelection && checkSelection.length < 1}
                             >
                                 Asignar Cheques
                             </Button>
@@ -108,7 +108,7 @@ const NavBar: React.FC<NavBarProps> = ({
                         <Col xs="auto">
                             <Button
                                 variant="primary"
-                                onClick={() => setModalShow(true)}
+                                onClick={() =>  setModalShow && setModalShow(true)}
                             >
                                 Agregar Cheques
                             </Button>

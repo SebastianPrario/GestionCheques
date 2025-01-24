@@ -18,7 +18,7 @@ const OrdersView = () => {
     const [loading, setLoading] = useState(false)
     const authContext = useContext(AuthContext)
     const token = authContext && authContext.user?.token
-    const headers = headerToken(token)
+    const headers = headerToken(token || '')
 
     const getOrders = async () => {
         setLoading(true)
@@ -70,6 +70,13 @@ const OrdersView = () => {
         }
     }, [authContext])
 
+    const totalAmount = (total , otherPayment) => {
+        console.log(total , otherPayment)
+        let totalAmount = 0
+        totalAmount = Number(total) + otherPayment.reduce((acum : number , elem : any) => acum + elem.number, 0)
+        return `$ ${totalAmount}`
+    }
+
     return (
         <div className="">
             <Styled.Nav>
@@ -100,14 +107,7 @@ const OrdersView = () => {
                                         <td> {order.destination} </td>
                                         <td>
                                             {' '}
-                                            {Number(order.totalAmount) +
-                                                Number(
-                                                    order.otherPayment.reduce(
-                                                        (acum, elem) =>
-                                                            acum + elem.number,
-                                                        0
-                                                    )
-                                                )}
+                                            {totalAmount(order.totalAmount, order.otherPayment)}{' '}
                                         </td>
                                         <td> {order.creationDate} </td>
                                         <td className="d- justify-content-between">
