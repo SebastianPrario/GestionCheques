@@ -61,7 +61,7 @@ function CheckProvider({ children }: { children: React.ReactNode }) {
         })
         if (result.isConfirmed) {
             if (URL) {
-                const response = await deleteCheckApi('cheques', headers, id)
+                const response = await deleteCheckApi( headers, id)
 
                 if (response) {
                     Swal.fire('¡Eliminado!')

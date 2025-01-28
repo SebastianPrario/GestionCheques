@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { Check, CheckContext, Order } from '../../contexts/CheckContext'
+import {  Order } from '../../contexts/CheckContext'
 import Styled from './styles'
 import { AuthContext } from '../../contexts/AuthContext'
 import Table from 'react-bootstrap/Table'
@@ -8,7 +8,6 @@ import { Button } from 'react-bootstrap'
 import { headerToken } from '../../librery/helpers'
 import { deleteOrderApi, getApiData } from '../../services/apiService'
 import PdfOrder from './Pdfview/PdfDown'
-import { number } from 'zod'
 import ReactDOM from 'react-dom'
 import Spinner from '../../components/Spinner/Spinner'
 import Swal from 'sweetalert2'
@@ -70,8 +69,7 @@ const OrdersView = () => {
         }
     }, [authContext])
 
-    const totalAmount = (total , otherPayment) => {
-        console.log(total , otherPayment)
+    const totalAmount = (total : string , otherPayment : []) => {
         let totalAmount = 0
         totalAmount = Number(total) + otherPayment.reduce((acum : number , elem : any) => acum + elem.number, 0)
         return `$ ${totalAmount}`

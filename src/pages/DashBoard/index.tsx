@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Check, CheckContext } from '../../contexts/CheckContext'
+import { Check } from '../../contexts/CheckContext'
 import Styled from './styles'
 import { AuthContext } from '../../contexts/AuthContext'
 import { Button, Form } from 'react-bootstrap'
@@ -21,8 +21,7 @@ const DashBoard = () => {
     const authContext = useContext(AuthContext)
     const token = authContext && authContext.user?.token
     const header = { authorization: `bear ${token}` }
-    console.log(orderBy)
-    console.log(checkList)
+ 
     const onClose = () => {
         setModalShow(false)
     }
@@ -66,7 +65,7 @@ const DashBoard = () => {
             if (response) {
                 Swal.fire('¡Eliminado!')
             } 
-            getAllCheck()
+            getAllCheck(orderBy?.order,orderBy?.asc)
             setLoading(true)
 
         }
@@ -80,7 +79,7 @@ const DashBoard = () => {
         }
     }
 
-    const getAllCheck = async (order , asc ) => {
+    const getAllCheck = async (order  : any , asc : any ) => {
         try {
             setLoading(true)
             const response = await getCheckApi(header || '', order , asc)
@@ -101,7 +100,7 @@ const DashBoard = () => {
         }
     }, [orderBy])
 
-    return (
+    return ( loading ? <Spinner /> :
         <div className="">
             <Styled.Nav>
                 <NavBar
@@ -114,14 +113,15 @@ const DashBoard = () => {
                     onClose={onCloseOrder}
                     checkSelection={checkedSelection}
                     setCheckedSelection={setCheckedSelection}
-                    getAllCheck={getAllCheck}
+                    getAllCheck={() => getAllCheck(orderBy?.order, orderBy?.asc)}
+                    orderBy={orderBy}
                     header={header}
                 />
             </Styled.Nav>
             <EnterCheck
                 show={modalShow}
                 onClose={onClose}
-                getAllCheck={getAllCheck}
+                getAllCheck={() => getAllCheck(orderBy?.order, orderBy?.asc)}
                 setCheckList={setCheckList}
                 header={header}
             />
