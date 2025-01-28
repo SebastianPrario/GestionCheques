@@ -1,12 +1,15 @@
+import { useContext } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
+import { CheckContext } from '../../contexts/CheckContext'
+import { AuthContext } from '../../contexts/AuthContext'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import * as formik from 'formik'
 import * as yup from 'yup'
 import { CustomModal } from '../CustomModal/CustomModal'
-import { differenceInDays, format, isAfter,  isEqual } from 'date-fns'
+import { differenceInDays, format, isAfter, isBefore, isEqual } from 'date-fns'
 import { postCheckApi } from '../../services/apiService'
 
 interface EnterCheckProps {
@@ -14,7 +17,7 @@ interface EnterCheckProps {
     onClose: () => void
     getAllCheck: () => void
     setCheckList: React.Dispatch<
-        React.SetStateAction<any | null | undefined>
+        React.SetStateAction<Check[] | null | undefined>
     >
     header: { authorization: string }
 }

@@ -4,10 +4,12 @@ import {
     View,
     Document,
     StyleSheet,
+    PDFDownloadLink,
     PDFViewer,
 } from '@react-pdf/renderer'
-import {  useEffect, useState } from 'react'
-import { Check,  } from '../../../contexts/CheckContext'
+import { useContext, useEffect, useState } from 'react'
+import { AuthContext } from '../../../contexts/AuthContext'
+import { Check, Order } from '../../../contexts/CheckContext'
 import { headerToken } from '../../../librery/helpers'
 import { getApiData } from '../../../services/apiService'
 import './PdfDown.css'

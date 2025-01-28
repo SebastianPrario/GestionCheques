@@ -3,11 +3,8 @@
     "private": true,
     "version": "0.0.0",
     "type": "module",
-    "homepage": "https://sebastianprario.github.io/GestionCheques",
     "scripts": {
         "dev": "vite",
-        "predeploy" : "npm run build",
-        "deploy": "gh-pages -d dist",
         "build": "tsc -b && vite build",
         "lint": "eslint .",
         "preview": "vite preview",

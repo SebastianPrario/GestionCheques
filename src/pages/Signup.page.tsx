@@ -3,6 +3,7 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import { FC, useState } from 'react'
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form'
 import { boolean, object, string, TypeOf } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import FormInput from '../components/FormInput'
 import Styles from './Login/styles'
 import { signUp } from '../librery/helpers'
@@ -40,6 +41,7 @@ const SignupPage: FC = () => {
 
     // 👇 Object containing all the methods returned by useForm
     const methods = useForm<ISignUp>({
+        resolver: zodResolver(signupSchema),
         defaultValues,
     })
 
