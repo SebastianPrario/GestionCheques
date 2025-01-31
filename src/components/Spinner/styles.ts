@@ -27,9 +27,8 @@ const Spinner = styled.div`
   background-size: contain;
   transform-origin: 50% 50%;
   animation: ${rotate} 3s infinite alternate ease-in-out;
-  ba
 `
-const LoadingText = styled.text`
+const LoadingText = styled.div`
     position: relative;
     z-index: 1;
     margin-top: 30px;

@@ -8,6 +8,7 @@ import * as yup from 'yup'
 import { CustomModal } from '../CustomModal/CustomModal'
 import { createOrderApi, Order } from '../../services/apiService'
 import { Check } from '../../contexts/CheckContext'
+import Swal from 'sweetalert2'
 
 interface EnterCheckProps {
     show: boolean
@@ -32,7 +33,7 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
     header,
     getAllCheck,
 }) => {
-    const [input, setInput] = useState({
+    const [input, setInput] = useState<{ [key: string]: string | number }>({
         p0: '',
         p1: '',
         p2: '',
@@ -55,16 +56,16 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
         importe: yup.number(),
     })
 
-    const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeInput = (event: any) => {
         const { name, value } = event.target
         setInput({ ...input, [name]: value })
     }
 
     const handleSubmit = async (values: Order, { resetForm }: any) => {
         const prop = [
-            { property: input.p0, number: Number(input.p3) },
-            { property: input.p1, number: Number(input.p4) },
-            { property: input.p2, number: Number(input.p5) },
+            { property: String(input.p0), number: Number(input.p3) },
+            { property: String(input.p1), number: Number(input.p4) },
+            { property: String(input.p2), number: Number(input.p5) },
         ]
         values.otherPayment = prop
         values.creationDate = new Date().toISOString()
@@ -72,10 +73,11 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
         resetForm()
         setCheckedSelection([])
         setInput({ p0: '', p1: '', p2: '', p3: 0, p4: 0, p5: 0 })
-        setTimeout(() => {
-            getAllCheck()
-            onClose()
-        }, 500)
+        await Swal.fire('Orden Creada!')
+        onClose()
+        getAllCheck()
+      
+       
     }
 
     return (
@@ -161,12 +163,12 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
                                 </Row>
                                 <Row>
                                     <div className="col-6">
-                                        {[1, 2, 3].map((input, index) => (
-                                            <Form.Group controlId="formInput1">
+                                        {[1, 2, 3].map((_, index) => (
+                                            <Form.Group controlId="formInput1" key={`detail-${index}`}>
                                                 <Form.Control
                                                     type="text"
                                                     name={`p${index}`}
-                                                    value={input[`p${index}`]}
+                                                    value={input[`p${index}`] as string}
                                                     placeholder="detalle"
                                                     onChange={(event) =>
                                                         handleChangeInput(event)
@@ -176,16 +178,16 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
                                         ))}
                                     </div>
                                     <div className="col-6">
-                                        {[1, 2, 3].map((input, index) => (
+                                        {[1, 2, 3].map((_, index) => (
                                             <Form.Group
                                                 controlId="formInput1"
-                                                key={`${index + 3}`}
+                                                key={`amount-${index + 3}`}
                                             >
                                                 <Form.Control
                                                     type="number"
                                                     name={`p${index + 3}`}
                                                     value={
-                                                        input[`p${index + 3}`]
+                                                        input[`p${index + 3}`] as number
                                                     }
                                                     placeholder="importe"
                                                     onChange={(event) =>

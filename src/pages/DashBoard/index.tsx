@@ -1,25 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Check, CheckContext } from '../../contexts/CheckContext'
+import { Check } from '../../contexts/CheckContext'
 import Styled from './styles'
 import { AuthContext } from '../../contexts/AuthContext'
 import { Button, Form } from 'react-bootstrap'
 import Table from 'react-bootstrap/Table'
 import NavBar from '../NavBar/NavBar'
-import { deleteCheckApi, getCheckApi, Order, OrderBy } from '../../services/apiService'
+import { deleteCheckApi, getCheckApi, OrderBy } from '../../services/apiService'
 import Swal from 'sweetalert2'
 import EnterCheck from '../EnterCheck/EnterCheck'
 import OrderPayment from '../OrderPayment/OrderPayment'
 import Spinner from '../../components/Spinner/Spinner'
 
-interface getAllCkeck{
-  order? : Order
-  asc? : string
-}
 const DashBoard = () => {
     const [checkList, setCheckList] = useState<Check[] | null | undefined>(null)
     const [checkedSelection, setCheckedSelection] = useState<Check[]>([]) // crea un objeto con los elementos seleccionado
-    const [orderBy, setOrderBy] = useState<{ order: string; asc: string } | null>(null)
-    const [loading, setLoading] = useState<boolean | null>(null)
+    const [orderBy, setOrderBy] = useState<{ order: OrderBy; asc: 'ASC' | 'DES' } | null>(null)
+    const [ ,setLoading] = useState<boolean>(false)
     const [modalShow, setModalShow] = useState(false)
     const [modalOrder, setModalOrder] = useState(false)
     const authContext = useContext(AuthContext)

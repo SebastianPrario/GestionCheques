@@ -14,7 +14,7 @@ import FormInput from '../../components/FormInput'
 import { postMethod } from '../../librery/helpers'
 import { useAuth } from '../../contexts/AuthContext'
 import Spinner from '../../components/Spinner/Spinner'
-import { ILogin, loginSchema } from './types'
+import { ILogin } from './types'
 import Styles from './styles'
 
 const LoginPage: FC = () => {
