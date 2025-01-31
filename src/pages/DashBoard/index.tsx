@@ -5,12 +5,16 @@ import { AuthContext } from '../../contexts/AuthContext'
 import { Button, Form } from 'react-bootstrap'
 import Table from 'react-bootstrap/Table'
 import NavBar from '../NavBar/NavBar'
-import { deleteCheckApi, getCheckApi, OrderBy } from '../../services/apiService'
+import { deleteCheckApi, getCheckApi, Order, OrderBy } from '../../services/apiService'
 import Swal from 'sweetalert2'
 import EnterCheck from '../EnterCheck/EnterCheck'
 import OrderPayment from '../OrderPayment/OrderPayment'
 import Spinner from '../../components/Spinner/Spinner'
 
+interface getAllCkeck{
+  order? : Order
+  asc? : string
+}
 const DashBoard = () => {
     const [checkList, setCheckList] = useState<Check[] | null | undefined>(null)
     const [checkedSelection, setCheckedSelection] = useState<Check[]>([]) // crea un objeto con los elementos seleccionado
@@ -21,8 +25,6 @@ const DashBoard = () => {
     const authContext = useContext(AuthContext)
     const token = authContext && authContext.user?.token
     const header = { authorization: `bear ${token}` }
-    console.log(orderBy)
-    console.log(checkList)
     const onClose = () => {
         setModalShow(false)
     }
@@ -80,7 +82,7 @@ const DashBoard = () => {
         }
     }
 
-    const getAllCheck = async (order , asc ) => {
+    const getAllCheck = async (order? : OrderBy , asc?: 'ASC' | 'DES') => {
         try {
             setLoading(true)
             const response = await getCheckApi(header || '', order , asc)
@@ -145,6 +147,7 @@ const DashBoard = () => {
                         {checkList ? (
                             checkList.length>0 ?
                             checkList?.map((elem: Check) => {
+                                const formattedNumber = elem.numero.toString().padStart(8, '0')
                                 return (
                                     <tr className="text-end" key={elem.id}>
                                         <td>
@@ -155,20 +158,21 @@ const DashBoard = () => {
                                                 }
                                             />
                                         </td>
-                                        <td className="text-center col-2">
+                                        <td className="text-center ps-4">
                                             {' '}
-                                            {elem.numero}{' '}
+                                            {formattedNumber}{' '}
                                         </td>
-                                        <td> {elem.cliente} </td>
-                                        <td> {elem.librador} </td>
-                                        <td> {elem.fechaEntrega} </td>
-                                        <td> {elem.fechaEmision} </td>
-                                        <td> $ {elem.importe} </td>
-                                        <td> {elem.banco} </td>
-                                        <td>
+                                        <td className="text-start"> {elem.cliente} </td>
+                                        <td className="text-start"> {elem.librador} </td>
+                                        <td className="text-start"> {elem.fechaEntrega} </td>
+                                        <td className="text-start"> {elem.fechaEmision} </td>
+                                        <td className="text-start"> $ {elem.importe} </td>
+                                        <td className="text-start"> {elem.banco} </td>
+                                        <td className='d-flex -justify-content-center'>
                                             <Button
                                                 onClick={handleDeleteChange}
                                                 name={`${elem.id}`}
+                                                className=""
                                             >
                                                 {' '}
                                                 eliminar

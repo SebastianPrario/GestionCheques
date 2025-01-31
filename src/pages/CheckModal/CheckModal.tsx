@@ -1,41 +1,60 @@
-import { Container, Modal } from 'react-bootstrap'
-import { CustomModal } from '../CustomModal/CustomModal'
-import { CheckData } from '../NavBar/NavBar'
+
+import { Modal,  Table } from 'react-bootstrap';
+import { CheckData } from '../NavBar/NavBar';
 
 interface CheckModalProps {
-    show: boolean
-    onClose: () => void
-    data: CheckData | null
+    show: boolean;
+    onClose: () => void;
+    data: CheckData[] | null;
 }
 
-export default function CheckModal({ show, onClose, data }: CheckModalProps) {
+const CheckModal = ({ show, onClose, data }: CheckModalProps) => {
     return (
-        <CustomModal show={show} onClose={onClose}>
-            <Modal.Header closeButton onHide={onClose}>
-                <Modal.Title>Datos Cheque</Modal.Title>
-            </Modal.Header>
-            <Container>
-                <h2>Estado : {data?.estado}</h2>
-                <h4>Numero: {data?.numero}</h4>
-                <h4>Importe: {data?.importe}</h4>
-                <h4>Cliente: {data?.cliente}</h4>
-                <h4>Librador: {data?.librador}</h4>
-                <h4>Fecha Emision: {data?.fechaEmision}</h4>
-                <h4>Fecha Entrega: {data?.fechaEntrega}</h4>
-                <h4>Banco: {data?.banco}</h4>
-                {data?.order && (
-                    <div className="text-primary">
-                        <h4>
-                            Este cheque se encuentra imputado en la orden Nro.{' '}
-                            {data?.order?.id}
-                        </h4>
-                        <h4>fue entregado a {data?.order?.destination} </h4>
-                        <h4>
-                            con fecha {data?.order?.creationDate.slice(0, 10)}{' '}
-                        </h4>
+        <Modal show={show}  onHide={onClose} size='lg' className='modal'>
+            <Modal.Header closeButton>
+                            <Modal.Title>Cheques Encontrado</Modal.Title>
+                        </Modal.Header>
+            {data ? data.length>0 ? (
+                    <div>
+                       
+                        <Table striped bordered hover responsive>
+                            <thead>
+                                <tr>
+                                    <th>Estado</th>
+                                    <th>Número</th>
+                                    <th>Importe</th>
+                                    <th>Cliente</th>
+                                    <th>Librador</th>
+                                    <th>Fecha Emisión</th>
+                                    <th>Fecha Entrega</th>
+                                    <th>Banco</th>
+                                    <th>Orden</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                { data.map((elem: any) => 
+                                 {const formattedNumber = elem.numero.toString().padStart(8, '0')
+                                return (
+                                    <tr key={elem.numero}>
+                                        <td>{elem.estado}</td>
+                                        <td>{formattedNumber}</td>
+                                        <td>${elem.importe}</td>
+                                        <td>{elem.cliente}</td>
+                                        <td>{elem.librador}</td>
+                                        <td>{elem.fechaEmision}</td>
+                                        <td>{elem.fechaEntrega}</td>
+                                        <td>{elem.banco}</td>
+                                        <td>{elem.order ? elem.order : 'N/A'}</td>
+                                    </tr>
+                                )}) }
+                            </tbody>
+                        </Table>
                     </div>
-                )}
-            </Container>
-        </CustomModal>
-    )
-}
+                ) : (
+                    <p className='text-center fs-4 text-primary'>Cheque no encontrado</p>
+                ) : <></>}
+        </Modal>
+    );
+};
+
+export default CheckModal;

@@ -1,15 +1,14 @@
-import { useContext } from 'react'
+import {  useState } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
-import { CheckContext } from '../../contexts/CheckContext'
-import { AuthContext } from '../../contexts/AuthContext'
+import { Check } from '../../contexts/CheckContext'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import * as formik from 'formik'
 import * as yup from 'yup'
 import { CustomModal } from '../CustomModal/CustomModal'
-import { differenceInDays, format, isAfter, isBefore, isEqual } from 'date-fns'
+import { differenceInDays, format, isAfter, isEqual } from 'date-fns'
 import { postCheckApi } from '../../services/apiService'
 
 interface EnterCheckProps {
@@ -89,7 +88,11 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
 
         banco: yup.string().required('banco es requerido'),
     })
-
+    const [buttonName, setButtonName] = useState('');
+    const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setButtonName(event.currentTarget.name);
+      };
+    
     return (
         <CustomModal show={show} onClose={onClose}>
             <Modal.Header closeButton onHide={onClose}>
@@ -113,6 +116,9 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                     } catch (error: unknown) {
                         console.log(error)
                     } finally {
+                        if (buttonName === 'close'){
+                            onClose()
+                        }
                     }
                 }}
                 initialValues={{
@@ -276,6 +282,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                         className="col-12 ms-2"
                                         type="submit"
                                         name="close"
+                                        onClick={handleButtonClick}
                                     >
                                         Agregar y cerrar
                                     </Button>

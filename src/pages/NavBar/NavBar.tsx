@@ -31,7 +31,7 @@ export interface CheckData {
     estado?: string
     borrado?: boolean
     user?: string
-    order?: Order | null
+    order?: Order | null | string
 }
 
 const NavBar: React.FC<NavBarProps> = ({
@@ -63,7 +63,7 @@ const NavBar: React.FC<NavBarProps> = ({
                     : { authorization: '' }
             )
             const data = foundCheck?.data
-
+            console.log(data)
             if (foundCheck?.data == 'Cheque no encontrado') {
                 window.alert('cheque no encontrado')
             } else {
