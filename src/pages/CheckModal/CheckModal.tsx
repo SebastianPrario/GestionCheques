@@ -1,6 +1,5 @@
 
 import { Modal,  Table } from 'react-bootstrap';
-import { CheckData } from '../NavBar/NavBar';
 
 interface CheckModalProps {
     show: boolean;
