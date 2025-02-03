@@ -5,7 +5,7 @@ import { CheckData } from '../NavBar/NavBar';
 interface CheckModalProps {
     show: boolean;
     onClose: () => void;
-    data: CheckData[] | null;
+    data: any | null;
 }
 
 const CheckModal = ({ show, onClose, data }: CheckModalProps) => {

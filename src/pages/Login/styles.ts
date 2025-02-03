@@ -1,10 +1,5 @@
 import {
-    Container,
-    Grid,
-    Box,
-    Typography,
-    Stack,
-    Link as MuiLink,
+  Link as MuiLink,
 } from '@mui/material'
 import styled from '@emotion/styled'
 import { Link } from 'react-router-dom'
