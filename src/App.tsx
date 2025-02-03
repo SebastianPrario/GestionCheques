@@ -1,10 +1,9 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import GlobalStyles from './GlobalStyles';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
+import LoginPage from './pages/Login/Login';
+import SignupPage from './pages/Signup.page';
 import DashBoard from './pages/DashBoard';
-import OrdersView from './pages/OrdersView';
+import OrdersView from './pages/OrdersView/OrdersView';
 import { useAuth } from './contexts/AuthContext';
 
 const App = () => {
