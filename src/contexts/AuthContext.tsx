@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
 interface User {
     name: string
@@ -23,6 +23,9 @@ export const useAuth = () => {
     }
     return context
 }
+
+  // Verificar si hay un token en el localStorage al cargar la aplicación
+ 
 const token = sessionStorage.getItem('userGestionToken')
 
 const inicialState = {
@@ -34,7 +37,14 @@ const inicialState = {
 }
 function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(inicialState)
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false); 
+    
+    useEffect(() => {
+        const token = sessionStorage.getItem('userGestionToken');
+        if (token) {
+        setIsAuthenticated(true);
+        }
+    }, []);
     const signInUser = (user: User) => {
         if (user) {
             sessionStorage.setItem('userGestionToken', `${user.token}`)
