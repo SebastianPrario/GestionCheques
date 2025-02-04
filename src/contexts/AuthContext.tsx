@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState } from 'react'
 
 interface User {
-    // Define las propiedades del usuario según tu aplicación
     name: string
     userId: string
     role: string
@@ -11,6 +10,7 @@ interface User {
 // Define el tipo para el contexto
 interface AuthContextType {
     user: User | null
+    isAuthenticated: boolean;
     setUser: React.Dispatch<React.SetStateAction<User | null>>
     signInUser: (arg0: User) => void | null
     signOutUser: () => void | null
@@ -27,22 +27,25 @@ const token = sessionStorage.getItem('userGestionToken')
 
 const inicialState = {
     name: '',
+    isAuthenticated: false,
     userId: '',
     role: '',
     token: token || '',
 }
 function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(inicialState)
-
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const signInUser = (user: User) => {
         if (user) {
             sessionStorage.setItem('userGestionToken', `${user.token}`)
             setUser(user)
+            setIsAuthenticated(true)
         }
     }
     const signOutUser = () => {
         localStorage.clear()
         setUser(null)
+        setIsAuthenticated(false)
     }
     return (
         <AuthContext.Provider
@@ -51,6 +54,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 setUser,
                 signInUser,
                 signOutUser,
+                isAuthenticated,
             }}
         >
             {children}
