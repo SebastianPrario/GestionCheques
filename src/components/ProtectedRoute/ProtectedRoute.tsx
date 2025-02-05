@@ -5,7 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAuth();
-  if (isAuthenticated) {
+  if (!isAuthenticated) {
     // Redirige al usuario a la página de inicio de sesión si no está autenticado
     return <Navigate to="/" replace />;
   }
