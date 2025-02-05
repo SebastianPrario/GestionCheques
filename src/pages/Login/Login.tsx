@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { FC, useState } from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
+import { useForm, FormProvider, Form } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import FormInput from '../../components/FormInput'
 import { postMethod } from '../../librery/helpers'
@@ -16,49 +16,46 @@ import { useAuth } from '../../contexts/AuthContext'
 import Spinner from '../../components/Spinner/Spinner'
 import { ILogin } from './types'
 import Styles from './styles'
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup'
 
+const loginSchema = yup.object().shape({
+    email: yup.string().email('Ingrese un correo electrónico válido').required('El correo electrónico es obligatorio'),
+    password: yup.string().required('La contraseña es obligatoria'),
+});
+  
+const defaultValues: ILogin = {
+    email: '',
+    password: '',
+  };
+  
 const LoginPage: FC = () => {
     const navigate = useNavigate()
-    const {
-        handleSubmit,
-    } = useForm()
-   
     
-    const defaultValues: ILogin = {
-        email: '',
-        password: '',
-    }
     const [loading, setIsLoading] = useState(false)
-    const {  signInUser } = useAuth()
+    const {  signInUser , isAuthenticated } = useAuth()
     const methods = useForm<ILogin>({
         defaultValues,
+        resolver: yupResolver(loginSchema),
     })
-
+   
     // 👇 Submit Handler
-    const onSubmit = async () => {
+    const onSubmit = async (data : ILogin) => {
         setIsLoading(true)
         try {
-            const { email, password } = methods.watch()
-            const data = {
-                email,
-                password,
-            }
-
             // Realiza la llamada a la API aquí
             const response = await postMethod(data)
-            console.log(response)
             signInUser({
                 name: response.payload.sub,
                 userId: response.payload.userId,
                 role: response.payload.role,
                 token: response.token,
             })
-            if (response.token) {
-                
-                navigate('/dashboard')
-            }
-        } catch (error) {
-            console.error('Error logging in:', error)
+                  
+            navigate('/dashboard')
+            
+        } catch (err: any ) {
+            console.error('Error logging in:', err);
         } finally {
             setIsLoading(false)
         }
@@ -121,7 +118,7 @@ const LoginPage: FC = () => {
                                         noValidate
                                         autoComplete="off"
                                         sx={{ paddingRight: { sm: '3rem' } }}
-                                        onSubmit={handleSubmit(onSubmit)}
+                                        onSubmit={methods.handleSubmit(onSubmit)}
                                     >
                                         <Typography
                                             variant="h6"
@@ -143,7 +140,7 @@ const LoginPage: FC = () => {
                                         />
                                         <FormInput
                                             type="password"
-                                            label="Password"
+                                            label="contraseña"
                                             name="password"
                                             required
                                             

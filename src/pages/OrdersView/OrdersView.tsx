@@ -20,11 +20,22 @@ const OrdersView = () => {
     const headers = headerToken(token || '')
 
     const getOrders = async () => {
-        setLoading(true)
-        const response = await getApiData('order/allorders', headers)
-        const data: Order[] = response?.data
-        setOrders(data)
-        setLoading(false)
+        try {
+            setLoading(true)
+            const response = await getApiData('order/allorders', headers)
+            if (!response || !response.data) {
+                throw new Error('No se recibieron datos del servidor');
+            }
+            const data: Order[] = response?.data
+            setOrders(data)
+           
+        } catch (error) {
+            console.error('Error al obtener las órdenes:', error);
+            Swal.fire('Error', 'Hubo un problema al cargar las órdenes.', 'error');
+        } finally {
+            setLoading(false);
+        }
+    
     }
 
     const handleDownloadClick = (id: number) => {
@@ -54,23 +65,23 @@ const OrdersView = () => {
             })
             if (result.isConfirmed) {
                 await deleteOrderApi('order', headers, id)
-                Swal.fire('¡Eliminado!') 
-                getOrders()
-                setLoading(false)
+                setOrders((prevOrders) => {
+                    return prevOrders?.filter((order) => order.id !== id); // Filtra la orden eliminada
+                });
+                await Swal.fire('¡Eliminado!') 
+                await getOrders()
             }
         } catch (error) {
-            console.log(error)
+            console.error('Error al eliminar la orden:', error);
+            Swal.fire('Error', 'Hubo un problema al eliminar la orden.', 'error');
         }
     }
     // al cargar la pagina se obtienen todas las ordenes y se muestran en el estado
     useEffect(() => {
-        if (authContext?.user?.token) {
-            getOrders()
-        }
-    }, [authContext])
+        getOrders()
+    }, [])
 
     const totalAmount = (total : any , otherPayment : any) => {
-        console.log(total , otherPayment)
         let totalAmount = 0
         totalAmount = Number(total) + otherPayment.reduce((acum : number , elem : any) => acum + elem.number, 0)
         return `$ ${totalAmount}`

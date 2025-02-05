@@ -20,6 +20,7 @@ const DashBoard = () => {
     const [modalOrder, setModalOrder] = useState(false)
     const authContext = useContext(AuthContext)
     const token = authContext && authContext.user?.token
+    const isAuthenticated = authContext && authContext.isAuthenticated
     const header = { authorization: `bear ${token}` }
     const onClose = () => {
         setModalShow(false)
@@ -94,10 +95,11 @@ const DashBoard = () => {
         return  setOrderBy({ order: param , asc: (orderBy?.asc ==='ASC' ? 'DES': 'ASC')})
     }
     useEffect(() => {
-        if (authContext?.user?.token) {
+        console.log('useEffect ejecutado', { isAuthenticated, orderBy });
+        if (isAuthenticated) {
             getAllCheck(orderBy?.order,orderBy?.asc)
         }
-    }, [orderBy])
+    }, [isAuthenticated, orderBy])
 
     return (
         <div className="">

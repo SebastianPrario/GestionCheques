@@ -16,7 +16,7 @@ interface EnterCheckProps {
     checkSelection: Check[]
     setCheckedSelection: React.Dispatch<React.SetStateAction<Check[] | []>>
     header: { authorization: string }
-    getAllCheck: () => void
+    getAllCheck: () => Promise<void>
 }
 
 
@@ -62,7 +62,8 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
     }
 
     const handleSubmit = async (values: Order, { resetForm }: any) => {
-        const prop = [
+        try{
+            const prop = [
             { property: String(input.p0), number: Number(input.p3) },
             { property: String(input.p1), number: Number(input.p4) },
             { property: String(input.p2), number: Number(input.p5) },
@@ -74,10 +75,14 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
         setCheckedSelection([])
         setInput({ p0: '', p1: '', p2: '', p3: 0, p4: 0, p5: 0 })
         await Swal.fire('Orden Creada!')
-        onClose()
-        getAllCheck()
-      
-       
+        await new Promise((resolve) => setTimeout(resolve, 500)); 
+        await getAllCheck()
+        } catch (error) {
+            console.error('Error al crear la orden:', error);
+            Swal.fire('Error', 'Hubo un problema al crear la orden.', 'error');
+        } finally {
+            onClose();
+        }
     }
 
     return (
