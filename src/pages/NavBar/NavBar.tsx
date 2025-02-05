@@ -56,6 +56,7 @@ const NavBar: React.FC<NavBarProps> = ({
     }
     async function handleClickSearch(): Promise<any> {
         try {
+            console.log(searchValue)
             const foundCheck = await getCheckByNumber(
                 Number(searchValue),
                 token
@@ -64,7 +65,7 @@ const NavBar: React.FC<NavBarProps> = ({
             )
             const data = foundCheck?.data
             console.log(data)
-            if (foundCheck?.data == 'Cheque no encontrado') {
+            if (data == 'Cheque no encontrado') {
                 window.alert('cheque no encontrado')
             } else {
                 setDataCheck(data)

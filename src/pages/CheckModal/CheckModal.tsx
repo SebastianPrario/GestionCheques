@@ -8,6 +8,7 @@ interface CheckModalProps {
 }
 
 const CheckModal = ({ show, onClose, data }: CheckModalProps) => {
+    
     return (
         <Modal show={show}  onHide={onClose} size='lg' className='modal'>
             <Modal.Header closeButton>
@@ -43,7 +44,7 @@ const CheckModal = ({ show, onClose, data }: CheckModalProps) => {
                                         <td>{elem.fechaEmision}</td>
                                         <td>{elem.fechaEntrega}</td>
                                         <td>{elem.banco}</td>
-                                        <td>{elem.order ? elem.order : 'N/A'}</td>
+                                        <td>{elem.order ? elem.order.id : 'N/A'}</td>
                                     </tr>
                                 )}) }
                             </tbody>
