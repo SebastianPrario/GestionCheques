@@ -75,7 +75,7 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
         setCheckedSelection([])
         setInput({ p0: '', p1: '', p2: '', p3: 0, p4: 0, p5: 0 })
         await Swal.fire('Orden Creada!')
-        await new Promise((resolve) => setTimeout(resolve, 500)); 
+        await new Promise((resolve) => setTimeout(resolve, 1000)); 
         await getAllCheck()
         } catch (error) {
             console.error('Error al crear la orden:', error);
