@@ -1,6 +1,4 @@
-import {
-  Link as MuiLink,
-} from '@mui/material'
+import { Link as MuiLink } from '@mui/material'
 import styled from '@emotion/styled'
 import { Link } from 'react-router-dom'
 
@@ -32,4 +30,4 @@ export const OauthMuiLink = styled(MuiLink)`
     }
 `
 
-export default { OauthMuiLink , LinkItem}
+export default { OauthMuiLink, LinkItem }

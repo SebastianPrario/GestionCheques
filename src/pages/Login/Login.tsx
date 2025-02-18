@@ -1,14 +1,7 @@
-import {
-    Container,
-    Grid,
-    Box,
-    Typography,
-    Stack
-   
-} from '@mui/material'
+import { Container, Grid, Box, Typography, Stack } from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { FC, useState } from 'react'
-import { useForm, FormProvider, Form } from 'react-hook-form'
+import { useForm, FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import FormInput from '../../components/FormInput'
 import { postMethod } from '../../librery/helpers'
@@ -16,31 +9,32 @@ import { useAuth } from '../../contexts/AuthContext'
 import Spinner from '../../components/Spinner/Spinner'
 import { ILogin } from './types'
 import Styles from './styles'
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup'
+import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
+import { z } from 'zod'
 
-const loginSchema = yup.object().shape({
-    email: yup.string().email('Ingrese un correo electrónico válido').required('El correo electrónico es obligatorio'),
-    password: yup.string().required('La contraseña es obligatoria'),
-});
-  
+const loginSchema = z.object({
+    email: z.string().email('Ingrese un correo electrónico válido')
+        .nonempty('El correo electrónico es obligatorio'),
+    password: z.string().nonempty('La contraseña es obligatoria'),
+})
+
 const defaultValues: ILogin = {
     email: '',
     password: '',
-  };
-  
+}
+
 const LoginPage: FC = () => {
     const navigate = useNavigate()
-    
+
     const [loading, setIsLoading] = useState(false)
-    const {  signInUser , isAuthenticated } = useAuth()
+    const { signInUser } = useAuth()
     const methods = useForm<ILogin>({
         defaultValues,
-        resolver: yupResolver(loginSchema),
+        resolver: zodResolver(loginSchema),
     })
-   
+
     // 👇 Submit Handler
-    const onSubmit = async (data : ILogin) => {
+    const onSubmit = async (data: ILogin) => {
         setIsLoading(true)
         try {
             // Realiza la llamada a la API aquí
@@ -51,11 +45,10 @@ const LoginPage: FC = () => {
                 role: response.payload.role,
                 token: response.token,
             })
-                  
+
             navigate('/dashboard')
-            
-        } catch (err: any ) {
-            console.error('Error logging in:', err);
+        } catch (err: any) {
+            console.error('Error logging in:', err)
         } finally {
             setIsLoading(false)
         }
@@ -69,7 +62,7 @@ const LoginPage: FC = () => {
                 backgroundColor: { xs: '#fff', md: '#f4f4f4' },
             }}
         >
-            { loading && <Spinner/>}
+            {loading && <Spinner />}
             <Grid
                 container
                 justifyContent="center"
@@ -118,7 +111,9 @@ const LoginPage: FC = () => {
                                         noValidate
                                         autoComplete="off"
                                         sx={{ paddingRight: { sm: '3rem' } }}
-                                        onSubmit={methods.handleSubmit(onSubmit)}
+                                        onSubmit={methods.handleSubmit(
+                                            onSubmit
+                                        )}
                                     >
                                         <Typography
                                             variant="h6"
@@ -143,7 +138,6 @@ const LoginPage: FC = () => {
                                             label="contraseña"
                                             name="password"
                                             required
-                                            
                                         />
 
                                         <LoadingButton

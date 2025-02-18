@@ -5,6 +5,9 @@ export interface otherPayment {
     property: string
     number: number
 }
+export interface Bank {
+    bank: string
+}
 export interface Order {
     destination: string
     totalAmount: number
@@ -14,18 +17,30 @@ export interface Order {
     otherPayment?: otherPayment[]
 }
 
-
-export type OrderBy = 'numero' | 'importe' | 'cliente' | 'librador' | 'fechaEmision' | 'fechaEntrega' | 'banco';
+export type OrderBy =
+    | 'numero'
+    | 'importe'
+    | 'cliente'
+    | 'librador'
+    | 'fechaEmision'
+    | 'fechaEntrega'
+    | 'banco'
 
 const URL = import.meta.env.VITE_API_URL
 
 export const apiService = axios.create({ baseURL: URL })
 
-export const getCheckApi = async (headers: {}, order?: OrderBy, asc?: 'ASC' | 'DES') => {
+export const getCheckApi = async (
+    headers: {},
+    order?: OrderBy,
+    asc?: 'ASC' | 'DES'
+) => {
     try {
-
-        const response = order ?  await apiService.get(`${URL}/cheques?orderBy=${order}${asc}`, { headers }):
-        await apiService.get(`${URL}/cheques`, { headers })
+        const response = order
+            ? await apiService.get(`${URL}/cheques?orderBy=${order}${asc}`, {
+                  headers,
+              })
+            : await apiService.get(`${URL}/cheques`, { headers })
         return response
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -115,6 +130,32 @@ export const deleteOrderApi = async (
     try {
         const URLAPI = `${URL}/${endpoint}`
         const response = await apiService.delete(`${URLAPI}/${id}`, { headers })
+        return response?.data
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            throw new Error(`error axios check: ${error.message}`)
+        }
+    }
+}
+
+export const getBankData = async (headers: { authorization: string }) => {
+    try {
+        const response = await apiService.get(`${URL}/bank`, { headers })
+        return response
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.log(error.message)
+        }
+    }
+}
+
+export const createBank = async (
+    headers: { authorization: string } | undefined,
+    data: Bank
+) => {
+    try {
+        const URLAPI = `${URL}/bank`
+        const response = await apiService.post(`${URLAPI}`, data, { headers })
         return response
     } catch (error: unknown) {
         if (error instanceof Error) {

@@ -10,12 +10,17 @@ import Swal from 'sweetalert2'
 import EnterCheck from '../EnterCheck/EnterCheck'
 import OrderPayment from '../OrderPayment/OrderPayment'
 import Spinner from '../../components/Spinner/Spinner'
+import { formatCurrency } from '../../librery/helpers'
+import { FaTrash } from 'react-icons/fa'
 
 const DashBoard = () => {
     const [checkList, setCheckList] = useState<Check[] | null | undefined>(null)
     const [checkedSelection, setCheckedSelection] = useState<Check[]>([]) // crea un objeto con los elementos seleccionado
-    const [orderBy, setOrderBy] = useState<{ order: OrderBy; asc: 'ASC' | 'DES' } | null>(null)
-    const [ ,setLoading] = useState<boolean>(false)
+    const [orderBy, setOrderBy] = useState<{
+        order: OrderBy
+        asc: 'ASC' | 'DES'
+    } | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
     const [modalShow, setModalShow] = useState(false)
     const [modalOrder, setModalOrder] = useState(false)
     const authContext = useContext(AuthContext)
@@ -49,7 +54,7 @@ const DashBoard = () => {
         }
     }
     const deleteCheck = async (id: number) => {
-        setLoading(true)
+        console.log(id)
         const result = await Swal.fire({
             title: '¿Estás seguro?',
             text: 'No podrás revertir esto.',
@@ -62,27 +67,22 @@ const DashBoard = () => {
         })
         if (result.isConfirmed) {
             const response = await deleteCheckApi(header, id)
-            if (response) {
+            if (response?.statusText === 'ok') {
                 Swal.fire('¡Eliminado!')
-            } 
-            getAllCheck()
+            }
             setLoading(true)
-
+            getAllCheck()
+            setLoading(false)
         }
     }
-    const handleDeleteChange = (
-        event: React.MouseEvent<HTMLButtonElement>
-    ): void => {
-        const id = Number((event.target as HTMLButtonElement).name)
-        if (token) {
-            deleteCheck(id)
-        }
+    const handleDeleteChange = (id: number = 0): void => {
+        deleteCheck(id)
     }
 
-    const getAllCheck = async (order? : OrderBy , asc?: 'ASC' | 'DES') => {
+    const getAllCheck = async (order?: OrderBy, asc?: 'ASC' | 'DES') => {
         try {
             setLoading(true)
-            const response = await getCheckApi(header || '', order , asc)
+            const response = await getCheckApi(header || '', order, asc)
             const data: Check[] = response?.data
             setCheckList(data)
             setLoading(false)
@@ -91,18 +91,21 @@ const DashBoard = () => {
         }
     }
 
-    const setOrder = ( param : OrderBy ) => {
-        return  setOrderBy({ order: param , asc: (orderBy?.asc ==='ASC' ? 'DES': 'ASC')})
+    const setOrder = (param: OrderBy) => {
+        return setOrderBy({
+            order: param,
+            asc: orderBy?.asc === 'ASC' ? 'DES' : 'ASC',
+        })
     }
     useEffect(() => {
-        console.log('useEffect ejecutado', { isAuthenticated, orderBy });
         if (isAuthenticated) {
-            getAllCheck(orderBy?.order,orderBy?.asc)
+            getAllCheck(orderBy?.order, orderBy?.asc)
         }
     }, [isAuthenticated, orderBy])
 
     return (
         <div className="">
+            {loading && <Spinner />}
             <Styled.Nav>
                 <NavBar
                     setModalOrder={setModalOrder}
@@ -127,59 +130,147 @@ const DashBoard = () => {
             />
             <div>
                 <Table striped bordered hover variant="dark" className="">
-                    <thead className='text-center'>
+                    <thead className="text-center">
                         <tr>
                             <th>Sel.</th>
-                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('numero')}>Número de cheque   </Button></th>
-                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('cliente')}>Cliente</Button></th>
-                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('librador')}>Librador</Button></th>
-                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('fechaEntrega')}>Fecha de Cobro</Button></th>
-                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('fechaEmision')}>Fecha de Emisión</Button></th>
-                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('importe')}>Importe</Button></th>
-                            <th><Button  type="button" className="btn btn-info btn-sm" onClick={() => setOrder('banco')}>Banco emisor</Button></th>
-                            <th className='text-danger'>Eliminar</th>
+                            <th>
+                                <Button
+                                    type="button"
+                                    className="btn btn-info btn-sm"
+                                    onClick={() => setOrder('numero')}
+                                >
+                                    Número de cheque{' '}
+                                </Button>
+                            </th>
+                            <th>
+                                <Button
+                                    type="button"
+                                    className="btn btn-info btn-sm"
+                                    onClick={() => setOrder('cliente')}
+                                >
+                                    Cliente
+                                </Button>
+                            </th>
+                            <th>
+                                <Button
+                                    type="button"
+                                    className="btn btn-info btn-sm"
+                                    onClick={() => setOrder('librador')}
+                                >
+                                    Librador
+                                </Button>
+                            </th>
+                            <th>
+                                <Button
+                                    type="button"
+                                    className="btn btn-info btn-sm"
+                                    onClick={() => setOrder('fechaEntrega')}
+                                >
+                                    Fecha de Cobro
+                                </Button>
+                            </th>
+                            <th>
+                                <Button
+                                    type="button"
+                                    className="btn btn-info btn-sm"
+                                    onClick={() => setOrder('fechaEmision')}
+                                >
+                                    Fecha de Emisión
+                                </Button>
+                            </th>
+                            <th>
+                                <Button
+                                    type="button"
+                                    className="btn btn-info btn-sm"
+                                    onClick={() => setOrder('importe')}
+                                >
+                                    Importe
+                                </Button>
+                            </th>
+                            <th>
+                                <Button
+                                    type="button"
+                                    className="btn btn-info btn-sm"
+                                    onClick={() => setOrder('banco')}
+                                >
+                                    Banco emisor
+                                </Button>
+                            </th>
+                            <th className="text-danger">Eliminar</th>
                         </tr>
                     </thead>
                     <div></div>
                     <tbody>
                         {checkList ? (
-                            checkList.length>0 ?
-                            checkList?.map((elem: Check) => {
-                                const formattedNumber = elem.numero.toString().padStart(8, '0')
-                                return (
-                                    <tr className="text-end" key={elem.id}>
-                                        <td>
-                                            <Form.Check
-                                                name={`${elem.id}`}
-                                                onChange={
-                                                    handleCheckboxSelection
-                                                }
-                                            />
-                                        </td>
-                                        <td className="text-center ps-4">
-                                            {' '}
-                                            {formattedNumber}{' '}
-                                        </td>
-                                        <td className="text-start"> {elem.cliente} </td>
-                                        <td className="text-start"> {elem.librador} </td>
-                                        <td className="text-start"> {elem.fechaEntrega} </td>
-                                        <td className="text-start"> {elem.fechaEmision} </td>
-                                        <td className="text-start"> $ {elem.importe} </td>
-                                        <td className="text-start"> {elem.banco} </td>
-                                        <td className='d-flex -justify-content-center'>
-                                            <Button
-                                                onClick={handleDeleteChange}
-                                                name={`${elem.id}`}
-                                                className=""
-                                            >
+                            checkList.length > 0 ? (
+                                checkList?.map((elem: Check) => {
+                                    const formattedNumber = elem.numero
+                                        .toString()
+                                        .padStart(8, '0')
+                                    return (
+                                        <tr className="text-end" key={elem.id}>
+                                            <td>
+                                                <Form.Check
+                                                    name={`${elem.id}`}
+                                                    onChange={
+                                                        handleCheckboxSelection
+                                                    }
+                                                />
+                                            </td>
+                                            <td className="text-center ps-4">
                                                 {' '}
-                                                eliminar
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                )
-                            }) : <div className='text-center'> no hay cheques en cartera</div>
-                        )  : (
+                                                {formattedNumber}{' '}
+                                            </td>
+                                            <td className="text-start">
+                                                {' '}
+                                                {elem.cliente}{' '}
+                                            </td>
+                                            <td className="text-start">
+                                                {' '}
+                                                {elem.librador}{' '}
+                                            </td>
+                                            <td className="text-center">
+                                                {' '}
+                                                {elem.fechaEntrega}{' '}
+                                            </td>
+                                            <td className="text-center">
+                                                {' '}
+                                                {elem.fechaEmision}{' '}
+                                            </td>
+                                            <td className="text-end fs-5">
+                                                {' '}
+                                                $ {formatCurrency(
+                                                    elem.importe
+                                                )}{' '}
+                                            </td>
+                                            <td className="text-start ps-4">
+                                                {' '}
+                                                {elem.banco}{' '}
+                                            </td>
+                                            <td className="d-flex -justify-content-center">
+                                                <Button
+                                                    onClick={() =>
+                                                        handleDeleteChange(
+                                                            elem.id
+                                                        )
+                                                    }
+                                                    className=""
+                                                    variant="danger"
+                                                    size="sm"
+                                                >
+                                                    <FaTrash />
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            ) : (
+                                <div className="text-center">
+                                    {' '}
+                                    no hay cheques en cartera
+                                </div>
+                            )
+                        ) : (
                             <Spinner />
                         )}
                     </tbody>

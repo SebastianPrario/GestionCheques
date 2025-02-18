@@ -8,5 +8,4 @@ export const loginSchema = object({
         .max(32, 'Password must be less than 32 characters'),
 })
 
-
 export type ILogin = TypeOf<typeof loginSchema>

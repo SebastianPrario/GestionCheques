@@ -7,6 +7,7 @@ import FormInput from '../components/FormInput'
 import Styles from './Login/styles'
 import { signUp } from '../librery/helpers'
 import { useNavigate } from 'react-router-dom'
+import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
 
 // 👇 SignUp Schema with Zod
 const signupSchema = object({
@@ -40,7 +41,8 @@ const SignupPage: FC = () => {
 
     // 👇 Object containing all the methods returned by useForm
     const methods = useForm<ISignUp>({
-      defaultValues,
+        defaultValues,
+        resolver: zodResolver(signupSchema),
     })
 
     const handleCheckboxChange = () => {
@@ -57,7 +59,7 @@ const SignupPage: FC = () => {
             password: values.password,
             role: isChecked,
         }
-
+        console.log(data)
         const response: any = await signUp(data)
         if (response?.status === 201) {
             navigate('/')
@@ -65,7 +67,7 @@ const SignupPage: FC = () => {
     }
     return (
         <Container
-            maxWidth='lg'
+            maxWidth="lg"
             sx={{
                 height: '100%',
                 backgroundColor: { xs: '#fff', md: '#f4f4f4' },
@@ -222,7 +224,9 @@ const SignupPage: FC = () => {
                                         sx={{ fontSize: '0.9rem', mb: '1rem' }}
                                     >
                                         Ya tienes cuenta?{' '}
-                                        <Styles.LinkItem to="/">ir</Styles.LinkItem>
+                                        <Styles.LinkItem to="/">
+                                            ir
+                                        </Styles.LinkItem>
                                     </Typography>
                                 </Stack>
                             </Grid>

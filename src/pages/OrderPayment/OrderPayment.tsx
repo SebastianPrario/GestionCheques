@@ -9,6 +9,7 @@ import { CustomModal } from '../CustomModal/CustomModal'
 import { createOrderApi, Order } from '../../services/apiService'
 import { Check } from '../../contexts/CheckContext'
 import Swal from 'sweetalert2'
+import { formatCurrency } from '../../librery/helpers'
 
 interface EnterCheckProps {
     show: boolean
@@ -17,12 +18,6 @@ interface EnterCheckProps {
     setCheckedSelection: React.Dispatch<React.SetStateAction<Check[] | []>>
     header: { authorization: string }
     getAllCheck: () => Promise<void>
-}
-
-
-
-export const formatoMoneda = (value: number) => {
-    return value.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })
 }
 
 export const OrderPayment: React.FC<EnterCheckProps> = ({
@@ -52,7 +47,7 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
         destination: yup
             .string()
             .required('El destino del pago es obligatorio'),
-        detail: yup.string(),
+        detail: yup.string().required('El detalle del pago es obligatorio'),
         importe: yup.number(),
     })
 
@@ -62,26 +57,26 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
     }
 
     const handleSubmit = async (values: Order, { resetForm }: any) => {
-        try{
+        try {
             const prop = [
-            { property: String(input.p0), number: Number(input.p3) },
-            { property: String(input.p1), number: Number(input.p4) },
-            { property: String(input.p2), number: Number(input.p5) },
-        ]
-        values.otherPayment = prop
-        values.creationDate = new Date().toISOString()
-        await createOrderApi('order', header, values)
-        resetForm()
-        setCheckedSelection([])
-        setInput({ p0: '', p1: '', p2: '', p3: 0, p4: 0, p5: 0 })
-        await Swal.fire('Orden Creada!')
-        await new Promise((resolve) => setTimeout(resolve, 1000)); 
-        await getAllCheck()
+                { property: String(input.p0), number: Number(input.p3) },
+                { property: String(input.p1), number: Number(input.p4) },
+                { property: String(input.p2), number: Number(input.p5) },
+            ]
+            values.otherPayment = prop
+            values.creationDate = new Date().toISOString()
+            await createOrderApi('order', header, values)
+            resetForm()
+            setCheckedSelection([])
+            setInput({ p0: '', p1: '', p2: '', p3: 0, p4: 0, p5: 0 })
+            await Swal.fire('Orden Creada!')
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+            await getAllCheck()
         } catch (error) {
-            console.error('Error al crear la orden:', error);
-            Swal.fire('Error', 'Hubo un problema al crear la orden.', 'error');
+            console.error('Error al crear la orden:', error)
+            Swal.fire('Error', 'Hubo un problema al crear la orden.', 'error')
         } finally {
-            onClose();
+            onClose()
         }
     }
 
@@ -169,11 +164,18 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
                                 <Row>
                                     <div className="col-6">
                                         {[1, 2, 3].map((_, index) => (
-                                            <Form.Group controlId="formInput1" key={`detail-${index}`}>
+                                            <Form.Group
+                                                controlId="formInput1"
+                                                key={`detail-${index}`}
+                                            >
                                                 <Form.Control
                                                     type="text"
                                                     name={`p${index}`}
-                                                    value={input[`p${index}`] as string}
+                                                    value={
+                                                        input[
+                                                            `p${index}`
+                                                        ] as string
+                                                    }
                                                     placeholder="detalle"
                                                     onChange={(event) =>
                                                         handleChangeInput(event)
@@ -192,7 +194,9 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
                                                     type="number"
                                                     name={`p${index + 3}`}
                                                     value={
-                                                        input[`p${index + 3}`] as number
+                                                        input[
+                                                            `p${index + 3}`
+                                                        ] as number
                                                     }
                                                     placeholder="importe"
                                                     onChange={(event) =>
@@ -208,7 +212,7 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
                                 <Row className="mt-4">
                                     <Col>
                                         {' '}
-                                        Total Pago {formatoMoneda(totalAmount)}
+                                        Total Pago {formatCurrency(totalAmount)}
                                     </Col>
                                     <Col>
                                         {' '}

@@ -2,7 +2,6 @@ import Swal from 'sweetalert2'
 import axios from 'axios'
 import { SignUp } from './types'
 
-
 export const postMethod = async (data: SignUp) => {
     const URL: string | undefined = import.meta.env.VITE_API_URL_SIGNIN
     try {
@@ -45,9 +44,11 @@ export const getToken = () => {
 
 export const signUp = async (data: SignUp) => {
     const URL: string | undefined = import.meta.env.VITE_API_URL_SIGNUP
+    console.log(URL)
     try {
         if (URL) {
             const response = await axios.post(URL, data)
+            console.log(response)
             if (response) {
                 Swal.fire({
                     title: 'Usuario Creado',
@@ -76,4 +77,14 @@ export const signUp = async (data: SignUp) => {
 export const headerToken = (token: string | undefined) => {
     const authorization = { authorization: `Bearer ${token}` }
     return authorization
+}
+
+export const formatCurrency = (value: number) => {
+    console.log(value)
+    return value.toLocaleString('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    })
 }

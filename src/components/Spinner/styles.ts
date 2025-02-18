@@ -20,13 +20,13 @@ const LoadingContainer = styled.div`
     background-color: white;
 `
 const Spinner = styled.div`
-  display: inline-block;
-  width: 100px;
-  height: 100px;
-  background: url('http://i.imgur.com/oSHLAzp.png') center center;
-  background-size: contain;
-  transform-origin: 50% 50%;
-  animation: ${rotate} 3s infinite alternate ease-in-out;
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    background: url('http://i.imgur.com/oSHLAzp.png') center center;
+    background-size: contain;
+    transform-origin: 50% 50%;
+    animation: ${rotate} 3s infinite alternate ease-in-out;
 `
 const LoadingText = styled.div`
     position: relative;

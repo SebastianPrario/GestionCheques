@@ -11,6 +11,7 @@ import { Check } from '../../contexts/CheckContext'
 import { getCheckByNumber } from '../../services/apiService'
 import CheckModal from '../CheckModal/CheckModal'
 import { Order } from '../../contexts/CheckContext'
+import Reports from '../Reports/Reports'
 
 interface NavBarProps {
     checkSelection?: Check[] | []
@@ -50,13 +51,17 @@ const NavBar: React.FC<NavBarProps> = ({
     }
     const [searchValue, setSearchValue] = useState('')
     const [modalCheck, setModalCheck] = useState(false)
+    const [modalReports, setModalReports] = useState(false)
     const [dataCheck, setDataCheck] = useState<CheckData | null>(null)
+
+    const onCloseReports = () => {
+        setModalReports(false)
+    }
     const onCloseCheck = () => {
         setModalCheck(false)
     }
     async function handleClickSearch(): Promise<any> {
         try {
-            console.log(searchValue)
             const foundCheck = await getCheckByNumber(
                 Number(searchValue),
                 token
@@ -64,7 +69,6 @@ const NavBar: React.FC<NavBarProps> = ({
                     : { authorization: '' }
             )
             const data = foundCheck?.data
-            console.log(data)
             if (data == 'Cheque no encontrado') {
                 window.alert('cheque no encontrado')
             } else {
@@ -95,13 +99,27 @@ const NavBar: React.FC<NavBarProps> = ({
                 </Nav>
             </Container>
             {location.pathname !== '/orders' && (
-                <Container>
+                <Container className="col-8">
                     <Row>
                         <Col xs="auto">
                             <Button
                                 variant="primary"
-                                onClick={() => setModalOrder && setModalOrder(true)}
-                                disabled={checkSelection && checkSelection.length < 1}
+                                onClick={() =>
+                                    setModalReports && setModalReports(true)
+                                }
+                            >
+                                Informes
+                            </Button>
+                        </Col>
+                        <Col xs="auto">
+                            <Button
+                                variant="primary"
+                                onClick={() =>
+                                    setModalOrder && setModalOrder(true)
+                                }
+                                disabled={
+                                    checkSelection && checkSelection.length < 1
+                                }
                             >
                                 Asignar Cheques
                             </Button>
@@ -109,7 +127,9 @@ const NavBar: React.FC<NavBarProps> = ({
                         <Col xs="auto">
                             <Button
                                 variant="primary"
-                                onClick={() =>  setModalShow && setModalShow(true)}
+                                onClick={() =>
+                                    setModalShow && setModalShow(true)
+                                }
                             >
                                 Agregar Cheques
                             </Button>
@@ -117,6 +137,10 @@ const NavBar: React.FC<NavBarProps> = ({
                                 show={modalCheck}
                                 onClose={onCloseCheck}
                                 data={dataCheck}
+                            />
+                            <Reports
+                                show={modalReports}
+                                onClose={onCloseReports}
                             />
                         </Col>
                         <Col>

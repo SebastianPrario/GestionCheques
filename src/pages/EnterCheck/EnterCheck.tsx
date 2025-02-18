@@ -1,4 +1,4 @@
-import {  useState } from 'react'
+import { useState } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
@@ -10,6 +10,8 @@ import * as yup from 'yup'
 import { CustomModal } from '../CustomModal/CustomModal'
 import { differenceInDays, format, isAfter, isEqual } from 'date-fns'
 import { postCheckApi } from '../../services/apiService'
+import SelectBank from './Bank/Bank'
+import Swal from 'sweetalert2'
 
 interface EnterCheckProps {
     show: boolean
@@ -27,6 +29,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
     getAllCheck,
     header,
 }) => {
+    const [bank, setBank] = useState<string>('')
     const { Formik } = formik
     const schema = yup.object().shape({
         numero: yup
@@ -85,14 +88,8 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                 }
             )
             .required('La fecha es obligatoria'),
-
-        banco: yup.string().required('banco es requerido'),
     })
-    const [buttonName, setButtonName] = useState('');
-    const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setButtonName(event.currentTarget.name);
-      };
-    
+
     return (
         <CustomModal show={show} onClose={onClose}>
             <Modal.Header closeButton onHide={onClose}>
@@ -109,16 +106,25 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                         values.fechaEntrega,
                         'yyyy/MM/dd'
                     )
+                    console.log(values.banco)
+                    console.log(bank)
+                    values.banco = bank
+                    console.log(values.banco)
                     try {
+                        if (
+                            values.banco === 'Elegir Banco' ||
+                            values.banco === ''
+                        ) {
+                            return Swal.fire('falta elegir banco')
+                        }
                         await postCheckApi('cheques', header, values)
                         resetForm()
+                        setBank('')
                         getAllCheck()
+                        onClose()
                     } catch (error: unknown) {
                         console.log(error)
                     } finally {
-                        if (buttonName === 'close'){
-                            onClose()
-                        }
                     }
                 }}
                 initialValues={{
@@ -255,17 +261,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                         </Row>
                         <Form.Group className="position-relative mb-3">
                             <Form.Label>Banco Emisor</Form.Label>
-                            <Form.Control
-                                type="text"
-                                required
-                                name="banco"
-                                value={values.banco}
-                                onChange={handleChange}
-                                isInvalid={!!errors.banco}
-                            />
-                            <Form.Control.Feedback type="invalid" tooltip>
-                                {errors.banco}
-                            </Form.Control.Feedback>
+                            <SelectBank setBank={setBank} />
                         </Form.Group>
                         <Row>
                             <Col className="d-flex justify-content-center">
@@ -273,6 +269,8 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                     <Button
                                         className="col-12 me-2"
                                         type="submit"
+                                        name="add"
+                                        
                                     >
                                         Agregar
                                     </Button>
@@ -282,7 +280,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                         className="col-12 ms-2"
                                         type="submit"
                                         name="close"
-                                        onClick={handleButtonClick}
+                                       
                                     >
                                         Agregar y cerrar
                                     </Button>

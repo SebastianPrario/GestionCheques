@@ -54,8 +54,8 @@ const OrdersView = () => {
             })
             if (result.isConfirmed) {
                 await deleteOrderApi('order', headers, id)
-                Swal.fire('¡Eliminado!') 
-                setOrders( orders?.filter( order => order.id !== id))
+                setOrders(orders?.filter((order) => order.id !== id))
+                Swal.fire('¡Eliminado!')
                 setLoading(false)
             }
         } catch (error) {
@@ -69,10 +69,14 @@ const OrdersView = () => {
         }
     }, [authContext])
 
-    const totalAmount = (total : any , otherPayment : any) => {
-        console.log(total , otherPayment)
+    const totalAmount = (total: any, otherPayment: any) => {
         let totalAmount = 0
-        totalAmount = Number(total) + otherPayment.reduce((acum : number , elem : any) => acum + elem.number, 0)
+        totalAmount =
+            Number(total) +
+            otherPayment.reduce(
+                (acum: number, elem: any) => acum + elem.number,
+                0
+            )
         return `$ ${totalAmount}`
     }
 
@@ -106,7 +110,10 @@ const OrdersView = () => {
                                         <td> {order.destination} </td>
                                         <td>
                                             {' '}
-                                            {totalAmount(order.totalAmount, order.otherPayment)}{' '}
+                                            {totalAmount(
+                                                order.totalAmount,
+                                                order.otherPayment
+                                            )}{' '}
                                         </td>
                                         <td> {order.creationDate} </td>
                                         <td className="d- justify-content-between">

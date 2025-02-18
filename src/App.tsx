@@ -15,18 +15,12 @@ function App() {
                 {/* Rutas Publicas */}
                 <Route path="/" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
-                
+
                 {/* Rutas Protegidas*/}
-                <Route element={<ProtectedRoute />} >
-                <Route
-                    path="/dashboard"
-                    element={<DashBoard />}
-                />
-                <Route
-                    path="/orders"
-                    element={<OrdersView />}
-                />
-                </ Route>
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/dashboard" element={<DashBoard />} />
+                    <Route path="/orders" element={<OrdersView />} />
+                </Route>
                 {/* Redirección por defecto */}
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
