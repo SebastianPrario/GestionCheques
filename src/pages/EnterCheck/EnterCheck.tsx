@@ -30,6 +30,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
     header,
 }) => {
     const [bank, setBank] = useState<string>('')
+    const [submitAction , setSubmitAction] = useState<string>('')
     const { Formik } = formik
     const schema = yup.object().shape({
         numero: yup
@@ -106,10 +107,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                         values.fechaEntrega,
                         'yyyy/MM/dd'
                     )
-                    console.log(values.banco)
-                    console.log(bank)
                     values.banco = bank
-                    console.log(values.banco)
                     try {
                         if (
                             values.banco === 'Elegir Banco' ||
@@ -121,7 +119,8 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                         resetForm()
                         setBank('')
                         getAllCheck()
-                        onClose()
+                        if ( submitAction ==='close') return onClose()
+                        
                     } catch (error: unknown) {
                         console.log(error)
                     } finally {
@@ -270,7 +269,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                         className="col-12 me-2"
                                         type="submit"
                                         name="add"
-                                        
+                                        onClick={()=> setSubmitAction('add')}
                                     >
                                         Agregar
                                     </Button>
@@ -280,6 +279,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                         className="col-12 ms-2"
                                         type="submit"
                                         name="close"
+                                        onClick={()=> setSubmitAction('close')}
                                        
                                     >
                                         Agregar y cerrar
