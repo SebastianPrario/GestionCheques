@@ -80,7 +80,6 @@ export const headerToken = (token: string | undefined) => {
 }
 
 export const formatCurrency = (value: number) => {
-    console.log(value)
     return value.toLocaleString('es-AR', {
         style: 'currency',
         currency: 'ARS',

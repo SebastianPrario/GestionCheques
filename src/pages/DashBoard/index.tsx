@@ -20,7 +20,6 @@ const DashBoard = () => {
         order: OrderBy
         asc: 'ASC' | 'DES'
     } | null>(null)
-    const [loading, setLoading] = useState<boolean>(false)
     const [modalShow, setModalShow] = useState(false)
     const [modalOrder, setModalOrder] = useState(false)
     const authContext = useContext(AuthContext)
@@ -70,9 +69,7 @@ const DashBoard = () => {
             if (response?.statusText === 'ok') {
                 Swal.fire('¡Eliminado!')
             }
-            setLoading(true)
             getAllCheck()
-            setLoading(false)
         }
     }
     const handleDeleteChange = (id: number = 0): void => {
@@ -81,11 +78,9 @@ const DashBoard = () => {
 
     const getAllCheck = async (order?: OrderBy, asc?: 'ASC' | 'DES') => {
         try {
-            setLoading(true)
             const response = await getCheckApi(header || '', order, asc)
             const data: Check[] = response?.data
             setCheckList(data)
-            setLoading(false)
         } catch (error) {
             console.log(error)
         }
@@ -105,7 +100,6 @@ const DashBoard = () => {
 
     return (
         <div className="">
-            {loading && <Spinner />}
             <Styled.Nav>
                 <NavBar
                     setModalOrder={setModalOrder}

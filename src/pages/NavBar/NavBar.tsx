@@ -40,7 +40,7 @@ const NavBar: React.FC<NavBarProps> = ({
     setModalOrder,
     checkSelection,
 }) => {
-    const token = localStorage.getItem('token')
+    const token = useAuth().user?.token
     const { signOutUser } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()

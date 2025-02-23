@@ -36,6 +36,7 @@ export const getCheckApi = async (
     asc?: 'ASC' | 'DES'
 ) => {
     try {
+        console.log(headers)
         const response = order
             ? await apiService.get(`${URL}/cheques?orderBy=${order}${asc}`, {
                   headers,
@@ -52,7 +53,7 @@ export const getCheckByNumber = async (
     numberCheck: number,
     headers: { authorization: string }
 ) => {
-    console.log(numberCheck)
+   
     try {
         const response = await apiService.get(
             `${URL}/cheques/number?number=${numberCheck}`,
@@ -160,6 +161,43 @@ export const createBank = async (
     } catch (error: unknown) {
         if (error instanceof Error) {
             throw new Error(`error axios check: ${error.message}`)
+        }
+    }
+}
+
+export const getAllCheckByReport = async (
+    headers: {},
+    order?: OrderBy,
+    asc?: 'ASC' | 'DES'
+) => {
+    try {
+        console.log(headers)
+        const response = order
+            ? await apiService.get(`${URL}/cheques?orderBy=${order}${asc}`, {
+                  headers,
+              })
+            : await apiService.get(`${URL}/cheques`, { headers })
+        return response
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.log(error.message)
+        }
+    }
+}
+export const getCheckByClient = async (
+    headers: {},
+    client : string
+) => {
+    console.log(client)
+    try {
+        const response  = await apiService.get(`${URL}/cheques/cliente?cliente=${client}`, {
+                  headers,
+              })
+        console.log(response)
+        return response
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.log(error)
         }
     }
 }
