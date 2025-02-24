@@ -6,6 +6,11 @@ export interface otherPayment {
     number: number
 }
 export interface Bank {
+    id: number
+    bank: string
+    user : string
+}
+export interface NewBank {
     bank: string
 }
 export interface Order {
@@ -152,7 +157,7 @@ export const getBankData = async (headers: { authorization: string }) => {
 
 export const createBank = async (
     headers: { authorization: string } | undefined,
-    data: Bank
+    data: NewBank
 ) => {
     try {
         const URLAPI = `${URL}/bank`
@@ -165,13 +170,26 @@ export const createBank = async (
     }
 }
 
+export const deleteBank = async (
+    headers: { authorization: string } | undefined,
+    idBank : number
+) => {
+    try {
+        const URLAPI = `${URL}/bank`
+        const response = await apiService.delete(`${URLAPI}/${idBank}`,  { headers })
+        return response
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            throw new Error(`error axios check: ${error.message}`)
+        }
+    }
+}
 export const getAllCheckByReport = async (
     headers: {},
     order?: OrderBy,
     asc?: 'ASC' | 'DES'
 ) => {
     try {
-        console.log(headers)
         const response = order
             ? await apiService.get(`${URL}/cheques?orderBy=${order}${asc}`, {
                   headers,

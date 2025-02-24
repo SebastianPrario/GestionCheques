@@ -44,7 +44,6 @@ export const getToken = () => {
 
 export const signUp = async (data: SignUp) => {
     const URL: string | undefined = import.meta.env.VITE_API_URL_SIGNUP
-    console.log(URL)
     try {
         if (URL) {
             const response = await axios.post(URL, data)

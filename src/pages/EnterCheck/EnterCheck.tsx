@@ -260,7 +260,9 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                         </Row>
                         <Form.Group className="position-relative mb-3">
                             <Form.Label>Banco Emisor</Form.Label>
-                            <SelectBank setBank={setBank} />
+                            <SelectBank 
+                                setBank={setBank}
+                                bank ={bank} />
                         </Form.Group>
                         <Row>
                             <Col className="d-flex justify-content-center">
