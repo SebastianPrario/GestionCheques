@@ -16,7 +16,6 @@ const reports = [ 'Cheques en Cartera', 'Cheques por Cliente']
 export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
 
     const token = useAuth().user?.token 
-    const [data, setData] = useState<Check[]>([])
     const [inputValue, setInputValue] = useState <string>('')
     const [reportOptions, setReportOptions] = useState<string | null>(null)
     const headers = { authorization: `Bearer ${token}` }
@@ -26,40 +25,31 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
 
         if(event.target.value === 'Cheques en Cartera'){
             setReportOptions(event.target.value)
-            try {
-                const response = await getAllCheckByReport(headers)
-                data  && setData(response?.data)
-              
-            }catch (error) {
-                console.error('Error fetching data:', error)
-            }
+          
         }
         if(event.target.value === 'Cheques por Cliente'){
             setReportOptions(event.target.value)  
         }
     }
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await getCheckByClient(headers, inputValue)
-                setData(response?.data)
-            } catch (error) {
-                console.error('Error fetching data:', error)
-            }
-        }
-        fetchData()
-    }, [inputValue])
    
     const handleClickSelection =  async () => {
+        let response;
+        if (reportOptions === 'Cheques por Cliente') {
+            response = await getCheckByClient(headers, inputValue)
+        } else if (reportOptions === 'Cheques en Cartera') {
+            response = await getAllCheckByReport(headers)
+        }
         const newWindow = window.open('', '')
-        if (newWindow && data) {
+        console.log(inputValue)
+        if (newWindow && response?.data) {
             newWindow.document.write('<div id="pdf-order-root"></div>')
             newWindow.document.title = 'PDF Order'
             newWindow.document.close()
             ReactDOM.render(
                 <PdfReport 
-                data={data}
+                data={response?.data}
                 reportOptions = {reportOptions ? reportOptions : ''}
+                inputValue = {inputValue}
                     />,
                 newWindow.document.getElementById('pdf-order-root')
             )

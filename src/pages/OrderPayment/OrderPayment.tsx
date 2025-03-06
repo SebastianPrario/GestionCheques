@@ -65,7 +65,8 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
             ]
             values.otherPayment = prop
             values.creationDate = new Date().toISOString()
-            await createOrderApi('order', header, values)
+            const response = await createOrderApi('order', header, values)
+            console.log(response)
             resetForm()
             setCheckedSelection([])
             setInput({ p0: '', p1: '', p2: '', p3: 0, p4: 0, p5: 0 })

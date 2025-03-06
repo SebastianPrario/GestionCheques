@@ -53,7 +53,6 @@ const DashBoard = () => {
         }
     }
     const deleteCheck = async (id: number) => {
-        console.log(id)
         const result = await Swal.fire({
             title: '¿Estás seguro?',
             text: 'No podrás revertir esto.',

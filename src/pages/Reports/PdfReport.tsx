@@ -13,6 +13,7 @@ import { Check } from '../../contexts/CheckContext'
 interface PdfReportProps {
     data : Check[]
     reportOptions : string
+    inputValue ?: string
 }
 
 
@@ -123,8 +124,9 @@ const styles = StyleSheet.create({
     },
 })
 
-export const OrderPDF: React.FC<PdfReportProps> = ({data , reportOptions  }) => {
-    console.log(reportOptions)
+export const OrderPDF: React.FC<PdfReportProps> = (
+    {data , reportOptions  , inputValue }) => {
+    console.log(inputValue)
    
     const sumaCheques = data?.reduce(
         (acc, curr) => acc + Number(curr.importe),
@@ -138,11 +140,17 @@ export const OrderPDF: React.FC<PdfReportProps> = ({data , reportOptions  }) => 
                     <Text style={styles.header2}>
                       { reportOptions }
                     </Text>
+                    { inputValue && (
+                        <Text style={styles.text}>
+                            Cliente: {inputValue}
+                        </Text>
+                    )}
                     <Text style={styles.text}></Text>
                 </View>
 
                 <View style={styles.section}>
-                    <Text style={styles.header2}>Monto Cheques en cartera:  {formatCurrency(sumaCheques)}</Text>
+                    { reportOptions === 'Cheques en Cartera' && <Text style={styles.header2}>Monto Cheques en cartera:  {formatCurrency(sumaCheques)}</Text> }
+                    { reportOptions === 'Cheques por Cliente' && <Text style={styles.header2}>Monto Cheques recibido de a cobrar {inputValue} :   {formatCurrency(sumaCheques)}</Text> }
                     <View style={styles.table}>
                         <View style={[styles.tableRow, styles.tableHeader]}>
                             <Text style={styles.tableCell2}>#</Text>
@@ -176,26 +184,7 @@ export const OrderPDF: React.FC<PdfReportProps> = ({data , reportOptions  }) => 
                         })}
                     </View>
                 </View>
-                {/* {datos?.otherPayment[0].number !== 0 && (
-                    <>
-                        <Text style={styles.otherPayment}>
-                            Otros Valores y Retenciones
-                        </Text>
-                        {datos?.otherPayment.map((elem: any, index: number) => {
-                            if (elem.number !== 0)
-                                return (
-                                    <View style={styles.tableRow4} key={index}>
-                                        <Text style={styles.tableCell3}>
-                                            {elem.property}
-                                        </Text>
-                                        <Text style={styles.tableCell3}>
-                                            ${elem.number}
-                                        </Text>
-                                    </View>
-                                )
-                        })}
-                    </>
-                )} */}
+               
             </Page>
         </Document>
     ) : (
@@ -203,7 +192,7 @@ export const OrderPDF: React.FC<PdfReportProps> = ({data , reportOptions  }) => 
     )
 }
 
-const PdfReport: React.FC<PdfReportProps> = ({data , reportOptions}) => {
+const PdfReport: React.FC<PdfReportProps> = ({data , reportOptions , inputValue}) => {
   
     return (
         <div className="pdf-container">
@@ -211,6 +200,7 @@ const PdfReport: React.FC<PdfReportProps> = ({data , reportOptions}) => {
                 <OrderPDF 
                 data={data}
                 reportOptions={reportOptions}
+                inputValue={inputValue}
                /> 
             </PDFViewer>
         </div>

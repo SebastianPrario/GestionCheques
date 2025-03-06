@@ -90,9 +90,11 @@ export const postCheckApi = async (
     try {
         const URLAPI = `${URL}/${endpoint}`
         const response = await apiService.post(`${URLAPI}`, data, { headers })
+        console.log(response)
         return response
     } catch (error: unknown) {
         if (error instanceof Error) {
+            console.log(error)
             throw new Error(`error axios check: ${error.message}`)
         }
     }
