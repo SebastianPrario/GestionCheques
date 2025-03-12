@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { Button, Container, Modal } from 'react-bootstrap'
 import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row'
 import * as formik from 'formik'
 import * as yup from 'yup'
 import { CustomModal } from '../CustomModal/CustomModal'
-import { createOrderApi, Order } from '../../services/apiService'
+import { createOrderApi, Order, OrderBy } from '../../services/apiService'
 import { Check } from '../../contexts/CheckContext'
 import Swal from 'sweetalert2'
 import { formatCurrency } from '../../librery/helpers'
@@ -17,7 +17,8 @@ interface EnterCheckProps {
     checkSelection: Check[]
     setCheckedSelection: React.Dispatch<React.SetStateAction<Check[] | []>>
     header: { authorization: string }
-    getAllCheck: () => Promise<void>
+    setOrderBy : Dispatch<SetStateAction<{ order: OrderBy; asc: "ASC" | "DES"; } | null>>
+    orderBy : { order: OrderBy; asc: "ASC" | "DES"; } | null
 }
 
 export const OrderPayment: React.FC<EnterCheckProps> = ({
@@ -26,7 +27,8 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
     checkSelection,
     setCheckedSelection,
     header,
-    getAllCheck,
+    setOrderBy,
+    orderBy
 }) => {
     const [input, setInput] = useState<{ [key: string]: string | number }>({
         p0: '',
@@ -65,14 +67,16 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
             ]
             values.otherPayment = prop
             values.creationDate = new Date().toISOString()
-            const response = await createOrderApi('order', header, values)
-            console.log(response)
+            await createOrderApi('order', header, values)
             resetForm()
             setCheckedSelection([])
             setInput({ p0: '', p1: '', p2: '', p3: 0, p4: 0, p5: 0 })
             await Swal.fire('Orden Creada!')
             await new Promise((resolve) => setTimeout(resolve, 1500))
-            await getAllCheck()
+            setOrderBy({
+                order: orderBy?.order || 'numero',
+                asc: orderBy?.asc || 'ASC',
+            })
         } catch (error) {
             console.error('Error al crear la orden:', error)
             Swal.fire('Error', 'Hubo un problema al crear la orden.', 'error')

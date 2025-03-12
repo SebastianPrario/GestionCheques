@@ -41,17 +41,15 @@ export const getCheckApi = async (
     asc?: 'ASC' | 'DES'
 ) => {
     try {
-        console.log(headers)
         const response = order
             ? await apiService.get(`${URL}/cheques?orderBy=${order}${asc}`, {
                   headers,
               })
             : await apiService.get(`${URL}/cheques`, { headers })
         return response
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.log(error.message)
-        }
+    } catch (error: any) {
+        if (error?.response.data.message === 'Token invalido o ruta protegida') return 'token invalido'
+        
     }
 }
 export const getCheckByNumber = async (

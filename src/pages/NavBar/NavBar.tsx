@@ -1,4 +1,5 @@
 import Navbar from 'react-bootstrap/Navbar'
+import { NavDropdown } from 'react-bootstrap'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
@@ -12,7 +13,8 @@ import { getCheckByNumber } from '../../services/apiService'
 import CheckModal from '../CheckModal/CheckModal'
 import { Order } from '../../contexts/CheckContext'
 import Reports from '../Reports/Reports'
-
+import { CustomButton } from './styles';
+import { FaSignOutAlt, FaArrowLeft,  FaSearch, FaFileAlt, FaPlus, FaClipboardList } from 'react-icons/fa';
 interface NavBarProps {
     checkSelection?: Check[] | []
     setModalShow?: React.Dispatch<React.SetStateAction<boolean>>
@@ -84,94 +86,77 @@ const NavBar: React.FC<NavBarProps> = ({
     }
 
     return (
-        <Navbar className="bg-body-tertiary">
+        <Navbar  bg="light" expand="lg">
             <Container>
-                <Navbar.Brand href="#home">Cheques 2.0</Navbar.Brand>
-                <Nav className="ms-4">
-                    <Button className="me-2" onClick={signOut}>
-                        Salir
-                    </Button>
-                    {location.pathname === '/orders' && (
-                        <Button onClick={() => navigate('/dashboard')}>
-                            Volver
-                        </Button>
-                    )}
-                </Nav>
-            </Container>
-            {location.pathname !== '/orders' && (
-                <Container className="col-8">
-                    <Row>
-                        <Col xs="auto">
-                            <Button
-                                variant="primary"
-                                onClick={() =>
-                                    setModalReports && setModalReports(true)
-                                }
-                            >
-                                Informes
-                            </Button>
-                        </Col>
-                        <Col xs="auto">
-                            <Button
-                                variant="primary"
-                                onClick={() =>
-                                    setModalOrder && setModalOrder(true)
-                                }
-                                disabled={
-                                    checkSelection && checkSelection.length < 1
-                                }
-                            >
-                                Asignar Cheques
-                            </Button>
-                        </Col>
-                        <Col xs="auto">
-                            <Button
-                                variant="primary"
-                                onClick={() =>
-                                    setModalShow && setModalShow(true)
-                                }
-                            >
-                                Agregar Cheques
-                            </Button>
+                <Navbar.Brand href="/dashboard">Cheques 2.0</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                        <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="ms-5">
+                        <Nav.Link className="me-3" onClick={signOut}>
+                            <FaSignOutAlt /> Salir
+                        </Nav.Link>
+                        {location.pathname === '/orders' && (
+                            <Nav.Link className="me-3" onClick={() => navigate('/dashboard')}>
+                                <FaArrowLeft /> Volver
+                            </Nav.Link>
+                        )}
+                        </Nav>
+                
+                   
+                    <Nav className="ms-auto d-lg-flex">
+                        <Nav.Link onClick={() => setModalReports && setModalReports(true)}>
+                            <FaFileAlt /> Informes
+                        </Nav.Link>
+                       
+                        <Nav.Link
+                            onClick={() => setModalOrder && setModalOrder(true)}
+                            disabled={checkSelection && checkSelection.length < 1}
+                        >
+                            <FaClipboardList /> Asignar Cheques
+                        </Nav.Link>
+                        <Nav.Link onClick={() => setModalShow && setModalShow(true)}>
+                            <FaPlus /> Agregar Cheques
+                        </Nav.Link>
                             <CheckModal
                                 show={modalCheck}
                                 onClose={onCloseCheck}
                                 data={dataCheck}
                             />
-                            <Reports
+                             <Reports
                                 show={modalReports}
                                 onClose={onCloseReports}
                             />
-                        </Col>
-                        <Col>
-                            <Button
-                                variant="primary"
+                        <Nav.Link
+                               
                                 onClick={() => navigate('/orders')}
-                            >
-                                Ordenes
-                            </Button>
-                        </Col>
-                    </Row>
-                    <Form className="col-4">
-                        <Row className="me-5 pe-1 d-flex justify-content-end">
-                            <Col className="d-flex  pe-4">
-                                <input
-                                    type="number"
-                                    name="searchbutton"
-                                    className="form-control col-12"
-                                    placeholder="N° Cheque"
-                                    value={searchValue}
-                                    onChange={handleInputChange}
-                                />
-                                <Button onClick={handleClickSearch}>
-                                    Buscar
-                                </Button>
-                            </Col>
-                        </Row>
+                        >
+                                  <FaFileAlt /> Ordenes
+                            </Nav.Link>
+                            </Nav>
+                           
+                       
+                  
+
+              
+                </Navbar.Collapse>
+                <Form className="d-flex ms-3">
+                        <Form.Control
+                            type="text"
+                            maxLength={8}
+                            placeholder="N° Cheque"
+                            className="ps-4 me-3  col-6"
+                            value={searchValue}
+                            onChange={handleInputChange}
+                        />
+                        <Button variant="outline-success" onClick={handleClickSearch}>
+                            <FaSearch />
+                        </Button>
                     </Form>
-                </Container>
-            )}
-        </Navbar>
+              
+           
+             </Container>
+        </Navbar> 
+       
     )
 }
 

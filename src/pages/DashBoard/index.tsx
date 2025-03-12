@@ -5,26 +5,22 @@ import { AuthContext } from '../../contexts/AuthContext'
 import { Button, Form } from 'react-bootstrap'
 import Table from 'react-bootstrap/Table'
 import NavBar from '../NavBar/NavBar'
-import { deleteCheckApi, getCheckApi, OrderBy } from '../../services/apiService'
+import { deleteCheckApi,  OrderBy } from '../../services/apiService'
 import Swal from 'sweetalert2'
 import EnterCheck from '../EnterCheck/EnterCheck'
 import OrderPayment from '../OrderPayment/OrderPayment'
 import Spinner from '../../components/Spinner/Spinner'
 import { formatCurrency } from '../../librery/helpers'
 import { FaTrash } from 'react-icons/fa'
+import useGetAllChecks from '../../hook/useGetAllCheck'
 
 const DashBoard = () => {
-    const [checkList, setCheckList] = useState<Check[] | null | undefined>(null)
+    const { checkList , setOrderBy , orderBy , setCheckList} = useGetAllChecks()
     const [checkedSelection, setCheckedSelection] = useState<Check[]>([]) // crea un objeto con los elementos seleccionado
-    const [orderBy, setOrderBy] = useState<{
-        order: OrderBy
-        asc: 'ASC' | 'DES'
-    } | null>(null)
     const [modalShow, setModalShow] = useState(false)
     const [modalOrder, setModalOrder] = useState(false)
     const authContext = useContext(AuthContext)
     const token = authContext && authContext.user?.token
-    const isAuthenticated = authContext && authContext.isAuthenticated
     const header = { authorization: `bear ${token}` }
     const onClose = () => {
         setModalShow(false)
@@ -68,57 +64,46 @@ const DashBoard = () => {
             if (response?.statusText === 'ok') {
                 Swal.fire('¡Eliminado!')
             }
-            getAllCheck()
+            
         }
+       setCheckList( checkList?.filter(check => check.id !== id ))
     }
     const handleDeleteChange = (id: number = 0): void => {
         deleteCheck(id)
     }
 
-    const getAllCheck = async (order?: OrderBy, asc?: 'ASC' | 'DES') => {
-        try {
-            const response = await getCheckApi(header || '', order, asc)
-            const data: Check[] = response?.data
-            setCheckList(data)
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
+ 
     const setOrder = (param: OrderBy) => {
-        return setOrderBy({
+      
+        setOrderBy({
             order: param,
             asc: orderBy?.asc === 'ASC' ? 'DES' : 'ASC',
         })
+        
     }
-    useEffect(() => {
-        if (isAuthenticated) {
-            getAllCheck(orderBy?.order, orderBy?.asc)
-        }
-    }, [isAuthenticated, orderBy])
+
 
     return (
-        <div className="">
-            <Styled.Nav>
-                <NavBar
+        <div>
+            <NavBar
                     setModalOrder={setModalOrder}
                     setModalShow={setModalShow}
                     checkSelection={checkedSelection}
-                />
-                <OrderPayment
-                    show={modalOrder}
-                    onClose={onCloseOrder}
-                    checkSelection={checkedSelection}
-                    setCheckedSelection={setCheckedSelection}
-                    getAllCheck={getAllCheck}
-                    header={header}
-                />
-            </Styled.Nav>
+            />
+            <OrderPayment
+                show={modalOrder}
+                onClose={onCloseOrder}
+                checkSelection={checkedSelection}
+                setCheckedSelection={setCheckedSelection}
+                setOrderBy = {setOrderBy}
+                orderBy = {orderBy}
+                header={header}
+            />
             <EnterCheck
                 show={modalShow}
                 onClose={onClose}
-                getAllCheck={getAllCheck}
-                setCheckList={setCheckList}
+                setOrderBy = {setOrderBy}
+                orderBy = {orderBy}
                 header={header}
             />
             <div>

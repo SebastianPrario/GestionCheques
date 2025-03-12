@@ -1,34 +1,33 @@
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
-import { Check } from '../../contexts/CheckContext'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import * as formik from 'formik'
 import * as yup from 'yup'
 import { CustomModal } from '../CustomModal/CustomModal'
 import { differenceInDays, format, isAfter, isEqual } from 'date-fns'
-import { postCheckApi } from '../../services/apiService'
+import { OrderBy, postCheckApi } from '../../services/apiService'
 import SelectBank from './Bank/Bank'
 import Swal from 'sweetalert2'
 
 interface EnterCheckProps {
     show: boolean
     onClose: () => void
-    getAllCheck: () => void
-    setCheckList: React.Dispatch<
-        React.SetStateAction<Check[] | null | undefined>
-    >
     header: { authorization: string }
+    setOrderBy : Dispatch<SetStateAction<{ order: OrderBy; asc: "ASC" | "DES"; } | null>>
+    orderBy : { order: OrderBy; asc: "ASC" | "DES"; } | null
 }
 
 export const EnterCheck: React.FC<EnterCheckProps> = ({
     show,
     onClose,
-    getAllCheck,
     header,
+    setOrderBy,
+    orderBy
 }) => {
+   
     const [bank, setBank] = useState<string>('')
     const [submitAction , setSubmitAction] = useState<string>('')
     const { Formik } = formik
@@ -118,12 +117,16 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                         await postCheckApi('cheques', header, values)
                         resetForm()
                         setBank('')
-                        getAllCheck()
+                       
                         if ( submitAction ==='close') return onClose()
                         
                     } catch (error: unknown) {
                         console.log(error)
                     } finally {
+                        setOrderBy({
+                            order: orderBy?.order || 'numero',
+                            asc: orderBy?.asc === 'ASC' ? 'DES' : 'ASC',
+                        })
                     }
                 }}
                 initialValues={{
