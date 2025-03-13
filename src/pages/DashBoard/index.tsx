@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext,  useState } from 'react'
 import { Check } from '../../contexts/CheckContext'
-import Styled from './styles'
 import { AuthContext } from '../../contexts/AuthContext'
 import { Button, Form } from 'react-bootstrap'
 import Table from 'react-bootstrap/Table'
@@ -11,7 +10,7 @@ import EnterCheck from '../EnterCheck/EnterCheck'
 import OrderPayment from '../OrderPayment/OrderPayment'
 import Spinner from '../../components/Spinner/Spinner'
 import { formatCurrency } from '../../librery/helpers'
-import { FaTrash } from 'react-icons/fa'
+import { FaTrash, FaSort } from 'react-icons/fa';
 import useGetAllChecks from '../../hook/useGetAllCheck'
 
 const DashBoard = () => {
@@ -107,74 +106,32 @@ const DashBoard = () => {
                 header={header}
             />
             <div>
-                <Table striped bordered hover variant="dark" className="">
+            <Table striped bordered hover variant="dark" className="">
                     <thead className="text-center">
                         <tr>
                             <th>Sel.</th>
-                            <th>
-                                <Button
-                                    type="button"
-                                    className="btn btn-info btn-sm"
-                                    onClick={() => setOrder('numero')}
-                                >
-                                    Número de cheque{' '}
-                                </Button>
+                            <th onClick={() => setOrder('numero')} className="sortable">
+                                Número de cheque <FaSort />
                             </th>
-                            <th>
-                                <Button
-                                    type="button"
-                                    className="btn btn-info btn-sm"
-                                    onClick={() => setOrder('cliente')}
-                                >
-                                    Cliente
-                                </Button>
+                            <th onClick={() => setOrder('cliente')} className="sortable">
+                                Cliente <FaSort />
                             </th>
-                            <th>
-                                <Button
-                                    type="button"
-                                    className="btn btn-info btn-sm"
-                                    onClick={() => setOrder('librador')}
-                                >
-                                    Librador
-                                </Button>
+                            <th onClick={() => setOrder('librador')} className="sortable">
+                                Librador <FaSort />
                             </th>
-                            <th>
-                                <Button
-                                    type="button"
-                                    className="btn btn-info btn-sm"
-                                    onClick={() => setOrder('fechaEntrega')}
-                                >
-                                    Fecha de Cobro
-                                </Button>
+                            <th onClick={() => setOrder('fechaEntrega')} className="sortable">
+                                Fecha de Cobro <FaSort />
                             </th>
-                            <th>
-                                <Button
-                                    type="button"
-                                    className="btn btn-info btn-sm"
-                                    onClick={() => setOrder('fechaEmision')}
-                                >
-                                    Fecha de Emisión
-                                </Button>
+                            <th onClick={() => setOrder('fechaEmision')} className="sortable">
+                                Fecha de Emisión <FaSort />
                             </th>
-                            <th>
-                                <Button
-                                    type="button"
-                                    className="btn btn-info btn-sm"
-                                    onClick={() => setOrder('importe')}
-                                >
-                                    Importe
-                                </Button>
+                            <th onClick={() => setOrder('importe')} className="sortable">
+                                Importe <FaSort />
                             </th>
-                            <th>
-                                <Button
-                                    type="button"
-                                    className="btn btn-info btn-sm"
-                                    onClick={() => setOrder('banco')}
-                                >
-                                    Banco emisor
-                                </Button>
+                            <th onClick={() => setOrder('banco')} className="sortable">
+                                Banco emisor <FaSort />
                             </th>
-                            <th className="text-danger">Eliminar</th>
+                           
                         </tr>
                     </thead>
                     <div></div>

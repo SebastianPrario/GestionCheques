@@ -5,12 +5,13 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import * as formik from 'formik'
-import * as yup from 'yup'
 import { CustomModal } from '../CustomModal/CustomModal'
-import { differenceInDays, format, isAfter, isEqual } from 'date-fns'
+import { format } from 'date-fns'
 import { OrderBy, postCheckApi } from '../../services/apiService'
 import SelectBank from './Bank/Bank'
 import Swal from 'sweetalert2'
+import schema from './validationSchema'
+
 
 interface EnterCheckProps {
     show: boolean
@@ -31,65 +32,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
     const [bank, setBank] = useState<string>('')
     const [submitAction , setSubmitAction] = useState<string>('')
     const { Formik } = formik
-    const schema = yup.object().shape({
-        numero: yup
-            .string()
-            .matches(
-                /^\d{8}$/,
-                'El número debe tener exactamente 8 dígitos numéricos'
-            )
-            .required('El número es obligatorio'),
-        importe: yup
-            .number()
-            .positive('El importe debe ser un valor positivo')
-            .required('El importe es obligatorio'),
-        cliente: yup.string().required('El nombre del cliente es requerido'),
-        librador: yup.string().required('Nombre del Emisor requerido'),
-        fechaEmision: yup
-            .date()
-            .default(() => new Date())
-            .test(
-                'is-valid-format',
-                'El formato debe ser aaaa/mm/dd',
-                function (value) {
-                    const formattedDate = format(value, 'yyyy/MM/dd')
-                    return /^\d{4}\/\d{2}\/\d{2}$/.test(formattedDate)
-                }
-            )
-            .required('La fecha es obligatoria'),
-        fechaEntrega: yup
-            .date()
-            .default(() => new Date())
-            .test(
-                'is-before',
-                'La fecha de pago debe ser posterior o igual a la fecha de emisión',
-                function (value) {
-                    const { fechaEmision } = this.parent
-                    return (
-                        isEqual(value, fechaEmision) ||
-                        isAfter(value, fechaEmision)
-                    )
-                }
-            )
-            .test(
-                'max-difference',
-                'La diferencia entre la fecha de emisión y la fecha de pago no puede ser mayor a 360 días',
-                function (value) {
-                    const { fechaEmision } = this.parent
-                    return differenceInDays(value, fechaEmision) <= 360
-                }
-            )
-            .test(
-                'is-valid-format',
-                'El formato debe ser aaaa/mm/dd',
-                function (value) {
-                    const formattedDate = format(value, 'yyyy/MM/dd')
-                    return /^\d{4}\/\d{2}\/\d{2}$/.test(formattedDate)
-                }
-            )
-            .required('La fecha es obligatoria'),
-    })
-
+    
     return (
         <CustomModal show={show} onClose={onClose}>
             <Modal.Header closeButton onHide={onClose}>
@@ -97,7 +40,11 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
             </Modal.Header>
             <Formik
                 validationSchema={schema}
+                validateOnBlur={false}
+                validateOnChange={false}
                 onSubmit={async (values, { resetForm }) => {
+                    
+                    console.log('entra')
                     values.fechaEmision = format(
                         values.fechaEmision,
                         'yyyy/MM/dd'
@@ -113,21 +60,23 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                             values.banco === ''
                         ) {
                             return Swal.fire('falta elegir banco')
+                            
                         }
                         await postCheckApi('cheques', header, values)
                         resetForm()
                         setBank('')
                        
-                        if ( submitAction ==='close') return onClose()
-                        
-                    } catch (error: unknown) {
-                        console.log(error)
-                    } finally {
                         setOrderBy({
                             order: orderBy?.order || 'numero',
                             asc: orderBy?.asc === 'ASC' ? 'DES' : 'ASC',
-                        })
-                    }
+                        }) 
+
+                        if ( submitAction ==='close') return onClose()
+                     
+                      
+                    } catch (error: unknown) {
+                        console.log(error)
+                    } 
                 }}
                 initialValues={{
                     numero: 0,
@@ -141,7 +90,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
             >
                 {({ handleSubmit, handleChange, values, errors }) => (
                     <Form noValidate onSubmit={handleSubmit}>
-                        <Row className="mb-3">
+                        <Row className="my-2 py-3 px-2">
                             <Form.Group
                                 as={Col}
                                 md="6"
@@ -152,6 +101,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 <Form.Control
                                     type="string"
                                     name="numero"
+                                    maxLength={8}
                                     value={values.numero}
                                     onChange={handleChange}
                                     isInvalid={!!errors.numero}
@@ -168,7 +118,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                             >
                                 <Form.Label>Importe</Form.Label>
                                 <Form.Control
-                                    type="number"
+                                    type='number'
                                     name="importe"
                                     value={values.importe}
                                     onChange={handleChange}
@@ -177,12 +127,16 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 <Form.Control.Feedback type="invalid" tooltip>
                                     {errors.importe}
                                 </Form.Control.Feedback>
-                            </Form.Group>
+                            </Form.Group> 
+                            </Row>
+                        <Row className='my-2 py-3 px-2'>
                             <Form.Group
                                 as={Col}
-                                md="4"
+                                md="6"
                                 controlId="validationFormikUsername2"
                             >
+
+                           
                                 <Form.Label>Cliente</Form.Label>
                                 <InputGroup hasValidation>
                                     <Form.Control
@@ -202,7 +156,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 </InputGroup>
                             </Form.Group>
                         </Row>
-                        <Row className="mb-3">
+                        <Row className='my-2 py-2 px-2'>
                             <Form.Group
                                 as={Col}
                                 md="6"
@@ -226,7 +180,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 as={Col}
                                 md="3"
                                 controlId="validationFormik104"
-                                className="position-relative"
+                                className="position-relative "
                             >
                                 <Form.Label>Fecha Emisión</Form.Label>
                                 <Form.Control
@@ -261,17 +215,20 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Row>
-                        <Form.Group className="position-relative mb-3">
-                            <Form.Label>Banco Emisor</Form.Label>
+                        <Row>
+                        <Form.Group className="position-relative py-3">
+                            <Form.Label
+                            column='sm'
+                            >Banco Emisor</Form.Label>
                             <SelectBank 
                                 setBank={setBank}
                                 bank ={bank} />
                         </Form.Group>
+                        </Row>
                         <Row>
                             <Col className="d-flex justify-content-center">
                                 <div className="d-flex justify-content-center">
                                     <Button
-                                        className="col-12 me-2"
                                         type="submit"
                                         name="add"
                                         onClick={()=> setSubmitAction('add')}
@@ -279,17 +236,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                         Agregar
                                     </Button>
                                 </div>
-                                <div className="d-flex justify-content-center">
-                                    <Button
-                                        className="col-12 ms-2"
-                                        type="submit"
-                                        name="close"
-                                        onClick={()=> setSubmitAction('close')}
-                                       
-                                    >
-                                        Agregar y cerrar
-                                    </Button>
-                                </div>
+                                
                             </Col>
                         </Row>
                     </Form>

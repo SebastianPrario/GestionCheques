@@ -7,8 +7,7 @@ const DashBoard = styled.div`
 `
 
 const Nav = styled.nav`
-    position: sticky;
-    top: 0;
+    position: fixed;
     width: 100%;
     z-index: 1000;
     background-color: black;

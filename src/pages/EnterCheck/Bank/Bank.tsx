@@ -5,7 +5,7 @@ import Modal from 'react-bootstrap/Modal'
 import { AuthContext } from '../../../contexts/AuthContext'
 import { Bank, createBank, deleteBank, getBankData } from '../../../services/apiService'
 import Swal from 'sweetalert2'
-import { FaTrash } from 'react-icons/fa'
+import { BsTrash } from 'react-icons/bs';
 import { Col, Row } from 'react-bootstrap'
 
 interface newOption {
@@ -69,7 +69,7 @@ function SelectBank({ setBank , bank }: SelectProps) {
             getBankData(header).then((data) => setOptions(data?.data))
         }
     }, [])
-    console.log(options)
+   
     return (
         <>
         <Row>
@@ -84,10 +84,13 @@ function SelectBank({ setBank , bank }: SelectProps) {
                 <option value="add-bank">Agregar Banco</option>
             </Form.Select>
             <Button 
-                className='col-2'
-                onClick={() =>handleDeleteBank()}
-                disabled={bank === '' || bank === 'Elegir Banco' || bank === 'add-bank'}>
-                <FaTrash />
+               variant="danger"
+               className=" ms-2 d-flex align-items-center justify-content-center"
+               onClick={handleDeleteBank}
+               disabled={bank === '' || bank === 'Elegir Banco' || bank === 'add-bank'}
+           >
+                <BsTrash 
+                />
             </Button>
             </Col>
         </Row>
@@ -104,7 +107,7 @@ function SelectBank({ setBank , bank }: SelectProps) {
                     />
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button  onClick={handleClose}>
                         Cerrar
                     </Button>
                     <Button variant="primary" onClick={handleAddOption}>

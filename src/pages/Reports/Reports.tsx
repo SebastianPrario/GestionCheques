@@ -1,9 +1,8 @@
 import { Button, Form, Modal, Row } from 'react-bootstrap'
 import { CustomModal } from '../CustomModal/CustomModal'
-import React, {   useEffect, useState } from 'react'
+import React, {    useState } from 'react'
 import ReactDOM from 'react-dom'
 import PdfReport from './PdfReport'
-import { Check } from '../../contexts/CheckContext'
 import { useAuth } from '../../contexts/AuthContext'
 import { getAllCheckByReport, getCheckByClient } from '../../services/apiService'
 

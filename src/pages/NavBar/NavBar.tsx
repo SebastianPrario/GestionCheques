@@ -1,9 +1,6 @@
 import Navbar from 'react-bootstrap/Navbar'
-import { NavDropdown } from 'react-bootstrap'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 import { Container, Nav } from 'react-bootstrap'
 import React, { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
@@ -13,7 +10,6 @@ import { getCheckByNumber } from '../../services/apiService'
 import CheckModal from '../CheckModal/CheckModal'
 import { Order } from '../../contexts/CheckContext'
 import Reports from '../Reports/Reports'
-import { CustomButton } from './styles';
 import { FaSignOutAlt, FaArrowLeft,  FaSearch, FaFileAlt, FaPlus, FaClipboardList } from 'react-icons/fa';
 interface NavBarProps {
     checkSelection?: Check[] | []
@@ -134,10 +130,6 @@ const NavBar: React.FC<NavBarProps> = ({
                             </Nav.Link>
                             </Nav>
                            
-                       
-                  
-
-              
                 </Navbar.Collapse>
                 <Form className="d-flex ms-3">
                         <Form.Control
