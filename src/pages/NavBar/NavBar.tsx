@@ -97,9 +97,9 @@ const NavBar: React.FC<NavBarProps> = ({
                             </Nav.Link>
                         )}
                         </Nav>
-                
-                   
-                    <Nav className="ms-auto d-lg-flex">
+                       {location.pathname !== '/orders' &&
+                       (
+                         <Nav className="ms-auto d-lg-flex">
                         <Nav.Link onClick={() => setModalReports && setModalReports(true)}>
                             <FaFileAlt /> Informes
                         </Nav.Link>
@@ -110,9 +110,12 @@ const NavBar: React.FC<NavBarProps> = ({
                         >
                             <FaClipboardList /> Asignar Cheques
                         </Nav.Link>
-                        <Nav.Link onClick={() => setModalShow && setModalShow(true)}>
+                        <Button
+                            variant='primary'
+                            onClick={() => setModalShow && setModalShow(true)}>
+                            
                             <FaPlus /> Agregar Cheques
-                        </Nav.Link>
+                        </Button>
                             <CheckModal
                                 show={modalCheck}
                                 onClose={onCloseCheck}
@@ -129,6 +132,11 @@ const NavBar: React.FC<NavBarProps> = ({
                                   <FaFileAlt /> Ordenes
                             </Nav.Link>
                             </Nav>
+                       )
+                       
+                       }
+                   
+                       
                            
                 </Navbar.Collapse>
                 <Form className="d-flex ms-3">

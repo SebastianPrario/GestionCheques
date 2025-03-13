@@ -12,6 +12,7 @@ import Spinner from '../../components/Spinner/Spinner'
 import { formatCurrency } from '../../librery/helpers'
 import { FaTrash, FaSort } from 'react-icons/fa';
 import useGetAllChecks from '../../hook/useGetAllCheck'
+import './DashBoard.css'
 
 const DashBoard = () => {
     const { checkList , setOrderBy , orderBy , setCheckList} = useGetAllChecks()
@@ -84,11 +85,14 @@ const DashBoard = () => {
 
     return (
         <div>
+            <div className="navbar-fixed">
             <NavBar
                     setModalOrder={setModalOrder}
                     setModalShow={setModalShow}
                     checkSelection={checkedSelection}
+                    
             />
+            </div>
             <OrderPayment
                 show={modalOrder}
                 onClose={onCloseOrder}
