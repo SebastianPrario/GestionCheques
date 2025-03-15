@@ -82,7 +82,7 @@ const NavBar: React.FC<NavBarProps> = ({
     }
 
     return (
-        <Navbar  bg="light" expand="lg">
+        <Navbar  bg="light" expand="lg" sticky='top'>
             <Container>
                 <Navbar.Brand href="/dashboard">Cheques 2.0</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />

@@ -81,7 +81,7 @@ const OrdersView = () => {
     }
 
     return (
-        <div className="">
+        <div>
             <Styled.Nav>
                 <NavBar />
             </Styled.Nav>

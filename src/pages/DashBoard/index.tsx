@@ -1,7 +1,7 @@
 import React, { useContext,  useState } from 'react'
 import { Check } from '../../contexts/CheckContext'
 import { AuthContext } from '../../contexts/AuthContext'
-import { Button, Form } from 'react-bootstrap'
+import { Button,  Form } from 'react-bootstrap'
 import Table from 'react-bootstrap/Table'
 import NavBar from '../NavBar/NavBar'
 import { deleteCheckApi,  OrderBy } from '../../services/apiService'
@@ -12,7 +12,6 @@ import Spinner from '../../components/Spinner/Spinner'
 import { formatCurrency } from '../../librery/helpers'
 import { FaTrash, FaSort } from 'react-icons/fa';
 import useGetAllChecks from '../../hook/useGetAllCheck'
-import './DashBoard.css'
 
 const DashBoard = () => {
     const { checkList , setOrderBy , orderBy , setCheckList} = useGetAllChecks()
@@ -84,15 +83,14 @@ const DashBoard = () => {
 
 
     return (
-        <div>
-            <div className="navbar-fixed">
-            <NavBar
+        <>      
+                    <NavBar
                     setModalOrder={setModalOrder}
                     setModalShow={setModalShow}
                     checkSelection={checkedSelection}
                     
             />
-            </div>
+          
             <OrderPayment
                 show={modalOrder}
                 onClose={onCloseOrder}
@@ -109,8 +107,8 @@ const DashBoard = () => {
                 orderBy = {orderBy}
                 header={header}
             />
-            <div>
-            <Table striped bordered hover variant="dark" className="">
+        
+            <Table striped bordered hover variant="dark" responsive='sm'>
                     <thead className="text-center">
                         <tr>
                             <th>Sel.</th>
@@ -214,8 +212,10 @@ const DashBoard = () => {
                         )}
                     </tbody>
                 </Table>
-            </div>
-        </div>
+           
+      
+    </>
+ 
     )
 }
 
