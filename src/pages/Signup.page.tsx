@@ -176,13 +176,7 @@ const SignupPage: FC = () => {
                                             required
                                             focused
                                         />
-                                        <label>
-                                            <input
-                                                type="checkbox"
-                                                onChange={handleCheckboxChange}
-                                            />{' '}
-                                            Administrador
-                                        </label>
+                                       
                                         <LoadingButton
                                             loading={false}
                                             type="submit"

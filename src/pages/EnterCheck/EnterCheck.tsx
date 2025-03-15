@@ -43,7 +43,6 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                 validateOnBlur={false}
                 validateOnChange={false}
                 onSubmit={async (values, { resetForm }) => {
-                    console.log('entra')
                     values.fechaEmision = format(
                         values.fechaEmision,
                         'yyyy/MM/dd'

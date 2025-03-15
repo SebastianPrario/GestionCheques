@@ -152,7 +152,7 @@ export const OrderPDF: React.FC<PdfReportProps> = ({
                     )}
                     {reportOptions === 'Cheques por Cliente' && (
                         <Text style={styles.header2}>
-                            Monto Cheques recibido de a cobrar {inputValue} :{' '}
+                            Monto Cheques recibido de {inputValue} :{' '}
                             {formatCurrency(sumaCheques)}
                         </Text>
                     )}
@@ -163,6 +163,7 @@ export const OrderPDF: React.FC<PdfReportProps> = ({
                             <Text style={styles.tableCell}>Importe</Text>
                             <Text style={styles.tableCell}>Librador</Text>
                             <Text style={styles.tableCell}>Fecha</Text>
+                            <Text style={styles.tableCell}>Estado</Text>
                         </View>
                         {data.map((elem: Check, index: number) => {
                             return (
@@ -183,6 +184,9 @@ export const OrderPDF: React.FC<PdfReportProps> = ({
                                         {new Date(
                                             elem.fechaEmision
                                         ).toLocaleDateString('es-AR')}
+                                    </Text>
+                                    <Text style={styles.tableCell}>
+                                        {elem.estado}
                                     </Text>
                                 </View>
                             )

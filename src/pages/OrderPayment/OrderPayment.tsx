@@ -4,12 +4,12 @@ import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import * as formik from 'formik'
-import * as yup from 'yup'
 import { CustomModal } from '../CustomModal/CustomModal'
 import { createOrderApi, Order, OrderBy } from '../../services/apiService'
 import { Check } from '../../contexts/CheckContext'
 import Swal from 'sweetalert2'
 import { formatCurrency } from '../../librery/helpers'
+import schema from './validationSchema'
 
 interface EnterCheckProps {
     show: boolean
@@ -47,13 +47,7 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
         Number(input.p4) +
         Number(input.p5)
 
-    const schema = yup.object().shape({
-        destination: yup
-            .string()
-            .required('El destino del pago es obligatorio'),
-        detail: yup.string().required('El detalle del pago es obligatorio'),
-        importe: yup.number(),
-    })
+   
 
     const handleChangeInput = (event: any) => {
         const { name, value } = event.target
@@ -94,6 +88,8 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
             </Modal.Header>
             <Formik
                 validationSchema={schema}
+                validateOnBlur={false}
+                validateOnChange={false}
                 onSubmit={handleSubmit}
                 initialValues={{
                     totalAmount: totalAmount,
