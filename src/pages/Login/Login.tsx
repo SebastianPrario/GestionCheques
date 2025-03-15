@@ -11,9 +11,13 @@ import { ILogin } from './types'
 import Styles from './styles'
 import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
 import { z } from 'zod'
+import { Image } from 'react-bootstrap'
+import logo from '../../assets/gcheq.webp'
 
 const loginSchema = z.object({
-    email: z.string().email('Ingrese un correo electrónico válido')
+    email: z
+        .string()
+        .email('Ingrese un correo electrónico válido')
         .nonempty('El correo electrónico es obligatorio'),
     password: z.string().nonempty('La contraseña es obligatoria'),
 })
@@ -33,11 +37,9 @@ const LoginPage: FC = () => {
         resolver: zodResolver(loginSchema),
     })
 
-    // 👇 Submit Handler
     const onSubmit = async (data: ILogin) => {
         setIsLoading(true)
         try {
-            // Realiza la llamada a la API aquí
             const response = await postMethod(data)
             signInUser({
                 name: response.payload.sub,
@@ -155,7 +157,14 @@ const LoginPage: FC = () => {
                                         </LoadingButton>
                                     </Box>
                                 </Grid>
-                                <Grid item xs={12} sm={6}></Grid>
+                                <Grid
+                                    item
+                                    xs={8}
+                                    sm={6}
+                                    className="ps-4 d-none d-md-block"
+                                >
+                                    <Image src={logo} fluid roundedCircle />
+                                </Grid>
                             </Grid>
                             <Grid container justifyContent="center">
                                 <Stack sx={{ mt: '3rem', textAlign: 'center' }}>
@@ -167,10 +176,6 @@ const LoginPage: FC = () => {
                                             click aqui
                                         </Styles.LinkItem>
                                     </Typography>
-                                    {/* <Typography sx={{ fontSize: '0.9rem' }}>
-                    Forgot your{' '}
-                    <LinkItem to='/forgotPassword'>password?</LinkItem>
-                  </Typography> */}
                                 </Stack>
                             </Grid>
                         </Grid>

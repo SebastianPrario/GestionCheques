@@ -8,7 +8,7 @@ export interface otherPayment {
 export interface Bank {
     id: number
     bank: string
-    user : string
+    user: string
 }
 export interface NewBank {
     bank: string
@@ -48,15 +48,14 @@ export const getCheckApi = async (
             : await apiService.get(`${URL}/cheques`, { headers })
         return response
     } catch (error: any) {
-        if (error?.response.data.message === 'Token invalido o ruta protegida') return 'token invalido'
-        
+        if (error?.response.data.message === 'Token invalido o ruta protegida')
+            return 'token invalido'
     }
 }
 export const getCheckByNumber = async (
     numberCheck: number,
     headers: { authorization: string }
 ) => {
-   
     try {
         const response = await apiService.get(
             `${URL}/cheques/number?number=${numberCheck}`,
@@ -172,11 +171,13 @@ export const createBank = async (
 
 export const deleteBank = async (
     headers: { authorization: string } | undefined,
-    idBank : number
+    idBank: number
 ) => {
     try {
         const URLAPI = `${URL}/bank`
-        const response = await apiService.delete(`${URLAPI}/${idBank}`,  { headers })
+        const response = await apiService.delete(`${URLAPI}/${idBank}`, {
+            headers,
+        })
         return response
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -202,15 +203,15 @@ export const getAllCheckByReport = async (
         }
     }
 }
-export const getCheckByClient = async (
-    headers: {},
-    client : string
-) => {
+export const getCheckByClient = async (headers: {}, client: string) => {
     console.log(client)
     try {
-        const response  = await apiService.get(`${URL}/cheques/cliente?cliente=${client}`, {
-                  headers,
-              })
+        const response = await apiService.get(
+            `${URL}/cheques/cliente?cliente=${client}`,
+            {
+                headers,
+            }
+        )
         console.log(response)
         return response
     } catch (error: unknown) {

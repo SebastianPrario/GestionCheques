@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
 import { Order } from '../../contexts/CheckContext'
-import Styled from './styles'
 import { AuthContext } from '../../contexts/AuthContext'
 import Table from 'react-bootstrap/Table'
 import NavBar from '../NavBar/NavBar'
@@ -11,7 +10,7 @@ import PdfOrder from './Pdfview/PdfDown'
 import ReactDOM from 'react-dom'
 import Spinner from '../../components/Spinner/Spinner'
 import Swal from 'sweetalert2'
-
+import { FaTrash , FaEye } from 'react-icons/fa'
 const OrdersView = () => {
     const [orders, setOrders] = useState<Order[] | null | undefined>(null)
     const [loading, setLoading] = useState(false)
@@ -81,20 +80,18 @@ const OrdersView = () => {
     }
 
     return (
-        <div>
-            <Styled.Nav>
-                <NavBar />
-            </Styled.Nav>
+        <>
+            <NavBar />
+          
             {loading && <Spinner />}
             <div>
-                <Table striped bordered hover variant="dark" className="">
-                    <thead>
+                <Table striped bordered hover variant="dark" >
+                    <thead  className="text-center">
                         <tr>
                             <th>Número</th>
                             <th>Destino</th>
                             <th>Importe</th>
                             <th>Fecha</th>
-                            <th>acciones</th>
                         </tr>
                     </thead>
                     <div></div>
@@ -126,7 +123,7 @@ const OrdersView = () => {
                                                         handleDelete(order.id)
                                                     }
                                                 >
-                                                    Eliminar
+                                                    <FaTrash/>
                                                 </Button>
                                                 <Button
                                                     variant="primary"
@@ -137,7 +134,7 @@ const OrdersView = () => {
                                                         )
                                                     }
                                                 >
-                                                    Mostrar
+                                                    <FaEye/>
                                                 </Button>
                                             </div>
                                         </td>
@@ -150,7 +147,7 @@ const OrdersView = () => {
                     </tbody>
                 </Table>
             </div>
-        </div>
+        </>
     )
 }
 

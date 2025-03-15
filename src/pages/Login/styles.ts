@@ -27,6 +27,7 @@ export const OauthMuiLink = styled(MuiLink)`
     &:hover {
         background-color: #fff;
         box-shadow: 0 1px 13px 0 rgb(0 0 0 / 15%);
+        height: fit-content;
     }
 `
 

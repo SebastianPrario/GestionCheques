@@ -17,8 +17,10 @@ interface EnterCheckProps {
     checkSelection: Check[]
     setCheckedSelection: React.Dispatch<React.SetStateAction<Check[] | []>>
     header: { authorization: string }
-    setOrderBy : Dispatch<SetStateAction<{ order: OrderBy; asc: "ASC" | "DES"; } | null>>
-    orderBy : { order: OrderBy; asc: "ASC" | "DES"; } | null
+    setOrderBy: Dispatch<
+        SetStateAction<{ order: OrderBy; asc: 'ASC' | 'DES' } | null>
+    >
+    orderBy: { order: OrderBy; asc: 'ASC' | 'DES' } | null
 }
 
 export const OrderPayment: React.FC<EnterCheckProps> = ({
@@ -28,7 +30,7 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
     setCheckedSelection,
     header,
     setOrderBy,
-    orderBy
+    orderBy,
 }) => {
     const [input, setInput] = useState<{ [key: string]: string | number }>({
         p0: '',

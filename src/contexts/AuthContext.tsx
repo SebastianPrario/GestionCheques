@@ -45,7 +45,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             sessionStorage.setItem('userGestionToken', `${user.token}`)
             setUser(user)
             setIsAuthenticated(true)
-           
         }
     }
     const signOutUser = () => {

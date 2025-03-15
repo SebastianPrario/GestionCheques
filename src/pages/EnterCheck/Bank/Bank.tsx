@@ -3,9 +3,14 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import { AuthContext } from '../../../contexts/AuthContext'
-import { Bank, createBank, deleteBank, getBankData } from '../../../services/apiService'
+import {
+    Bank,
+    createBank,
+    deleteBank,
+    getBankData,
+} from '../../../services/apiService'
 import Swal from 'sweetalert2'
-import { BsTrash } from 'react-icons/bs';
+import { BsTrash } from 'react-icons/bs'
 import { Col, Row } from 'react-bootstrap'
 
 interface newOption {
@@ -15,7 +20,7 @@ interface SelectProps {
     setBank: React.Dispatch<React.SetStateAction<string>>
     bank: string
 }
-function SelectBank({ setBank , bank }: SelectProps) {
+function SelectBank({ setBank, bank }: SelectProps) {
     const authContext = useContext(AuthContext)
     const token = authContext && authContext.user?.token
     const isAuthenticated = authContext && authContext.isAuthenticated
@@ -54,11 +59,10 @@ function SelectBank({ setBank , bank }: SelectProps) {
     }
 
     const handleDeleteBank = () => {
-       const seletedBank = options.find((option) => option.bank === bank)
-       if (seletedBank) { 
+        const seletedBank = options.find((option) => option.bank === bank)
+        if (seletedBank) {
             const id = seletedBank?.id
-            deleteBank(header, id )
-            .then(() => {
+            deleteBank(header, id).then(() => {
                 Swal.fire('Banco Eliminado')
                 getBankData(header).then((data) => setOptions(data?.data))
             })
@@ -69,31 +73,37 @@ function SelectBank({ setBank , bank }: SelectProps) {
             getBankData(header).then((data) => setOptions(data?.data))
         }
     }, [])
-   
+
     return (
         <>
-        <Row>
-            <Col className='d-flex justify-content-start'>
-            <Form.Select onChange={handleSelectChange} className='col-6'>
-                <option>Elegir Banco</option>
-                {options.map((option, index) => (
-                    <option key={index} value={option?.bank}>
-                        {option?.bank}
-                    </option>
-                ))}
-                <option value="add-bank">Agregar Banco</option>
-            </Form.Select>
-            <Button 
-               variant="danger"
-               className=" ms-2 d-flex align-items-center justify-content-center"
-               onClick={handleDeleteBank}
-               disabled={bank === '' || bank === 'Elegir Banco' || bank === 'add-bank'}
-           >
-                <BsTrash 
-                />
-            </Button>
-            </Col>
-        </Row>
+            <Row>
+                <Col className="d-flex justify-content-start">
+                    <Form.Select
+                        onChange={handleSelectChange}
+                        className="col-6"
+                    >
+                        <option>Elegir Banco</option>
+                        {options.map((option, index) => (
+                            <option key={index} value={option?.bank}>
+                                {option?.bank}
+                            </option>
+                        ))}
+                        <option value="add-bank">Agregar Banco</option>
+                    </Form.Select>
+                    <Button
+                        variant="danger"
+                        className=" ms-2 d-flex align-items-center justify-content-center"
+                        onClick={handleDeleteBank}
+                        disabled={
+                            bank === '' ||
+                            bank === 'Elegir Banco' ||
+                            bank === 'add-bank'
+                        }
+                    >
+                        <BsTrash />
+                    </Button>
+                </Col>
+            </Row>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Agregar Banco</Modal.Title>
@@ -107,9 +117,7 @@ function SelectBank({ setBank , bank }: SelectProps) {
                     />
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button  onClick={handleClose}>
-                        Cerrar
-                    </Button>
+                    <Button onClick={handleClose}>Cerrar</Button>
                     <Button variant="primary" onClick={handleAddOption}>
                         Agregar
                     </Button>

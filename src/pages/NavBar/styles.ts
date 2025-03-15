@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { Button } from 'react-bootstrap';
+import styled from 'styled-components'
+import { Button } from 'react-bootstrap'
 
 export const CustomButton = styled(Button)`
     font-size: 1rem; /* Tamaño de fuente por defecto */
@@ -10,5 +10,5 @@ export const CustomButton = styled(Button)`
         padding: 0.25rem 0.5rem; /* Padding para pantallas pequeñas */
         color: aqua;
     }
-`;
-export default { CustomButton };
+`
+export default { CustomButton }

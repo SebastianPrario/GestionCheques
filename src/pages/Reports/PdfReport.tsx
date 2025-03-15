@@ -9,15 +9,11 @@ import {
 import { formatCurrency } from '../../librery/helpers'
 import { Check } from '../../contexts/CheckContext'
 
-
 interface PdfReportProps {
-    data : Check[]
-    reportOptions : string
-    inputValue ?: string
+    data: Check[]
+    reportOptions: string
+    inputValue?: string
 }
-
-
-
 
 const styles = StyleSheet.create({
     page: {
@@ -124,10 +120,13 @@ const styles = StyleSheet.create({
     },
 })
 
-export const OrderPDF: React.FC<PdfReportProps> = (
-    {data , reportOptions  , inputValue }) => {
+export const OrderPDF: React.FC<PdfReportProps> = ({
+    data,
+    reportOptions,
+    inputValue,
+}) => {
     console.log(inputValue)
-   
+
     const sumaCheques = data?.reduce(
         (acc, curr) => acc + Number(curr.importe),
         0
@@ -137,20 +136,26 @@ export const OrderPDF: React.FC<PdfReportProps> = (
             <Page size="A4" style={styles.page}>
                 <View style={styles.section}>
                     <Text style={styles.header}>Listado de Cheques</Text>
-                    <Text style={styles.header2}>
-                      { reportOptions }
-                    </Text>
-                    { inputValue && (
-                        <Text style={styles.text}>
-                            Cliente: {inputValue}
-                        </Text>
+                    <Text style={styles.header2}>{reportOptions}</Text>
+                    {inputValue && (
+                        <Text style={styles.text}>Cliente: {inputValue}</Text>
                     )}
                     <Text style={styles.text}></Text>
                 </View>
 
                 <View style={styles.section}>
-                    { reportOptions === 'Cheques en Cartera' && <Text style={styles.header2}>Monto Cheques en cartera:  {formatCurrency(sumaCheques)}</Text> }
-                    { reportOptions === 'Cheques por Cliente' && <Text style={styles.header2}>Monto Cheques recibido de a cobrar {inputValue} :   {formatCurrency(sumaCheques)}</Text> }
+                    {reportOptions === 'Cheques en Cartera' && (
+                        <Text style={styles.header2}>
+                            Monto Cheques en cartera:{' '}
+                            {formatCurrency(sumaCheques)}
+                        </Text>
+                    )}
+                    {reportOptions === 'Cheques por Cliente' && (
+                        <Text style={styles.header2}>
+                            Monto Cheques recibido de a cobrar {inputValue} :{' '}
+                            {formatCurrency(sumaCheques)}
+                        </Text>
+                    )}
                     <View style={styles.table}>
                         <View style={[styles.tableRow, styles.tableHeader]}>
                             <Text style={styles.tableCell2}>#</Text>
@@ -159,7 +164,7 @@ export const OrderPDF: React.FC<PdfReportProps> = (
                             <Text style={styles.tableCell}>Librador</Text>
                             <Text style={styles.tableCell}>Fecha</Text>
                         </View>
-                        {data.map((elem: Check , index: number) => {
+                        {data.map((elem: Check, index: number) => {
                             return (
                                 <View style={styles.tableRow} key={index}>
                                     <Text style={styles.tableCell2}>
@@ -184,7 +189,6 @@ export const OrderPDF: React.FC<PdfReportProps> = (
                         })}
                     </View>
                 </View>
-               
             </Page>
         </Document>
     ) : (
@@ -192,16 +196,19 @@ export const OrderPDF: React.FC<PdfReportProps> = (
     )
 }
 
-const PdfReport: React.FC<PdfReportProps> = ({data , reportOptions , inputValue}) => {
-  
+const PdfReport: React.FC<PdfReportProps> = ({
+    data,
+    reportOptions,
+    inputValue,
+}) => {
     return (
         <div className="pdf-container">
             <PDFViewer style={{ width: '100%', height: '100vh' }}>
-                <OrderPDF 
-                data={data}
-                reportOptions={reportOptions}
-                inputValue={inputValue}
-               /> 
+                <OrderPDF
+                    data={data}
+                    reportOptions={reportOptions}
+                    inputValue={inputValue}
+                />
             </PDFViewer>
         </div>
     )

@@ -12,13 +12,14 @@ import SelectBank from './Bank/Bank'
 import Swal from 'sweetalert2'
 import schema from './validationSchema'
 
-
 interface EnterCheckProps {
     show: boolean
     onClose: () => void
     header: { authorization: string }
-    setOrderBy : Dispatch<SetStateAction<{ order: OrderBy; asc: "ASC" | "DES"; } | null>>
-    orderBy : { order: OrderBy; asc: "ASC" | "DES"; } | null
+    setOrderBy: Dispatch<
+        SetStateAction<{ order: OrderBy; asc: 'ASC' | 'DES' } | null>
+    >
+    orderBy: { order: OrderBy; asc: 'ASC' | 'DES' } | null
 }
 
 export const EnterCheck: React.FC<EnterCheckProps> = ({
@@ -26,13 +27,12 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
     onClose,
     header,
     setOrderBy,
-    orderBy
+    orderBy,
 }) => {
-   
     const [bank, setBank] = useState<string>('')
-    const [submitAction , setSubmitAction] = useState<string>('')
+    const [submitAction, setSubmitAction] = useState<string>('')
     const { Formik } = formik
-    
+
     return (
         <CustomModal show={show} onClose={onClose}>
             <Modal.Header closeButton onHide={onClose}>
@@ -43,7 +43,6 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                 validateOnBlur={false}
                 validateOnChange={false}
                 onSubmit={async (values, { resetForm }) => {
-                    
                     console.log('entra')
                     values.fechaEmision = format(
                         values.fechaEmision,
@@ -60,23 +59,20 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                             values.banco === ''
                         ) {
                             return Swal.fire('falta elegir banco')
-                            
                         }
                         await postCheckApi('cheques', header, values)
                         resetForm()
                         setBank('')
-                       
+
                         setOrderBy({
                             order: orderBy?.order || 'numero',
                             asc: orderBy?.asc === 'ASC' ? 'DES' : 'ASC',
-                        }) 
+                        })
 
-                        if ( submitAction ==='close') return onClose()
-                     
-                      
+                        if (submitAction === 'close') return onClose()
                     } catch (error: unknown) {
                         console.log(error)
-                    } 
+                    }
                 }}
                 initialValues={{
                     numero: 0,
@@ -118,7 +114,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                             >
                                 <Form.Label>Importe</Form.Label>
                                 <Form.Control
-                                    type='number'
+                                    type="number"
                                     name="importe"
                                     value={values.importe}
                                     onChange={handleChange}
@@ -127,16 +123,14 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 <Form.Control.Feedback type="invalid" tooltip>
                                     {errors.importe}
                                 </Form.Control.Feedback>
-                            </Form.Group> 
-                            </Row>
-                        <Row className='my-2 py-3 px-2'>
+                            </Form.Group>
+                        </Row>
+                        <Row className="my-2 py-3 px-2">
                             <Form.Group
                                 as={Col}
                                 md="6"
                                 controlId="validationFormikUsername2"
                             >
-
-                           
                                 <Form.Label>Cliente</Form.Label>
                                 <InputGroup hasValidation>
                                     <Form.Control
@@ -156,7 +150,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 </InputGroup>
                             </Form.Group>
                         </Row>
-                        <Row className='my-2 py-2 px-2'>
+                        <Row className="my-2 py-2 px-2">
                             <Form.Group
                                 as={Col}
                                 md="6"
@@ -216,14 +210,12 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                             </Form.Group>
                         </Row>
                         <Row>
-                        <Form.Group className="position-relative py-3">
-                            <Form.Label
-                            column='sm'
-                            >Banco Emisor</Form.Label>
-                            <SelectBank 
-                                setBank={setBank}
-                                bank ={bank} />
-                        </Form.Group>
+                            <Form.Group className="position-relative py-3">
+                                <Form.Label column="sm">
+                                    Banco Emisor
+                                </Form.Label>
+                                <SelectBank setBank={setBank} bank={bank} />
+                            </Form.Group>
                         </Row>
                         <Row>
                             <Col className="d-flex justify-content-center">
@@ -231,12 +223,11 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                     <Button
                                         type="submit"
                                         name="add"
-                                        onClick={()=> setSubmitAction('add')}
+                                        onClick={() => setSubmitAction('add')}
                                     >
                                         Agregar
                                     </Button>
                                 </div>
-                                
                             </Col>
                         </Row>
                     </Form>
