@@ -102,7 +102,7 @@ const DashBoard = () => {
                 header={header}
             />
 
-            <Table striped bordered hover variant="dark" responsive="sm">
+            <Table striped bordered hover variant="dark" responsive>
                 <thead className="text-center">
                     <tr>
                         <th>Sel.</th>

@@ -91,7 +91,7 @@ const NavBar: React.FC<NavBarProps> = ({
     }
 
     return (
-        <Navbar bg="light" expand="lg" sticky="top">
+        <Navbar bg="light" expand="lg" sticky="top" >
             <Container>
                 <Navbar.Brand href="/dashboard">
                 <Image src={logo} style={{width: '50px', height: '50px'}} roundedCircle />
