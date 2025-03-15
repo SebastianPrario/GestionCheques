@@ -85,7 +85,7 @@ const OrdersView = () => {
           
             {loading && <Spinner />}
             <div>
-                <Table striped bordered hover variant="dark" >
+                <Table striped bordered hover variant="dark" responsive="sm" >
                     <thead  className="text-center">
                         <tr>
                             <th>Número</th>
