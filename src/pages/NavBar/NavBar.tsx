@@ -1,7 +1,7 @@
 import Navbar from 'react-bootstrap/Navbar'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import {Image} from 'react-bootstrap'
+import { Image } from 'react-bootstrap'
 import { Container, Nav } from 'react-bootstrap'
 import React, { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
@@ -91,10 +91,14 @@ const NavBar: React.FC<NavBarProps> = ({
     }
 
     return (
-        <Navbar bg="light" expand="lg" sticky="top" >
+        <Navbar bg="light" expand="lg" sticky="top">
             <Container>
                 <Navbar.Brand href="/dashboard">
-                <Image src={logo} style={{width: '50px', height: '50px'}} roundedCircle />
+                    <Image
+                        src={logo}
+                        style={{ width: '50px', height: '50px' }}
+                        roundedCircle
+                    />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">

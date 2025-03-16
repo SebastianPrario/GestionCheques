@@ -10,7 +10,7 @@ import PdfOrder from './Pdfview/PdfDown'
 import ReactDOM from 'react-dom'
 import Spinner from '../../components/Spinner/Spinner'
 import Swal from 'sweetalert2'
-import { FaTrash , FaEye } from 'react-icons/fa'
+import { FaTrash, FaEye } from 'react-icons/fa'
 const OrdersView = () => {
     const [orders, setOrders] = useState<Order[] | null | undefined>(null)
     const [loading, setLoading] = useState(false)
@@ -82,11 +82,11 @@ const OrdersView = () => {
     return (
         <>
             <NavBar />
-          
+
             {loading && <Spinner />}
             <div>
-                <Table striped bordered hover variant="dark" responsive="sm" >
-                    <thead  className="text-center">
+                <Table striped bordered hover variant="dark" responsive="sm">
+                    <thead className="text-center">
                         <tr>
                             <th>Número</th>
                             <th>Destino</th>
@@ -123,7 +123,7 @@ const OrdersView = () => {
                                                         handleDelete(order.id)
                                                     }
                                                 >
-                                                    <FaTrash/>
+                                                    <FaTrash />
                                                 </Button>
                                                 <Button
                                                     variant="primary"
@@ -134,7 +134,7 @@ const OrdersView = () => {
                                                         )
                                                     }
                                                 >
-                                                    <FaEye/>
+                                                    <FaEye />
                                                 </Button>
                                             </div>
                                         </td>

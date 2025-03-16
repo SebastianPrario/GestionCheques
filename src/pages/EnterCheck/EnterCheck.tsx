@@ -7,7 +7,12 @@ import Row from 'react-bootstrap/Row'
 import * as formik from 'formik'
 import { CustomModal } from '../CustomModal/CustomModal'
 import { format } from 'date-fns'
-import { OrderBy, postCheckApi } from '../../services/apiService'
+import {
+    getChequesInfo,
+    getCuitInfo,
+    OrderBy,
+    postCheckApi,
+} from '../../services/apiService'
 import SelectBank from './Bank/Bank'
 import Swal from 'sweetalert2'
 import schema from './validationSchema'
@@ -22,6 +27,10 @@ interface EnterCheckProps {
     orderBy: { order: OrderBy; asc: 'ASC' | 'DES' } | null
 }
 
+interface Info {
+    situation: number
+    cheques: boolean
+}
 export const EnterCheck: React.FC<EnterCheckProps> = ({
     show,
     onClose,
@@ -31,8 +40,40 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
 }) => {
     const [bank, setBank] = useState<string>('')
     const [submitAction, setSubmitAction] = useState<string>('')
+    const [info, setInfo] = useState<Info>({
+        situation: 1,
+        cheques: false,
+    })
     const { Formik } = formik
 
+    const situation = (cheques: []) => {
+        const maxSituation = Math.max(...cheques)
+        if (maxSituation !== 1) {
+            setInfo({ ...info, situation: maxSituation })
+        }
+    }
+    const handleChangeCuit = async (e: string) => {
+        setInfo({
+            situation: 1,
+            cheques: false,
+        })
+        if (e.length === 11) {
+            const response = await getCuitInfo(e)
+            const chequesInfo = await getChequesInfo(e)
+
+            if (chequesInfo && chequesInfo.length !== 0) {
+                setInfo({ ...info, cheques: true })
+            }
+
+            if (response) {
+                situation(response?.data[0].situacion)
+            }
+
+            return response?.data[0].denominacion
+        }
+    }
+
+    console.log(info)
     return (
         <CustomModal show={show} onClose={onClose}>
             <Modal.Header closeButton onHide={onClose}>
@@ -81,9 +122,16 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                     fechaEmision: '',
                     fechaEntrega: '',
                     banco: '',
+                    cuit: '',
                 }}
             >
-                {({ handleSubmit, handleChange, values, errors }) => (
+                {({
+                    handleSubmit,
+                    handleChange,
+                    values,
+                    errors,
+                    setFieldValue,
+                }) => (
                     <Form noValidate onSubmit={handleSubmit}>
                         <Row className="my-2 py-3 px-2">
                             <Form.Group
@@ -156,6 +204,32 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 controlId="validationFormik103"
                                 className="position-relative"
                             >
+                                <Form.Label>Cuit Emisor</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="cuit"
+                                    value={values.cuit}
+                                    maxLength={11}
+                                    minLength={11}
+                                    onChange={async (e) => {
+                                        handleChange(e)
+                                        const denominacion =
+                                            await handleChangeCuit(
+                                                e.target.value
+                                            )
+                                        if (denominacion) {
+                                            setFieldValue(
+                                                'librador',
+                                                denominacion
+                                            )
+                                        }
+                                    }}
+                                    isInvalid={!!errors.cuit}
+                                />
+
+                                <Form.Control.Feedback type="invalid" tooltip>
+                                    {errors.librador}
+                                </Form.Control.Feedback>
                                 <Form.Label>Emisor del Cheque</Form.Label>
                                 <Form.Control
                                     type="text"
@@ -164,7 +238,6 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                     onChange={handleChange}
                                     isInvalid={!!errors.librador}
                                 />
-
                                 <Form.Control.Feedback type="invalid" tooltip>
                                     {errors.librador}
                                 </Form.Control.Feedback>
@@ -188,6 +261,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                     {errors.fechaEmision}
                                 </Form.Control.Feedback>
                             </Form.Group>
+
                             <Form.Group
                                 as={Col}
                                 md="3"
@@ -195,6 +269,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 className="position-relative"
                             >
                                 <Form.Label>Fecha Pago</Form.Label>
+
                                 <Form.Control
                                     type="Date"
                                     placeholder="aaaa/mm/dd"
@@ -208,6 +283,24 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Row>
+                        <Row className="align-items-center justify-content-center">
+                            <Col className="col-12  text-center">
+                                <div style={{ minHeight: '40px' }}>
+                                    {info.cheques && (
+                                        <p className="bg-danger px-1 me-4 d-inline-block">
+                                            cuit con cheques rechazados
+                                        </p>
+                                    )}
+                                    {info.situation !== 1 && (
+                                        <p className="bg-danger px-1 d-inline-block">
+                                            cliente en situacion{' '}
+                                            {info.situation}
+                                        </p>
+                                    )}
+                                </div>
+                            </Col>
+                        </Row>
+
                         <Row>
                             <Form.Group className="position-relative py-3">
                                 <Form.Label column="sm">

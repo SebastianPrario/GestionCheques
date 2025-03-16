@@ -30,7 +30,7 @@ type ISignUp = TypeOf<typeof signupSchema>
 const SignupPage: FC = () => {
     // 👇 Default Values
     const navigate = useNavigate()
-    const [isChecked, setIsChecked] = useState<boolean>(false)
+    const [isChecked] = useState<boolean>(false)
     const defaultValues: ISignUp = {
         name: '',
         email: '',
@@ -44,13 +44,6 @@ const SignupPage: FC = () => {
         defaultValues,
         resolver: zodResolver(signupSchema),
     })
-
-    const handleCheckboxChange = () => {
-        if (isChecked) setIsChecked(false)
-        else {
-            setIsChecked(true)
-        }
-    }
 
     const onSubmitHandler: SubmitHandler<ISignUp> = async (values: ISignUp) => {
         const data = {
@@ -176,7 +169,7 @@ const SignupPage: FC = () => {
                                             required
                                             focused
                                         />
-                                       
+
                                         <LoadingButton
                                             loading={false}
                                             type="submit"

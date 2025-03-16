@@ -162,7 +162,7 @@ const DashBoard = () => {
                                     <tr className="text-end" key={elem.id}>
                                         <td>
                                             <Form.Check
-                                                type='checkbox'
+                                                type="checkbox"
                                                 name={`${elem.id}`}
                                                 onChange={
                                                     handleCheckboxSelection

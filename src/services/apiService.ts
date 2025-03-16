@@ -220,3 +220,26 @@ export const getCheckByClient = async (headers: {}, client: string) => {
         }
     }
 }
+
+export const getCuitInfo = async (cuit: string) => {
+    try {
+        const response = await apiService.get(`${URL}/emisor/info?cuit=${cuit}`)
+        return response
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.log(error.message)
+        }
+    }
+}
+export const getChequesInfo = async (cuit: string) => {
+    try {
+        const response = await apiService.get(
+            `${URL}/emisor/cheques?cuit=${cuit}`
+        )
+        return response.data
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.log(error.message)
+        }
+    }
+}

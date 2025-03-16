@@ -47,8 +47,6 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
         Number(input.p4) +
         Number(input.p5)
 
-   
-
     const handleChangeInput = (event: any) => {
         const { name, value } = event.target
         setInput({ ...input, [name]: value })
