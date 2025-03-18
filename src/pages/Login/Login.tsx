@@ -91,6 +91,7 @@ const LoginPage: FC = () => {
                             <Grid
                                 item
                                 container
+                                alignItems={'center'}
                                 justifyContent="space-between"
                                 rowSpacing={5}
                                 sx={{
@@ -99,20 +100,24 @@ const LoginPage: FC = () => {
                                 }}
                             >
                                 <Grid
-                                    item
                                     xs={12}
                                     sm={6}
                                     sx={{
                                         borderRight: { sm: '1px solid #ddd' },
+                                        display: 'flex', // Hacer que el contenedor sea un flexbox
+                                        justifyContent: 'start', // Centrar horizontalmente
+                                        alignItems: 'center', // Centrar verticalmente
+                                        height: '100%', // Asegurar que ocupe toda la altura disponible
                                     }}
                                 >
                                     <Box
                                         display="flex"
                                         flexDirection="column"
+                                        alignContent={'center'}
+                                        justifyContent={'center'}
                                         component="form"
                                         noValidate
                                         autoComplete="off"
-                                        sx={{ paddingRight: { sm: '3rem' } }}
                                         onSubmit={methods.handleSubmit(
                                             onSubmit
                                         )}
@@ -162,8 +167,11 @@ const LoginPage: FC = () => {
                                     xs={8}
                                     sm={6}
                                     className="ps-4 d-none d-md-block"
+                                    alignContent={'center'}
                                 >
-                                    <Image src={logo} fluid roundedCircle />
+                                    <Image src={logo} 
+                                    className='ms-5' 
+                                    fluid roundedCircle />
                                 </Grid>
                             </Grid>
                             <Grid container justifyContent="center">

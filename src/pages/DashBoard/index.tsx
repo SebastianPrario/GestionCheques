@@ -9,7 +9,7 @@ import Swal from 'sweetalert2'
 import EnterCheck from '../EnterCheck/EnterCheck'
 import OrderPayment from '../OrderPayment/OrderPayment'
 import Spinner from '../../components/Spinner/Spinner'
-import { formatCurrency } from '../../librery/helpers'
+import { formatCurrency, formatDate } from '../../librery/helpers'
 import { FaTrash, FaSort } from 'react-icons/fa'
 import useGetAllChecks from '../../hook/useGetAllCheck'
 
@@ -103,14 +103,14 @@ const DashBoard = () => {
             />
 
             <Table striped bordered hover variant="dark" responsive>
-                <thead className="text-center">
+                <thead  className="text-center" >
                     <tr>
                         <th>Sel.</th>
                         <th
                             onClick={() => setOrder('numero')}
                             className="sortable"
                         >
-                            Número de cheque <FaSort />
+                            Número <FaSort />
                         </th>
                         <th
                             onClick={() => setOrder('cliente')}
@@ -128,13 +128,13 @@ const DashBoard = () => {
                             onClick={() => setOrder('fechaEntrega')}
                             className="sortable"
                         >
-                            Fecha de Cobro <FaSort />
+                            Pago <FaSort />
                         </th>
                         <th
                             onClick={() => setOrder('fechaEmision')}
                             className="sortable"
                         >
-                            Fecha de Emisión <FaSort />
+                            Emisión <FaSort />
                         </th>
                         <th
                             onClick={() => setOrder('importe')}
@@ -183,15 +183,15 @@ const DashBoard = () => {
                                         </td>
                                         <td className="text-center">
                                             {' '}
-                                            {elem.fechaEntrega}{' '}
+                                            {formatDate(elem.fechaEntrega)}{' '}
                                         </td>
                                         <td className="text-center">
                                             {' '}
-                                            {elem.fechaEmision}{' '}
+                                            {formatDate(elem.fechaEmision)}{' '}
                                         </td>
-                                        <td className="text-end fs-5">
+                                        <td className="text-end fs-6">
                                             {' '}
-                                            $ {formatCurrency(
+                                            {formatCurrency(
                                                 elem.importe
                                             )}{' '}
                                         </td>
