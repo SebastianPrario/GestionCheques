@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
@@ -16,6 +16,9 @@ import {
 import SelectBank from './Bank/Bank'
 import Swal from 'sweetalert2'
 import schema from './validationSchema'
+import { AxiosResponse } from 'axios'
+import ReactDOM from 'react-dom'
+import PdfCheq from './PdfCheq/PdfCheq'
 
 interface EnterCheckProps {
     show: boolean
@@ -30,6 +33,7 @@ interface EnterCheckProps {
 interface Info {
     situation: number
     cheques: boolean
+    chequesInfo?: any[]
 }
 export const EnterCheck: React.FC<EnterCheckProps> = ({
     show,
@@ -43,37 +47,87 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
     const [info, setInfo] = useState<Info>({
         situation: 1,
         cheques: false,
+        chequesInfo: [],
     })
     const { Formik } = formik
 
-    const situation = (cheques: []) => {
-        const maxSituation = Math.max(...cheques)
+   
+    const stateInfo = async (event: string | any[] , response: AxiosResponse<any, any> | undefined, chequesInfo: string | any[]) => {
+
+        const situation = (situation: []) : number => {
+        if (situation.length === 0) return 1
+        const maxSituation = Math.max(...situation)
         if (maxSituation !== 1) {
-            setInfo({ ...info, situation: maxSituation })
+            return  maxSituation 
+        } return 1
+        }
+        if (event.length === 11) {
+             const situationInfo : number = situation (response?.data[0].situacion)
+             const cheques = chequesInfo[0].entidades[0].detalle.map((elem: any) => ({
+                    nroCheque: elem.nroCheque || 0,
+                    fechaRechazo: elem.fechaRechazo || 0,
+                    monto: elem.monto || 0,
+                    fechaPago: elem.fechaDePago || 0,
+                    fechaPagoMulta: elem.fechaDePagoMulta || 0,
+                    causal : chequesInfo[0].causal
+                }));
+            if (chequesInfo.length !== 0 && response) {
+                return setInfo({ 
+                    situation : situationInfo,
+                    cheques: true, 
+                    chequesInfo: cheques})
+            } else if (chequesInfo.length !== 0) {
+                return setInfo({ ...info, cheques: true })
+            } else if (chequesInfo) {
+                return setInfo({ 
+                    situation : situationInfo, 
+                    cheques: false, 
+                    chequesInfo: cheques
+                })
+      
+            }
         }
     }
+
+    const handleCheques = () => {
+            const newWindow = window.open('', '')
+            if (newWindow) {
+                newWindow.document.write('<div id="Cheques-root"></div>')
+                newWindow.document.title = 'Cheques Rechazados'
+                newWindow.document.close()
+                ReactDOM.render(
+                    <PdfCheq chequesInfo = {info.chequesInfo}  />,
+                    newWindow.document.getElementById('pdf-order-root')
+                )
+            }
+    }
+    
+   
     const handleChangeCuit = async (e: string) => {
+        let response = null
+        let chequesInfo = null
+        setInfo({
+            situation: 1,
+            cheques: false,
+            chequesInfo: [],
+        })
+        if (e.length === 11) {
+             response = await getCuitInfo(e)
+             chequesInfo = await getChequesInfo(e)
+             stateInfo(e, response, chequesInfo)
+             console.log(chequesInfo)
+
+        }
+        return  response?.data[0].denominacion
+    }
+    
+    useEffect(() => { 
         setInfo({
             situation: 1,
             cheques: false,
         })
-        if (e.length === 11) {
-            const response = await getCuitInfo(e)
-            const chequesInfo = await getChequesInfo(e)
+      }, [show])
 
-            if (chequesInfo && chequesInfo.length !== 0) {
-                setInfo({ ...info, cheques: true })
-            }
-
-            if (response) {
-                situation(response?.data[0].situacion)
-            }
-
-            return response?.data[0].denominacion
-        }
-    }
-
-    console.log(info)
     return (
         <CustomModal show={show} onClose={onClose}>
             <Modal.Header closeButton onHide={onClose}>
@@ -103,7 +157,10 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                         await postCheckApi('cheques', header, values)
                         resetForm()
                         setBank('')
-
+                        setInfo({
+                            situation: 1,
+                            cheques: false,
+                        })
                         setOrderBy({
                             order: orderBy?.order || 'numero',
                             asc: orderBy?.asc === 'ASC' ? 'DES' : 'ASC',
@@ -133,7 +190,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                     setFieldValue,
                 }) => (
                     <Form noValidate onSubmit={handleSubmit}>
-                        <Row className="my-2 py-3 px-2">
+                        <Row className="my-2  px-2">
                             <Form.Group
                                 as={Col}
                                 md="6"
@@ -197,7 +254,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 </InputGroup>
                             </Form.Group>
                         </Row>
-                        <Row className="my-2 py-2 px-2">
+                        <Row className="my-1 py-2 px-2">
                             <Form.Group
                                 as={Col}
                                 md="6"
@@ -230,7 +287,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 <Form.Control.Feedback type="invalid" tooltip>
                                     {errors.librador}
                                 </Form.Control.Feedback>
-                                <Form.Label>Emisor del Cheque</Form.Label>
+                                <Form.Label className='mt-2'>Emisor del Cheque</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="librador"
@@ -283,22 +340,32 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Row>
-                        <Row className="align-items-center justify-content-center">
-                            <Col className="col-12  text-center">
+                        <Row className="d-flex text-start align-items-start">
+                            <Col className="col-8  text-center">
                                 <div style={{ minHeight: '40px' }}>
                                     {info.cheques && (
-                                        <p className="bg-danger px-1 me-4 d-inline-block">
+                                        <p className="fs-6 bg-danger px-1 me-4 d-inline-block">
                                             cuit con cheques rechazados
                                         </p>
                                     )}
                                     {info.situation !== 1 && (
                                         <p className="bg-danger px-1 d-inline-block">
-                                            cliente en situacion{' '}
+                                            cuit en situacion{' '}
                                             {info.situation}
                                         </p>
                                     )}
                                 </div>
                             </Col>
+                            <Col>
+                             {info.cheques && (
+                                <Button 
+                                    variant="outline-secondary"
+                                    size="sm"
+                                    onClick={handleCheques}>
+                                        ver cheques
+                                </Button>)}
+                            </Col>
+                           
                         </Row>
 
                         <Row>
