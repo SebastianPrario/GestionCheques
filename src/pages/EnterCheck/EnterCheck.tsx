@@ -132,6 +132,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
              chequesInfo = await getChequesInfo(e)
              stateInfo(e, response, chequesInfo)
         }
+        console.log(response)
         return  response?.data[0].denominacion
     }
     
@@ -141,6 +142,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
             cheques: false,
             chequesInfo: [],
         })
+        
       }, [show])
 
     return (

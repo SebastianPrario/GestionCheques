@@ -187,7 +187,7 @@ export const deleteBank = async (
 }
 export const getAllCheckByReport = async (
     headers: {},
-    order?: OrderBy,
+    order?: 'fecheEntrega',
     asc?: 'ASC' | 'DES'
 ) => {
     try {
@@ -224,6 +224,7 @@ export const getCheckByClient = async (headers: {}, client: string) => {
 export const getCuitInfo = async (cuit: string) => {
     try {
         const response = await apiService.get(`${URL}/emisor/info?cuit=${cuit}`)
+        console.log(response)
         return response
     } catch (error: unknown) {
         if (error instanceof Error) {

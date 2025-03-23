@@ -37,7 +37,7 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
             response = await getAllCheckByReport(headers)
         }
         const newWindow = window.open('', '')
-        console.log(inputValue)
+       
         if (newWindow && response?.data) {
             newWindow.document.write('<div id="pdf-order-root"></div>')
             newWindow.document.title = 'PDF Order'
@@ -53,7 +53,6 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
         }
         setReportOptions(null)
         setInputValue('')
-
         onClose()
     }
     const handleInputValue = (event: any) => {
@@ -81,7 +80,7 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
                                 onClick={handleOptionChange}
                             />
                             {reportOptions === type &&
-                                reportOptions !== 'Cheques en Cartera' && (
+                                reportOptions === 'Cheques por Cliente' && (
                                     <>
                                         <Form.Label
                                             htmlFor={`input-${type}`}

@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0,
     },
     tableRow: {
-        margin: 'auto',
+        margin: 0,
         flexDirection: 'row',
         height: 30,
     },
@@ -158,7 +158,6 @@ export const OrderPDF: React.FC<PdfReportProps> = ({
                     )}
                     <View style={styles.table}>
                         <View style={[styles.tableRow, styles.tableHeader]}>
-                            <Text style={styles.tableCell2}>#</Text>
                             <Text style={styles.tableCell}>Número</Text>
                             <Text style={styles.tableCell}>Importe</Text>
                             <Text style={styles.tableCell}>Librador</Text>
@@ -168,9 +167,7 @@ export const OrderPDF: React.FC<PdfReportProps> = ({
                         {data.map((elem: Check, index: number) => {
                             return (
                                 <View style={styles.tableRow} key={index}>
-                                    <Text style={styles.tableCell2}>
-                                        {index + 1}
-                                    </Text>
+                                   
                                     <Text style={styles.tableCell}>
                                         {elem.numero}
                                     </Text>
