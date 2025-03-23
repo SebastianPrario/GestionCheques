@@ -13,6 +13,7 @@ interface PdfCheqProps {
 }
 
 const PdfCheq: React.FC<PdfCheqProps> = ({ chequesInfo }) => {
+    console.log(chequesInfo)
     return (
         <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px' }}>
             <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>

@@ -35,6 +35,14 @@ interface Info {
     cheques: boolean
     chequesInfo?: any[]
 }
+interface ChequesInfo {
+    nroCheque: number
+    fechaRechazo: string
+    monto: number
+    fechaPago: string
+    fechaPagoMulta: string
+    causal: string
+}
 export const EnterCheck: React.FC<EnterCheckProps> = ({
     show,
     onClose,
@@ -52,8 +60,8 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
     const { Formik } = formik
 
    
-    const stateInfo = async (event: string | any[] , response: AxiosResponse<any, any> | undefined, chequesInfo: string | any[]) => {
-
+    const stateInfo = async (event: string | any[] , response: AxiosResponse<any, any> | undefined, chequesInfo: [] ) => {
+        const cheques : ChequesInfo[] = []
         const situation = (situation: []) : number => {
         if (situation.length === 0) return 1
         const maxSituation = Math.max(...situation)
@@ -62,15 +70,23 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
         } return 1
         }
         if (event.length === 11) {
-             const situationInfo : number = situation (response?.data[0].situacion)
-             const cheques = chequesInfo[0].entidades[0].detalle.map((elem: any) => ({
-                    nroCheque: elem.nroCheque || 0,
-                    fechaRechazo: elem.fechaRechazo || 0,
-                    monto: elem.monto || 0,
-                    fechaPago: elem.fechaDePago || 0,
-                    fechaPagoMulta: elem.fechaDePagoMulta || 0,
-                    causal : chequesInfo[0].causal
-                }));
+            const situationInfo : number = situation (response?.data[0].situacion)
+            chequesInfo?.forEach((causal : any) =>{
+                causal.entidades.forEach((entidades: { detalle: any [] }) => {
+                    entidades.detalle.forEach(cheque => {
+                        cheques.push({
+                            nroCheque: cheque.nroCheque || 0,
+                            fechaRechazo: cheque.fechaRechazo || 0,
+                            monto: cheque.monto || 'sin monto',
+                            fechaPago: cheque.fechaDePago || 'impago',
+                            fechaPagoMulta: cheque.fechaDePagoMulta || 'impaga',
+                            causal : causal.causal,
+                        })
+                    })
+                });
+                setInfo({... info, chequesInfo: cheques})                 
+            })
+     
             if (chequesInfo.length !== 0 && response) {
                 return setInfo({ 
                     situation : situationInfo,
@@ -97,12 +113,12 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                 newWindow.document.close()
                 ReactDOM.render(
                     <PdfCheq chequesInfo = {info.chequesInfo}  />,
-                    newWindow.document.getElementById('pdf-order-root')
+                    newWindow.document.getElementById('Cheques-root')
                 )
             }
     }
     
-   
+    
     const handleChangeCuit = async (e: string) => {
         let response = null
         let chequesInfo = null
@@ -115,8 +131,6 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
              response = await getCuitInfo(e)
              chequesInfo = await getChequesInfo(e)
              stateInfo(e, response, chequesInfo)
-             console.log(chequesInfo)
-
         }
         return  response?.data[0].denominacion
     }
@@ -125,6 +139,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
         setInfo({
             situation: 1,
             cheques: false,
+            chequesInfo: [],
         })
       }, [show])
 
