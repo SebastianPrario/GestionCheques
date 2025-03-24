@@ -161,7 +161,7 @@ export const OrderPDF: React.FC<PdfReportProps> = ({
                             <Text style={styles.tableCell}>Número</Text>
                             <Text style={styles.tableCell}>Importe</Text>
                             <Text style={styles.tableCell}>Librador</Text>
-                            <Text style={styles.tableCell}>Fecha</Text>
+                            <Text style={styles.tableCell}>Fecha Pago</Text>
                             <Text style={styles.tableCell}>Estado</Text>
                         </View>
                         {data.map((elem: Check, index: number) => {
@@ -179,7 +179,7 @@ export const OrderPDF: React.FC<PdfReportProps> = ({
                                     </Text>
                                     <Text style={styles.tableCell}>
                                         {new Date(
-                                            elem.fechaEmision
+                                            elem.fechaEntrega
                                         ).toLocaleDateString('es-AR')}
                                     </Text>
                                     <Text style={styles.tableCell}>

@@ -1,7 +1,7 @@
-import { Button, Form, Modal, Row } from 'react-bootstrap'
+import { createRoot } from 'react-dom/client';
+import { Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import { CustomModal } from '../CustomModal/CustomModal'
 import React, { useState } from 'react'
-import ReactDOM from 'react-dom'
 import PdfReport from './PdfReport'
 import { useAuth } from '../../contexts/AuthContext'
 import {
@@ -13,24 +13,37 @@ interface EnterCheckProps {
     show: boolean
     onClose: () => void
 }
-const reports = ['Cheques en Cartera', 'Cheques por Cliente']
+enum ReportOptions {
+    ChequesEnCartera = 'Cheques en Cartera',
+    ChequesPorCliente = 'Cheques por Cliente',
+}
+
+interface InputValue {
+    cliente: string
+    desde: string
+    hasta: string
+}
 export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
     const token = useAuth().user?.token
-    const [inputValue, setInputValue] = useState<string>('')
-    const [reportOptions, setReportOptions] = useState<string | null>(null)
     const headers = { authorization: `Bearer ${token}` }
+    const [inputValue, setInputValue] = useState<InputValue>(
+        {
+            cliente: '',
+            desde: '',
+            hasta: '',
+        }
+    )
+    const [reportOptions, setReportOptions] = useState<ReportOptions | null>(null)
+   
 
-    const handleOptionChange = async (event: any) => {
-        if (event.target.value === 'Cheques en Cartera') {
-            setReportOptions(event.target.value)
-        }
-        if (event.target.value === 'Cheques por Cliente') {
-            setReportOptions(event.target.value)
-        }
+    const handleOptionClick = (event: React.MouseEvent<HTMLInputElement>) => {
+        const selectedOption = (event.target as HTMLInputElement).value as ReportOptions
+        setReportOptions(selectedOption)
     }
 
     const handleClickSelection = async () => {
         let response
+     
         if (reportOptions === 'Cheques por Cliente') {
             response = await getCheckByClient(headers, inputValue)
         } else if (reportOptions === 'Cheques en Cartera') {
@@ -39,25 +52,37 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
         const newWindow = window.open('', '')
        
         if (newWindow && response?.data) {
-            newWindow.document.write('<div id="pdf-order-root"></div>')
-            newWindow.document.title = 'PDF Order'
-            newWindow.document.close()
-            ReactDOM.render(
-                <PdfReport
-                    data={response?.data}
-                    reportOptions={reportOptions ? reportOptions : ''}
-                    inputValue={inputValue}
-                />,
-                newWindow.document.getElementById('pdf-order-root')
-            )
-        }
+            newWindow.document.write('<div id="pdf-order-root"></div>');
+            newWindow.document.title = 'PDF Order';
+            newWindow.document.close();
+
+            const container = newWindow.document.getElementById('pdf-order-root');
+            if (container) {
+                const root = createRoot(container); // Crear un contenedor raíz
+                root.render(
+                    <PdfReport
+                        data={response?.data}
+                        reportOptions={reportOptions ? reportOptions : ''}
+                        inputValue={inputValue.cliente}
+                    />
+                );
+            }
         setReportOptions(null)
-        setInputValue('')
+        setInputValue({
+            cliente: '',
+            desde: '',
+            hasta: '',
+        })
         onClose()
     }
-    const handleInputValue = (event: any) => {
-        setInputValue(event.target.value)
     }
+    const handleInputValue = (event: any) => {
+        const value = event.target.value
+        const name = event.target.name
+        console.log(event.target.value , event.target.name)
+        setInputValue({ ...inputValue, [name]: value })
+    }
+    console.log(inputValue)
     return (
         <CustomModal show={show} onClose={onClose}>
             <Modal.Header closeButton onHide={onClose}>
@@ -68,8 +93,8 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
                 </Row>
             </Modal.Header>
             <Modal.Body>
-                <Form>
-                    {reports.map((type) => (
+                <div>
+                    {Object.values(ReportOptions).map((type) => (
                         <div key={`default-${type}`} className="mb-3">
                             <Form.Check
                                 type="radio"
@@ -77,29 +102,62 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
                                 label={type}
                                 name="reportOptions"
                                 value={type}
-                                onClick={handleOptionChange}
+                                onClick={handleOptionClick}
                             />
                             {reportOptions === type &&
                                 reportOptions === 'Cheques por Cliente' && (
-                                    <>
+                                    <> 
+                                    <Row className='d-flex mt-2'>
+                                        <Col className='col-8'>
                                         <Form.Label
                                             htmlFor={`input-${type}`}
-                                        ></Form.Label>
+                                        >Cliente</Form.Label>
                                         <Form.Control
+                                            className='col-4'
                                             type="text"
-                                            id={`input-${type}`}
+                                            name= "cliente"
                                             aria-describedby={`detailsHelpBlock-${type}`}
-                                            value={inputValue}
+                                            value={inputValue.cliente}
                                             onChange={(e) =>
                                                 handleInputValue(e)
                                             }
                                         />
-                                        <Form.Text
-                                            id={`detailsHelpBlock-${type}`}
-                                            muted
-                                        >
-                                            Ingrese los detalles para {type}.
-                                        </Form.Text>
+                                        </Col>
+                                    </Row>
+                                    <Row className='d-flex mt-2'>
+                                        <Col className='col-6'>
+                                         <Form.Label
+                                            htmlFor={`input-${type}`}
+                                        >desde</Form.Label>
+                                        <Form.Control
+                                            className='col-6'
+                                            type="date"
+                                            name= "desde"
+                                            aria-describedby={`detailsHelpBlock-${type}`}
+                                            value={inputValue.desde}
+                                            onChange={(e) =>
+                                                handleInputValue(e)
+                                            }
+                                        />
+                                        </Col>
+                                        <Col>
+                                          <Form.Label
+                                            htmlFor={`input-${type}`}
+                                        >hasta</Form.Label>
+                                        <Form.Control className='col-6'
+                                            type="date"
+                                            name= "hasta"
+                                            aria-describedby={`detailsHelpBlock-${type}`}
+                                            value={inputValue.hasta}
+                                            onChange={(e) =>
+                                                handleInputValue(e)
+                                            }
+                                        />
+                                        </Col>
+                                       
+                                    
+                                        </Row>
+                                       
                                     </>
                                 )}
                         </div>
@@ -111,7 +169,7 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
                         {' '}
                         Listar
                     </Button>
-                </Form>
+                </div>
             </Modal.Body>
         </CustomModal>
     )

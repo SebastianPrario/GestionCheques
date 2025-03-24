@@ -11,7 +11,7 @@ import OrderPayment from '../OrderPayment/OrderPayment'
 import Spinner from '../../components/Spinner/Spinner'
 import { formatCurrency, formatDate } from '../../librery/helpers'
 import { FaTrash, FaSort } from 'react-icons/fa'
-import useGetAllChecks from '../../hook/useGetAllCheck'
+import useGetAllChecks from '../../hooks/useGetAllCheck'
 
 const DashBoard = () => {
     const { checkList, setOrderBy, orderBy, setCheckList } = useGetAllChecks()

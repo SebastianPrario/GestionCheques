@@ -22,6 +22,11 @@ export interface Order {
     otherPayment?: otherPayment[]
 }
 
+interface InputValue {
+    cliente: string
+    desde: string
+    hasta: string   
+}
 export type OrderBy =
     | 'numero'
     | 'importe'
@@ -203,11 +208,15 @@ export const getAllCheckByReport = async (
         }
     }
 }
-export const getCheckByClient = async (headers: {}, client: string) => {
-    console.log(client)
+export const getCheckByClient = async (headers: {}, inputValue: InputValue ) => {
+    const { cliente , desde , hasta } = inputValue
+    const formatDate = (date: string): string => {
+        return date.replace(/-/g, '/'); // Reemplaza los guiones por barras
+      };
     try {
+
         const response = await apiService.get(
-            `${URL}/cheques/cliente?cliente=${client}`,
+            `${URL}/cheques/cliente?cliente=${cliente}&desde=${formatDate(desde)}&hasta=${formatDate(hasta)}`,
             {
                 headers,
             }
