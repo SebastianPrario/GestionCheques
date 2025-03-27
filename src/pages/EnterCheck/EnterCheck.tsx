@@ -8,10 +8,10 @@ import * as formik from 'formik'
 import { CustomModal } from '../CustomModal/CustomModal'
 import { format } from 'date-fns'
 import {
+    fetchApi,
     getChequesInfo,
     getCuitInfo,
     OrderBy,
-    postCheckApi,
 } from '../../services/apiService'
 import SelectBank from './Bank/Bank'
 import Swal from 'sweetalert2'
@@ -46,7 +46,6 @@ interface ChequesInfo {
 export const EnterCheck: React.FC<EnterCheckProps> = ({
     show,
     onClose,
-    header,
     setOrderBy,
     orderBy,
 }) => {
@@ -59,66 +58,69 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
     })
     const { Formik } = formik
 
-   
-    const stateInfo = async (event: string | any[] , response: AxiosResponse<any, any> | undefined, chequesInfo: [] ) => {
-        const cheques : ChequesInfo[] = []
-        const situation = (situation: []) : number => {
-        if (situation.length === 0) return 1
-        const maxSituation = Math.max(...situation)
-        if (maxSituation !== 1) {
-            return  maxSituation 
-        } return 1
+    const stateInfo = async (
+        event: string | any[],
+        response: AxiosResponse<any, any> | undefined,
+        chequesInfo: []
+    ) => {
+        const cheques: ChequesInfo[] = []
+        const situation = (situation: []): number => {
+            if (situation.length === 0) return 1
+            const maxSituation = Math.max(...situation)
+            if (maxSituation !== 1) {
+                return maxSituation
+            }
+            return 1
         }
         if (event.length === 11) {
-            const situationInfo : number = situation (response?.data[0].situacion)
-            chequesInfo?.forEach((causal : any) =>{
-                causal.entidades.forEach((entidades: { detalle: any [] }) => {
-                    entidades.detalle.forEach(cheque => {
+            const situationInfo: number = situation(response?.data[0].situacion)
+            chequesInfo?.forEach((causal: any) => {
+                causal.entidades.forEach((entidades: { detalle: any[] }) => {
+                    entidades.detalle.forEach((cheque) => {
                         cheques.push({
                             nroCheque: cheque.nroCheque || 0,
                             fechaRechazo: cheque.fechaRechazo || 0,
                             monto: cheque.monto || 'sin monto',
                             fechaPago: cheque.fechaDePago || 'impago',
                             fechaPagoMulta: cheque.fechaDePagoMulta || 'impaga',
-                            causal : causal.causal,
+                            causal: causal.causal,
                         })
                     })
-                });
-                setInfo({... info, chequesInfo: cheques})                 
+                })
+                setInfo({ ...info, chequesInfo: cheques })
             })
-     
+
             if (chequesInfo.length !== 0 && response) {
-                return setInfo({ 
-                    situation : situationInfo,
-                    cheques: true, 
-                    chequesInfo: cheques})
+                return setInfo({
+                    situation: situationInfo,
+                    cheques: true,
+                    chequesInfo: cheques,
+                })
             } else if (chequesInfo.length !== 0) {
                 return setInfo({ ...info, cheques: true })
             } else if (chequesInfo) {
-                return setInfo({ 
-                    situation : situationInfo, 
-                    cheques: false, 
-                    chequesInfo: cheques
+                return setInfo({
+                    situation: situationInfo,
+                    cheques: false,
+                    chequesInfo: cheques,
                 })
-      
             }
         }
     }
 
     const handleCheques = () => {
-            const newWindow = window.open('', '')
-            if (newWindow) {
-                newWindow.document.write('<div id="Cheques-root"></div>')
-                newWindow.document.title = 'Cheques Rechazados'
-                newWindow.document.close()
-                ReactDOM.render(
-                    <PdfCheq chequesInfo = {info.chequesInfo}  />,
-                    newWindow.document.getElementById('Cheques-root')
-                )
-            }
+        const newWindow = window.open('', '')
+        if (newWindow) {
+            newWindow.document.write('<div id="Cheques-root"></div>')
+            newWindow.document.title = 'Cheques Rechazados'
+            newWindow.document.close()
+            ReactDOM.render(
+                <PdfCheq chequesInfo={info.chequesInfo} />,
+                newWindow.document.getElementById('Cheques-root')
+            )
+        }
     }
-    
-    
+
     const handleChangeCuit = async (e: string) => {
         let response = null
         let chequesInfo = null
@@ -128,22 +130,21 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
             chequesInfo: [],
         })
         if (e.length === 11) {
-             response = await getCuitInfo(e)
-             chequesInfo = await getChequesInfo(e)
-             stateInfo(e, response, chequesInfo)
+            response = await getCuitInfo(e)
+            chequesInfo = await getChequesInfo(e)
+            stateInfo(e, response, chequesInfo)
         }
         console.log(response)
-        return  response?.data[0].denominacion
+        return response?.data[0].denominacion
     }
-    
-    useEffect(() => { 
+
+    useEffect(() => {
         setInfo({
             situation: 1,
             cheques: false,
             chequesInfo: [],
         })
-        
-      }, [show])
+    }, [show])
 
     return (
         <CustomModal show={show} onClose={onClose}>
@@ -171,7 +172,25 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                         ) {
                             return Swal.fire('falta elegir banco')
                         }
-                        await postCheckApi('cheques', header, values)
+                        const response = await fetchApi(
+                            'cheques',
+                            'POST',
+                            values
+                        )
+                        if (response?.status === 201) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Cheque Agregado',
+                                showConfirmButton: false,
+                                timer: 1500,
+                            })
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error al agregar cheque',
+                                text: response?.data.message,
+                            })
+                        }
                         resetForm()
                         setBank('')
                         setInfo({
@@ -304,7 +323,9 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 <Form.Control.Feedback type="invalid" tooltip>
                                     {errors.librador}
                                 </Form.Control.Feedback>
-                                <Form.Label className='mt-2'>Emisor del Cheque</Form.Label>
+                                <Form.Label className="mt-2">
+                                    Emisor del Cheque
+                                </Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="librador"
@@ -367,22 +388,22 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                     )}
                                     {info.situation !== 1 && (
                                         <p className="bg-danger px-1 d-inline-block">
-                                            cuit en situacion{' '}
-                                            {info.situation}
+                                            cuit en situacion {info.situation}
                                         </p>
                                     )}
                                 </div>
                             </Col>
                             <Col>
-                             {info.cheques && (
-                                <Button 
-                                    variant="outline-secondary"
-                                    size="sm"
-                                    onClick={handleCheques}>
+                                {info.cheques && (
+                                    <Button
+                                        variant="outline-secondary"
+                                        size="sm"
+                                        onClick={handleCheques}
+                                    >
                                         ver cheques
-                                </Button>)}
+                                    </Button>
+                                )}
                             </Col>
-                           
                         </Row>
 
                         <Row>

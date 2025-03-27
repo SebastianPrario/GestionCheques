@@ -7,7 +7,7 @@ import React, { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Check } from '../../contexts/CheckContext'
-import { getCheckByNumber } from '../../services/apiService'
+import { fetchApi } from '../../services/apiService'
 import CheckModal from '../CheckModal/CheckModal'
 import { Order } from '../../contexts/CheckContext'
 import Reports from '../Reports/Reports'
@@ -20,6 +20,7 @@ import {
     FaPlus,
     FaClipboardList,
 } from 'react-icons/fa'
+
 interface NavBarProps {
     checkSelection?: Check[] | []
     setModalShow?: React.Dispatch<React.SetStateAction<boolean>>
@@ -47,7 +48,6 @@ const NavBar: React.FC<NavBarProps> = ({
     setModalOrder,
     checkSelection,
 }) => {
-    const token = useAuth().user?.token
     const { signOutUser } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
@@ -69,11 +69,11 @@ const NavBar: React.FC<NavBarProps> = ({
     }
     async function handleClickSearch(): Promise<any> {
         try {
-            const foundCheck = await getCheckByNumber(
-                Number(searchValue),
-                token
-                    ? { authorization: `bear ${token}` }
-                    : { authorization: '' }
+            const foundCheck = await fetchApi(
+                '/cheques/number',
+                'GET',
+                undefined,
+                { number: searchValue }
             )
             const data = foundCheck?.data
             if (data == 'Cheque no encontrado') {

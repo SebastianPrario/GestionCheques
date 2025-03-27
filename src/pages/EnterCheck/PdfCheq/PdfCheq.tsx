@@ -28,22 +28,34 @@ const PdfCheq: React.FC<PdfCheqProps> = ({ chequesInfo }) => {
             >
                 <thead>
                     <tr>
-                        <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                        <th
+                            style={{ border: '1px solid #ddd', padding: '8px' }}
+                        >
                             Nro Cheque
                         </th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                        <th
+                            style={{ border: '1px solid #ddd', padding: '8px' }}
+                        >
                             Fecha Rechazo
                         </th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                        <th
+                            style={{ border: '1px solid #ddd', padding: '8px' }}
+                        >
                             Monto
                         </th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                        <th
+                            style={{ border: '1px solid #ddd', padding: '8px' }}
+                        >
                             Fecha Pago
                         </th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                        <th
+                            style={{ border: '1px solid #ddd', padding: '8px' }}
+                        >
                             Fecha Pago Multa
                         </th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px' }}>
+                        <th
+                            style={{ border: '1px solid #ddd', padding: '8px' }}
+                        >
                             Causal
                         </th>
                     </tr>
@@ -94,7 +106,9 @@ const PdfCheq: React.FC<PdfCheqProps> = ({ chequesInfo }) => {
                                     textAlign: 'center',
                                 }}
                             >
-                                {cheque.fechaPagoMulta ? cheque.fechaPagoMulta : 'impaga'} 
+                                {cheque.fechaPagoMulta
+                                    ? cheque.fechaPagoMulta
+                                    : 'impaga'}
                             </td>
                             <td
                                 style={{

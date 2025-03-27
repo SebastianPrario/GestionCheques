@@ -1,7 +1,7 @@
 import Swal from 'sweetalert2'
 import axios from 'axios'
 import { SignUp } from './types'
-import { format } from 'date-fns';
+import { format } from 'date-fns'
 
 export const postMethod = async (data: SignUp) => {
     const URL: string | undefined = import.meta.env.VITE_API_URL_SIGNIN
@@ -85,9 +85,9 @@ export const formatCurrency = (value: number) => {
         currency: 'ARS',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-    }).format(value);
+    }).format(value)
 }
 
 export const formatDate = (date: string): string => {
-    return format(new Date(date), 'dd/MM/yyyy');
-};
+    return format(new Date(date), 'dd/MM/yyyy')
+}

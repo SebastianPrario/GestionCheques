@@ -4,7 +4,7 @@ import { AuthContext } from '../../contexts/AuthContext'
 import { Button, Form } from 'react-bootstrap'
 import Table from 'react-bootstrap/Table'
 import NavBar from '../NavBar/NavBar'
-import { deleteCheckApi, OrderBy } from '../../services/apiService'
+import { fetchApi, OrderBy } from '../../services/apiService'
 import Swal from 'sweetalert2'
 import EnterCheck from '../EnterCheck/EnterCheck'
 import OrderPayment from '../OrderPayment/OrderPayment'
@@ -47,7 +47,7 @@ const DashBoard = () => {
             }
         }
     }
-    const deleteCheck = async (id: number) => {
+    const handleDeleteCheck = async (id: number = 0) => {
         const result = await Swal.fire({
             title: '¿Estás seguro?',
             text: 'No podrás revertir esto.',
@@ -58,16 +58,17 @@ const DashBoard = () => {
             confirmButtonText: 'Sí, eliminarlo',
             cancelButtonText: 'Cancelar',
         })
+        if (result.isDismissed) {
+            Swal.fire('No se eliminó el cheque', '', 'info')
+            return
+        }
         if (result.isConfirmed) {
-            const response = await deleteCheckApi(header, id)
-            if (response?.statusText === 'ok') {
+            const response = await fetchApi(`/cheques/${id}`, 'DELETE')
+            if (response?.statusText === 'OK') {
                 Swal.fire('¡Eliminado!')
+                setCheckList(checkList?.filter((check) => check.id !== id))
             }
         }
-        setCheckList(checkList?.filter((check) => check.id !== id))
-    }
-    const handleDeleteChange = (id: number = 0): void => {
-        deleteCheck(id)
     }
 
     const setOrder = (param: OrderBy) => {
@@ -103,7 +104,7 @@ const DashBoard = () => {
             />
 
             <Table striped bordered hover variant="dark" responsive>
-                <thead  className="text-center" >
+                <thead className="text-center">
                     <tr>
                         <th>Sel.</th>
                         <th
@@ -191,9 +192,7 @@ const DashBoard = () => {
                                         </td>
                                         <td className="text-end fs-6">
                                             {' '}
-                                            {formatCurrency(
-                                                elem.importe
-                                            )}{' '}
+                                            {formatCurrency(elem.importe)}{' '}
                                         </td>
                                         <td className="text-start ps-4">
                                             {' '}
@@ -202,7 +201,7 @@ const DashBoard = () => {
                                         <td className="d-flex -justify-content-center">
                                             <Button
                                                 onClick={() =>
-                                                    handleDeleteChange(elem.id)
+                                                    handleDeleteCheck(elem.id)
                                                 }
                                                 className=""
                                                 variant="danger"

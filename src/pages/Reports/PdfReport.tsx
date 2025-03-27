@@ -167,7 +167,6 @@ export const OrderPDF: React.FC<PdfReportProps> = ({
                         {data.map((elem: Check, index: number) => {
                             return (
                                 <View style={styles.tableRow} key={index}>
-                                   
                                     <Text style={styles.tableCell}>
                                         {elem.numero}
                                     </Text>

@@ -169,9 +169,12 @@ const LoginPage: FC = () => {
                                     className="ps-4 d-none d-md-block"
                                     alignContent={'center'}
                                 >
-                                    <Image src={logo} 
-                                    className='ms-5' 
-                                    fluid roundedCircle />
+                                    <Image
+                                        src={logo}
+                                        className="ms-5"
+                                        fluid
+                                        roundedCircle
+                                    />
                                 </Grid>
                             </Grid>
                             <Grid container justifyContent="center">
