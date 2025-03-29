@@ -37,15 +37,7 @@ export type OrderBy =
 
 const URL = import.meta.env.VITE_API_URL
 
-export const instance = axios.create({
-    baseURL: URL,
-    headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
-    },
-})
 
-console.log(instance)
 export const apiService = axios.create({ baseURL: URL })
 
 export const fetchApi = async <T>(
@@ -54,7 +46,14 @@ export const fetchApi = async <T>(
     data?: T,
     params?: { [key: string]: string | number }
 ) => {
-    console.log(params, endpoint, method)
+    
+    const instance = axios.create({
+    baseURL: URL,
+    headers: {
+        Authorization: `Bearer ${sessionStorage.getItem('userGestionToken')}`,
+        'Content-Type': 'application/json',
+    }})
+   
     try {
         const response = await instance.request({
             url: `${endpoint}`,
