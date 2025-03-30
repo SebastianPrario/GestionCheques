@@ -62,7 +62,7 @@ const DashBoard = () => {
         if (result.isConfirmed) {
             const response = await fetchApi(`/cheques/${id}`, 'DELETE')
             console.log(response)
-            if (response?.statusText === 'OK') {
+            if (response?.status === 200) {
                 Swal.fire('¡Eliminado!')
                 setCheckList(checkList?.filter((check) => check.id !== id))
             }
