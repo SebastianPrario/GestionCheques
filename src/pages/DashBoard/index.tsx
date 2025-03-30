@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react'
+import React, {  useState } from 'react'
 import { Check } from '../../contexts/CheckContext'
-import { AuthContext } from '../../contexts/AuthContext'
+
 import NavBar from '../NavBar/NavBar'
 import { fetchApi, OrderBy } from '../../services/apiService'
 import Swal from 'sweetalert2'
@@ -14,9 +14,8 @@ const DashBoard = () => {
     const [checkedSelection, setCheckedSelection] = useState<Check[]>([]) // crea un objeto con los elementos seleccionado
     const [modalShow, setModalShow] = useState(false)
     const [modalOrder, setModalOrder] = useState(false)
-    const authContext = useContext(AuthContext)
-    const token = authContext && authContext.user?.token
-    const header = { authorization: `bear ${token}` }
+  
+   
     const onClose = () => {
         setModalShow(false)
     }
@@ -58,8 +57,11 @@ const DashBoard = () => {
             Swal.fire('No se eliminó el cheque', '', 'info')
             return
         }
+        console.log(result)
+        
         if (result.isConfirmed) {
             const response = await fetchApi(`/cheques/${id}`, 'DELETE')
+            console.log(response)
             if (response?.statusText === 'OK') {
                 Swal.fire('¡Eliminado!')
                 setCheckList(checkList?.filter((check) => check.id !== id))
@@ -89,8 +91,7 @@ const DashBoard = () => {
                 setCheckedSelection={setCheckedSelection}
                 setOrderBy={setOrderBy}
                 orderBy={orderBy}
-                header={header}
-            />
+                />
             )}
             {modalShow &&
              <EnterCheck
@@ -98,7 +99,7 @@ const DashBoard = () => {
                 onClose={onClose}
                 setOrderBy={setOrderBy}
                 orderBy={orderBy}
-                header={header}
+               
             />
             }
            

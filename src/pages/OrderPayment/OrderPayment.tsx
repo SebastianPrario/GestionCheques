@@ -16,7 +16,6 @@ interface EnterCheckProps {
     onClose: () => void
     checkSelection: Check[]
     setCheckedSelection: React.Dispatch<React.SetStateAction<Check[] | []>>
-    header: { authorization: string }
     setOrderBy: Dispatch<
         SetStateAction<{ order: OrderBy; asc: 'ASC' | 'DES' } | null>
     >
