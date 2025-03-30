@@ -7,8 +7,8 @@ import {
     PDFViewer,
 } from '@react-pdf/renderer'
 import { useEffect, useState } from 'react'
-import { formatCurrency, headerToken } from '../../../librery/helpers'
-import { getApiData } from '../../../services/apiService'
+import { formatCurrency } from '../../../librery/helpers'
+import { fetchApi} from '../../../services/apiService'
 import './PdfDown.css'
 
 interface cheque {
@@ -34,7 +34,6 @@ interface OrderDetail {
 
 interface reactProps {
     id: number | undefined
-    token: string | undefined
 }
 
 const styles = StyleSheet.create({
@@ -225,25 +224,23 @@ export const OrderPDF = (data: any) => {
     )
 }
 
-const PdfOrder: React.FC<reactProps> = ({ id, token }) => {
+const PdfOrder: React.FC<reactProps> = ({ id }) => {
     const [dataOrder, setDataOrder] = useState<OrderDetail | null>(null)
     useEffect(() => {
         if (!dataOrder) {
-            if (id && token) getOrder(id, token)
+            if (id) getOrder(id)
         }
-    }, [dataOrder, id, token])
+    }, [dataOrder, id])
 
-    const getOrder = async (id: number, token: any) => {
+    const getOrder = async (id: number) => {
         try {
-            const headers = token && headerToken(token)
-            const response =
-                headers && (await getApiData(`order/${id}`, headers))
+            const response = await fetchApi(`/order/${id}`, 'GET')
             response && setDataOrder(response.data)
         } catch (error) {
             console.log(error)
         }
     }
-    console.log(dataOrder)
+  
 
     return (
         <div className="pdf-container">

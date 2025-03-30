@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import * as formik from 'formik'
 import { CustomModal } from '../CustomModal/CustomModal'
-import { createOrderApi, Order, OrderBy } from '../../services/apiService'
+import { fetchApi, Order, OrderBy } from '../../services/apiService'
 import { Check } from '../../contexts/CheckContext'
 import Swal from 'sweetalert2'
 import { formatCurrency } from '../../librery/helpers'
@@ -28,7 +28,6 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
     onClose,
     checkSelection,
     setCheckedSelection,
-    header,
     setOrderBy,
     orderBy,
 }) => {
@@ -61,7 +60,8 @@ export const OrderPayment: React.FC<EnterCheckProps> = ({
             ]
             values.otherPayment = prop
             values.creationDate = new Date().toISOString()
-            await createOrderApi('order', header, values)
+            await fetchApi(
+                '/order', 'POST', values)
             resetForm()
             setCheckedSelection([])
             setInput({ p0: '', p1: '', p2: '', p3: 0, p4: 0, p5: 0 })

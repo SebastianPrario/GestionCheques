@@ -1,4 +1,6 @@
 import axios from 'axios'
+import Swal from 'sweetalert2'
+import { SignUp } from './../librery/types'
 
 export interface otherPayment {
     property: string
@@ -21,11 +23,6 @@ export interface Order {
     otherPayment?: otherPayment[]
 }
 
-interface InputValue {
-    cliente: string
-    desde: string
-    hasta: string
-}
 export type OrderBy =
     | 'numero'
     | 'importe'
@@ -67,214 +64,91 @@ export const fetchApi = async <T>(
     }
 }
 
-// export const getCheckApi = async (
-//     headers: {},
-//     order?: OrderBy,
-//     asc?: 'ASC' | 'DES'
-// ) => {
-//     try {
-//         const response =  await apiService.get(`${URL}/cheques?orderBy=${order}${asc}`, {
-//                   headers,
-//               })
 
-//         return response
-//     } catch (error: any) {
-//         if (error?.response.data.message === 'Token invalido o ruta protegida')
-//             return 'token invalido'
-//     }
-// }
-// export const getCheckByNumber = async (
-//     numberCheck: number,
-//     headers: { authorization: string }
-// ) => {
-//     try {
-//         const response = await apiService.get(
-//             `${URL}/cheques/number?number=${numberCheck}`,
-//             { headers }
-//         )
-//         return response
-//     } catch (error: unknown) {
-//         if (error instanceof Error) {
-//             console.log(error.message)
-//         }
-//     }
-// }
-// export const deleteCheckApi = async (headers: {}, id: number) => {
-//     try {
-//         const URLAPI = `${URL}/cheques`
-//         const response = await apiService.delete(`${URLAPI}/${id}`, { headers })
-//         return response
-//     } catch (error: unknown) {
-//         if (error instanceof Error) {
-//             throw new Error(`error axios check: ${error.message}`)
-//         }
-//     }
-// }
-// export const postCheckApi = async (
-//     endpoint: string,
-//     headers: { authorization: string } | undefined,
-//     data: Check
-// ) => {
-//     try {
-//         const URLAPI = `${URL}/${endpoint}`
-//         const response = await apiService.post(`${URLAPI}`, data, { headers })
-//         console.log(response)
-//         return response
-//     } catch (error: unknown) {
-//         if (error instanceof Error) {
-//             console.log(error)
-//             throw new Error(`error axios check: ${error.message}`)
-//         }
-//     }
-// }
-
-export const createOrderApi = async (
-    endpoint: string,
-    headers: { authorization: string } | undefined,
-    data: Order
-) => {
-    try {
-        const URLAPI = `${URL}/${endpoint}`
-        const response = await apiService.post(`${URLAPI}`, data, { headers })
-        return response
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            throw new Error(`error axios check: ${error.message}`)
-        }
-    }
-}
-
-export const getApiData = async (
-    endpoint: string,
-    headers: { authorization: string }
-) => {
-    try {
-        const response = await apiService.get(`${URL}/${endpoint}`, { headers })
-        return response
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.log(error.message)
-        }
-    }
-}
-
-export const deleteOrderApi = async (
-    endpoint: string,
-    headers: { authorization: string } | undefined,
-    id: number
-) => {
-    try {
-        const URLAPI = `${URL}/${endpoint}`
-        const response = await apiService.delete(`${URLAPI}/${id}`, { headers })
-        return response?.data
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            throw new Error(`error axios check: ${error.message}`)
-        }
-    }
-}
-
-export const getBankData = async (headers: { authorization: string }) => {
-    try {
-        const response = await apiService.get(`${URL}/bank`, { headers })
-        return response
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.log(error.message)
-        }
-    }
-}
-
-export const createBank = async (
-    headers: { authorization: string } | undefined,
-    data: NewBank
-) => {
-    try {
-        const URLAPI = `${URL}/bank`
-        const response = await apiService.post(`${URLAPI}`, data, { headers })
-        return response
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            throw new Error(`error axios check: ${error.message}`)
-        }
-    }
-}
-
-export const deleteBank = async (
-    headers: { authorization: string } | undefined,
-    idBank: number
-) => {
-    try {
-        const URLAPI = `${URL}/bank`
-        const response = await apiService.delete(`${URLAPI}/${idBank}`, {
-            headers,
+export const getCuitInfo = async(
+        endpoint: string,
+        params?: { [key: string]: string | number }
+    ) => {
+        
+        const instance = axios.create({
+        baseURL: URL,
         })
-        return response
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            throw new Error(`error axios check: ${error.message}`)
-        }
-    }
-}
-export const getAllCheckByReport = async (
-    headers: {},
-    order?: 'fecheEntrega',
-    asc?: 'ASC' | 'DES'
-) => {
-    try {
-        const response = order
-            ? await apiService.get(`${URL}/cheques?orderBy=${order}${asc}`, {
-                  headers,
-              })
-            : await apiService.get(`${URL}/cheques`, { headers })
-        return response
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.log(error.message)
-        }
-    }
-}
-export const getCheckByClient = async (headers: {}, inputValue: InputValue) => {
-    const { cliente, desde, hasta } = inputValue
-    const formatDate = (date: string): string => {
-        return date.replace(/-/g, '/') // Reemplaza los guiones por barras
-    }
-    try {
-        const response = await apiService.get(
-            `${URL}/cheques/cliente?cliente=${cliente}&desde=${formatDate(desde)}&hasta=${formatDate(hasta)}`,
-            {
-                headers,
-            }
-        )
-        console.log(response)
-        return response
-    } catch (error: unknown) {
-        if (error instanceof Error) {
+        try {
+            const response = await instance.request({
+                url: `${endpoint}`,
+                method: 'GET',
+                params,
+                
+            })
+       
+            return response
+        } catch (error: unknown) {
             console.log(error)
         }
+    
+}
+   
+   
+   
+   
+   
+   
+
+export const fetchLogin = async (data: SignUp) => {
+    const URL: string | undefined = import.meta.env.VITE_API_URL_SIGNIN
+    try {
+        if (URL) {
+            const response = await axios.post(URL, data)
+            if (response.data === 'usuario o password incorrecta') {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'email o contraseña incorrecta',
+                    icon: 'error',
+                    confirmButtonText: 'error',
+                })
+            }
+           
+            return response.data
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'email o contraseña incorrecta',
+            icon: 'error',
+            confirmButtonText: 'aceptar',
+        })
+        return
     }
 }
 
-export const getCuitInfo = async (cuit: string) => {
+export const fetchSignUp = async (data: SignUp) => {
+    const URL: string | undefined = import.meta.env.VITE_API_URL_SIGNUP
     try {
-        const response = await apiService.get(`${URL}/emisor/info?cuit=${cuit}`)
-        console.log(response)
-        return response
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.log(error.message)
+        if (URL) {
+            const response = await axios.post(URL, data)
+            console.log(response)
+            if (response) {
+                Swal.fire({
+                    title: 'Usuario Creado',
+                    icon: 'success',
+                    confirmButtonText: 'cerrar',
+                })
+                return response
+            }
         }
-    }
-}
-export const getChequesInfo = async (cuit: string) => {
-    try {
-        const response = await apiService.get(
-            `${URL}/emisor/cheques?cuit=${cuit}`
-        )
-        return response.data
     } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.log(error.message)
+        if (axios.isAxiosError(error)) {
+            if (error.response?.data?.message === 'email existente') {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Email Existente',
+                    icon: 'error',
+                    confirmButtonText: 'cerrar',
+                })
+            }
+        } else {
+            console.error('Unexpected error:', error)
         }
     }
 }

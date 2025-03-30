@@ -9,7 +9,6 @@ import { CustomModal } from '../CustomModal/CustomModal'
 import { format } from 'date-fns'
 import {
     fetchApi,
-    getChequesInfo,
     getCuitInfo,
     OrderBy,
 } from '../../services/apiService'
@@ -61,8 +60,9 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
     const stateInfo = async (
         event: string | any[],
         response: AxiosResponse<any, any> | undefined,
-        chequesInfo: []
+        chequesInfo: any[] = []
     ) => {
+        console.log(response)
         const cheques: ChequesInfo[] = []
         const situation = (situation: []): number => {
             if (situation.length === 0) return 1
@@ -130,14 +130,21 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
             chequesInfo: [],
         })
         if (e.length === 11) {
-            response = await getCuitInfo(e)
-            chequesInfo = await getChequesInfo(e)
-            stateInfo(e, response, chequesInfo)
+            response = await getCuitInfo(
+                '/emisor/info',
+                { cuit: e}
+            )
+            chequesInfo = await getCuitInfo(
+                '/emisor/cheques',
+                {cuit:e}
+            )
+            if (chequesInfo !== null && response !== null) {
+            stateInfo(e, response ,chequesInfo?.data)
         }
-        console.log(response)
+      
         return response?.data[0].denominacion
+        }
     }
-
     useEffect(() => {
         setInfo({
             situation: 1,

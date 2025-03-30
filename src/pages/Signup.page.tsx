@@ -3,9 +3,9 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import { FC, useState } from 'react'
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form'
 import { boolean, object, string, TypeOf } from 'zod'
-import FormInput from '../components/FormInput'
+import FormInput from '../components/FormInput/FormInput'
 import Styles from './Login/styles'
-import { signUp } from '../librery/helpers'
+import { fetchSignUp } from '../services/apiService'
 import { useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
 
@@ -52,8 +52,8 @@ const SignupPage: FC = () => {
             password: values.password,
             role: isChecked,
         }
-        console.log(data)
-        const response: any = await signUp(data)
+       
+        const response: any = await fetchSignUp(data)
         if (response?.status === 201) {
             navigate('/')
         }

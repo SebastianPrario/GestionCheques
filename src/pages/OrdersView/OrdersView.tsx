@@ -1,30 +1,30 @@
-import { useContext, useEffect, useState } from 'react'
 import { Order } from '../../contexts/CheckContext'
-import { AuthContext } from '../../contexts/AuthContext'
 import Table from 'react-bootstrap/Table'
 import NavBar from '../NavBar/NavBar'
 import { Button } from 'react-bootstrap'
-import { headerToken } from '../../librery/helpers'
-import { deleteOrderApi, getApiData } from '../../services/apiService'
+import {  fetchApi } from '../../services/apiService'
 import PdfOrder from './Pdfview/PdfDown'
 import ReactDOM from 'react-dom'
 import Spinner from '../../components/Spinner/Spinner'
 import Swal from 'sweetalert2'
 import { FaTrash, FaEye } from 'react-icons/fa'
+import useFetch from '../../hooks/useFetch'
 const OrdersView = () => {
-    const [orders, setOrders] = useState<Order[] | null | undefined>(null)
-    const [loading, setLoading] = useState(false)
-    const authContext = useContext(AuthContext)
-    const token = authContext && authContext.user?.token
-    const headers = headerToken(token || '')
+  
+   
+   
 
-    const getOrders = async () => {
-        setLoading(true)
-        const response = await getApiData('order/allorders', headers)
-        const data: Order[] = response?.data
-        setOrders(data)
-        setLoading(false)
-    }
+    const { 
+        data: orders,
+        loading,
+        refetch,
+    } = useFetch<Order[]>(
+        'order/allorders',
+        'GET',
+        undefined,
+        undefined   
+    )
+
 
     const handleDownloadClick = (id: number) => {
         const newWindow = window.open('', '')
@@ -33,7 +33,7 @@ const OrdersView = () => {
             newWindow.document.title = 'PDF Order'
             newWindow.document.close()
             ReactDOM.render(
-                <PdfOrder id={id} token={token ?? undefined} />,
+                <PdfOrder id={id} />,
                 newWindow.document.getElementById('pdf-order-root')
             )
         }
@@ -52,21 +52,22 @@ const OrdersView = () => {
                 cancelButtonText: 'Cancelar',
             })
             if (result.isConfirmed) {
-                await deleteOrderApi('order', headers, id)
-                setOrders(orders?.filter((order) => order.id !== id))
-                Swal.fire('¡Eliminado!')
-                setLoading(false)
+                
+                
+                await fetchApi(
+                    `order/${id}`,
+                    'DELETE'
+                )
+                Swal.fire(
+                 'Orden Eliminada')
+                refetch()
+                
             }
         } catch (error) {
             console.log(error)
         }
     }
-    // al cargar la pagina se obtienen todas las ordenes y se muestran en el estado
-    useEffect(() => {
-        if (authContext?.user?.token) {
-            getOrders()
-        }
-    }, [authContext])
+
 
     const totalAmount = (total: any, otherPayment: any) => {
         let totalAmount = 0

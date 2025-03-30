@@ -1,17 +1,13 @@
 import React, { useContext, useState } from 'react'
 import { Check } from '../../contexts/CheckContext'
 import { AuthContext } from '../../contexts/AuthContext'
-import { Button, Form } from 'react-bootstrap'
-import Table from 'react-bootstrap/Table'
 import NavBar from '../NavBar/NavBar'
 import { fetchApi, OrderBy } from '../../services/apiService'
 import Swal from 'sweetalert2'
 import EnterCheck from '../EnterCheck/EnterCheck'
 import OrderPayment from '../OrderPayment/OrderPayment'
-import Spinner from '../../components/Spinner/Spinner'
-import { formatCurrency, formatDate } from '../../librery/helpers'
-import { FaTrash, FaSort } from 'react-icons/fa'
 import useGetAllChecks from '../../hooks/useGetAllCheck'
+import TableView from '../../components/TableView/TableView'
 
 const DashBoard = () => {
     const { checkList, setOrderBy, orderBy, setCheckList } = useGetAllChecks()
@@ -103,127 +99,12 @@ const DashBoard = () => {
                 header={header}
             />
 
-            <Table striped bordered hover variant="dark" responsive>
-                <thead className="text-center">
-                    <tr>
-                        <th>Sel.</th>
-                        <th
-                            onClick={() => setOrder('numero')}
-                            className="sortable"
-                        >
-                            Número <FaSort />
-                        </th>
-                        <th
-                            onClick={() => setOrder('cliente')}
-                            className="sortable"
-                        >
-                            Cliente <FaSort />
-                        </th>
-                        <th
-                            onClick={() => setOrder('librador')}
-                            className="sortable"
-                        >
-                            Librador <FaSort />
-                        </th>
-                        <th
-                            onClick={() => setOrder('fechaEntrega')}
-                            className="sortable"
-                        >
-                            Pago <FaSort />
-                        </th>
-                        <th
-                            onClick={() => setOrder('fechaEmision')}
-                            className="sortable"
-                        >
-                            Emisión <FaSort />
-                        </th>
-                        <th
-                            onClick={() => setOrder('importe')}
-                            className="sortable"
-                        >
-                            Importe <FaSort />
-                        </th>
-                        <th
-                            onClick={() => setOrder('banco')}
-                            className="sortable"
-                        >
-                            Banco emisor <FaSort />
-                        </th>
-                    </tr>
-                </thead>
-                <div></div>
-                <tbody>
-                    {checkList ? (
-                        checkList.length > 0 ? (
-                            checkList?.map((elem: Check) => {
-                                const formattedNumber = elem.numero
-                                    .toString()
-                                    .padStart(8, '0')
-                                return (
-                                    <tr className="text-end" key={elem.id}>
-                                        <td>
-                                            <Form.Check
-                                                type="checkbox"
-                                                name={`${elem.id}`}
-                                                onChange={
-                                                    handleCheckboxSelection
-                                                }
-                                            />
-                                        </td>
-                                        <td className="text-center ps-4">
-                                            {' '}
-                                            {formattedNumber}{' '}
-                                        </td>
-                                        <td className="text-start">
-                                            {' '}
-                                            {elem.cliente}{' '}
-                                        </td>
-                                        <td className="text-start">
-                                            {' '}
-                                            {elem.librador}{' '}
-                                        </td>
-                                        <td className="text-center">
-                                            {' '}
-                                            {formatDate(elem.fechaEntrega)}{' '}
-                                        </td>
-                                        <td className="text-center">
-                                            {' '}
-                                            {formatDate(elem.fechaEmision)}{' '}
-                                        </td>
-                                        <td className="text-end fs-6">
-                                            {' '}
-                                            {formatCurrency(elem.importe)}{' '}
-                                        </td>
-                                        <td className="text-start ps-4">
-                                            {' '}
-                                            {elem.banco}{' '}
-                                        </td>
-                                        <td className="d-flex -justify-content-center">
-                                            <Button
-                                                onClick={() =>
-                                                    handleDeleteCheck(elem.id)
-                                                }
-                                                className=""
-                                                variant="danger"
-                                                size="sm"
-                                            >
-                                                <FaTrash />
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                )
-                            })
-                        ) : (
-                            <div className="text-center">
-                                {' '}
-                                no hay cheques en cartera
-                            </div>
-                        )
-                    ) : (
-                        <Spinner />
-                    )}
-                </tbody>
-            </Table>
+           <TableView
+            setOrder={setOrder}
+            checkList={checkList}
+            handleCheckboxSelection = {handleCheckboxSelection}
+            handleDeleteCheck = { handleDeleteCheck}
+            />
         </>
     )
 }

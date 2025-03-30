@@ -3,8 +3,8 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import { FC, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import FormInput from '../../components/FormInput'
-import { postMethod } from '../../librery/helpers'
+import FormInput from '../../components/FormInput/FormInput'
+import { fetchLogin } from '../../services/apiService'
 import { useAuth } from '../../contexts/AuthContext'
 import Spinner from '../../components/Spinner/Spinner'
 import { ILogin } from './types'
@@ -40,7 +40,7 @@ const LoginPage: FC = () => {
     const onSubmit = async (data: ILogin) => {
         setIsLoading(true)
         try {
-            const response = await postMethod(data)
+            const response = await fetchLogin(data)
             signInUser({
                 name: response.payload.sub,
                 userId: response.payload.userId,

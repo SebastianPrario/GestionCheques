@@ -3,11 +3,10 @@ import { Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import { CustomModal } from '../CustomModal/CustomModal'
 import React, { useState } from 'react'
 import PdfReport from './PdfReport'
-import { useAuth } from '../../contexts/AuthContext'
 import {
-    getAllCheckByReport,
-    getCheckByClient,
+    fetchApi,
 } from '../../services/apiService'
+import { formatDateByReport } from '../../librery/helpers'
 
 interface EnterCheckProps {
     show: boolean
@@ -24,8 +23,6 @@ interface InputValue {
     hasta: string
 }
 export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
-    const token = useAuth().user?.token
-    const headers = { authorization: `Bearer ${token}` }
     const [inputValue, setInputValue] = useState<InputValue>({
         cliente: '',
         desde: '',
@@ -43,11 +40,16 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
 
     const handleClickSelection = async () => {
         let response
-
+        const dataStart =  formatDateByReport(inputValue.desde)
+        const dataEnd = formatDateByReport(inputValue.hasta)
         if (reportOptions === 'Cheques por Cliente') {
-            response = await getCheckByClient(headers, inputValue)
+            response = await fetchApi(
+                `/cheques/cliente?cliente=${inputValue.cliente}&desde=${dataStart}&hasta=${dataEnd}`,
+                'GET')
         } else if (reportOptions === 'Cheques en Cartera') {
-            response = await getAllCheckByReport(headers)
+            response = await fetchApi(
+                `/cheques?orderBy='fecheEntrega`
+            )
         }
         const newWindow = window.open('', '')
 
@@ -83,7 +85,7 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
         console.log(event.target.value, event.target.name)
         setInputValue({ ...inputValue, [name]: value })
     }
-    console.log(inputValue)
+  
     return (
         <CustomModal show={show} onClose={onClose}>
             <Modal.Header closeButton onHide={onClose}>

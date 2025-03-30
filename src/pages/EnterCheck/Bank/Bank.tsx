@@ -5,9 +5,7 @@ import Modal from 'react-bootstrap/Modal'
 import { AuthContext } from '../../../contexts/AuthContext'
 import {
     Bank,
-    createBank,
-    deleteBank,
-    getBankData,
+    fetchApi,
 } from '../../../services/apiService'
 import Swal from 'sweetalert2'
 import { BsTrash } from 'react-icons/bs'
@@ -22,9 +20,7 @@ interface SelectProps {
 }
 function SelectBank({ setBank, bank }: SelectProps) {
     const authContext = useContext(AuthContext)
-    const token = authContext && authContext.user?.token
     const isAuthenticated = authContext && authContext.isAuthenticated
-    const header = { authorization: `bear ${token}` }
     const [options, setOptions] = useState<Bank[]>([])
     const [show, setShow] = useState(false)
     const [newOption, setNewOption] = useState<newOption>({ bank: '' })
@@ -34,7 +30,10 @@ function SelectBank({ setBank, bank }: SelectProps) {
 
     const handleAddOption = async () => {
         if (newOption) {
-            const response = await createBank(header, newOption)
+            const response = await fetchApi(
+                '/bank',
+                'POST',
+                newOption)
             if (response?.data === 'BANCO YA EXISTE') {
                 Swal.fire('El banco ya existe!')
                 setNewOption({ bank: '' })
@@ -45,7 +44,7 @@ function SelectBank({ setBank, bank }: SelectProps) {
             setOptions([])
             Swal.fire('Banco Creado!')
             handleClose()
-            getBankData(header).then((data) => setOptions(data?.data))
+            fetchApi('/bank').then((data) => setOptions(data?.data))
         }
     }
 
@@ -62,15 +61,18 @@ function SelectBank({ setBank, bank }: SelectProps) {
         const seletedBank = options.find((option) => option.bank === bank)
         if (seletedBank) {
             const id = seletedBank?.id
-            deleteBank(header, id).then(() => {
+            fetchApi(
+                `/bank/${id}`,
+                'DELETE'
+            ).then(() => {
                 Swal.fire('Banco Eliminado')
-                getBankData(header).then((data) => setOptions(data?.data))
+                fetchApi('/bank').then((data) => setOptions(data?.data))
             })
         }
     }
     useEffect(() => {
         if (isAuthenticated) {
-            getBankData(header).then((data) => setOptions(data?.data))
+            fetchApi('/bank').then((data) => setOptions(data?.data))
         }
     }, [])
 
