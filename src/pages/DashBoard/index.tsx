@@ -81,8 +81,8 @@ const DashBoard = () => {
                 setModalShow={setModalShow}
                 checkSelection={checkedSelection}
             />
-
-            <OrderPayment
+            { modalOrder && (
+                <OrderPayment
                 show={modalOrder}
                 onClose={onCloseOrder}
                 checkSelection={checkedSelection}
@@ -91,14 +91,17 @@ const DashBoard = () => {
                 orderBy={orderBy}
                 header={header}
             />
-            <EnterCheck
+            )}
+            {modalShow &&
+             <EnterCheck
                 show={modalShow}
                 onClose={onClose}
                 setOrderBy={setOrderBy}
                 orderBy={orderBy}
                 header={header}
             />
-
+            }
+           
            <TableView
             setOrder={setOrder}
             checkList={checkList}
