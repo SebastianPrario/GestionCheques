@@ -22,7 +22,6 @@ import PdfCheq from './PdfCheq/PdfCheq'
 interface EnterCheckProps {
     show: boolean
     onClose: () => void
-    header: { authorization: string }
     setOrderBy: Dispatch<
         SetStateAction<{ order: OrderBy; asc: 'ASC' | 'DES' } | null>
     >
