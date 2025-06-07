@@ -7,6 +7,9 @@ import {
     fetchApi,
 } from '../../services/apiService'
 import { formatDateByReport } from '../../librery/helpers'
+import ReportByClient from '../../components/ReportByClient/ReportByClient'
+import ReportByAi from '../../components/ReportByAi/ReportByAi'
+import { set } from 'date-fns'
 
 interface EnterCheckProps {
     show: boolean
@@ -15,22 +18,26 @@ interface EnterCheckProps {
 enum ReportOptions {
     ChequesEnCartera = 'Cheques en Cartera',
     ChequesPorCliente = 'Cheques por Cliente',
+    Ai = 'Buscar con Inteligencia Artificial',
 }
 
 interface InputValue {
     cliente: string
     desde: string
     hasta: string
+    text: string    
 }
 export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
     const [inputValue, setInputValue] = useState<InputValue>({
         cliente: '',
         desde: '',
         hasta: '',
+        text: '',
     })
     const [reportOptions, setReportOptions] = useState<ReportOptions | null>(
         null
     )
+   
 
     const handleOptionClick = (event: React.MouseEvent<HTMLInputElement>) => {
         const selectedOption = (event.target as HTMLInputElement)
@@ -39,20 +46,46 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
     }
 
     const handleClickSelection = async () => {
-        let response
+       
         const dataStart =  formatDateByReport(inputValue.desde)
         const dataEnd = formatDateByReport(inputValue.hasta)
-        if (reportOptions === 'Cheques por Cliente') {
-            response = await fetchApi(
-                `/cheques/cliente?cliente=${inputValue.cliente}&desde=${dataStart}&hasta=${dataEnd}`,
-                'GET')
-        } else if (reportOptions === 'Cheques en Cartera') {
-            response = await fetchApi(
-                `/cheques?orderBy='fecheEntrega`
-            )
+        let response = null
+        switch (reportOptions) {
+            
+            case ReportOptions.ChequesPorCliente:
+                response = await fetchApi(
+                    `/cheques/cliente?cliente=${inputValue.cliente}&desde=${dataStart}&hasta=${dataEnd}`,
+                    'GET'
+                )
+               
+                break
+            
+            case ReportOptions.ChequesEnCartera:
+                response = await fetchApi(
+                    `/cheques?orderBy=fechaEntrega`
+                )
+            
+                break
+            
+            case ReportOptions.Ai:
+                response = await fetchApi(
+                    '/search', 
+                    'POST', 
+                    { prompt: inputValue.text }
+                )
+                if (response) {
+                    response.data = response.data.result
+                } 
+              
+                break
+            
+            default:
+                console.log('Opción no válida')
+                return
         }
-        const newWindow = window.open('', '')
 
+        const newWindow = window.open('', '')
+        
         if (newWindow && response?.data) {
             newWindow.document.write('<div id="pdf-order-root"></div>')
             newWindow.document.title = 'PDF Order'
@@ -60,7 +93,7 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
 
             const container =
                 newWindow.document.getElementById('pdf-order-root')
-            if (container) {
+            if (container && response?.data) {
                 const root = createRoot(container) // Crear un contenedor raíz
                 root.render(
                     <PdfReport
@@ -75,23 +108,25 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
                 cliente: '',
                 desde: '',
                 hasta: '',
+                text: ''
             })
+         
             onClose()
         }
     }
+   
     const handleInputValue = (event: any) => {
         const value = event.target.value
         const name = event.target.name
         console.log(event.target.value, event.target.name)
         setInputValue({ ...inputValue, [name]: value })
     }
-  
     return (
         <CustomModal show={show} onClose={onClose}>
             <Modal.Header closeButton onHide={onClose}>
                 <Row>
                     <Modal.Title className="col-12">
-                        Cheques en Cartera
+                        Informes
                     </Modal.Title>
                 </Row>
             </Modal.Header>
@@ -109,63 +144,19 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
                             />
                             {reportOptions === type &&
                                 reportOptions === 'Cheques por Cliente' && (
-                                    <>
-                                        <Row className="d-flex mt-2">
-                                            <Col className="col-8">
-                                                <Form.Label
-                                                    htmlFor={`input-${type}`}
-                                                >
-                                                    Cliente
-                                                </Form.Label>
-                                                <Form.Control
-                                                    className="col-4"
-                                                    type="text"
-                                                    name="cliente"
-                                                    aria-describedby={`detailsHelpBlock-${type}`}
-                                                    value={inputValue.cliente}
-                                                    onChange={(e) =>
-                                                        handleInputValue(e)
-                                                    }
-                                                />
-                                            </Col>
-                                        </Row>
-                                        <Row className="d-flex mt-2">
-                                            <Col className="col-6">
-                                                <Form.Label
-                                                    htmlFor={`input-${type}`}
-                                                >
-                                                    desde
-                                                </Form.Label>
-                                                <Form.Control
-                                                    className="col-6"
-                                                    type="date"
-                                                    name="desde"
-                                                    aria-describedby={`detailsHelpBlock-${type}`}
-                                                    value={inputValue.desde}
-                                                    onChange={(e) =>
-                                                        handleInputValue(e)
-                                                    }
-                                                />
-                                            </Col>
-                                            <Col>
-                                                <Form.Label
-                                                    htmlFor={`input-${type}`}
-                                                >
-                                                    hasta
-                                                </Form.Label>
-                                                <Form.Control
-                                                    className="col-6"
-                                                    type="date"
-                                                    name="hasta"
-                                                    aria-describedby={`detailsHelpBlock-${type}`}
-                                                    value={inputValue.hasta}
-                                                    onChange={(e) =>
-                                                        handleInputValue(e)
-                                                    }
-                                                />
-                                            </Col>
-                                        </Row>
-                                    </>
+                                   <ReportByClient
+                                        inputValue={inputValue}
+                                        handleInputValue={handleInputValue}
+                                        type ={type}
+                                    />
+                                )}
+                            {reportOptions === type &&
+                                reportOptions === 'Buscar con Inteligencia Artificial' && (
+                                   <ReportByAi
+                                        inputValue={inputValue}
+                                        handleInputValue={handleInputValue}
+                                        type ={type}
+                                    />
                                 )}
                         </div>
                     ))}
