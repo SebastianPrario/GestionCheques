@@ -57,14 +57,13 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
                     `/cheques/cliente?cliente=${inputValue.cliente}&desde=${dataStart}&hasta=${dataEnd}`,
                     'GET'
                 )
-               
+        
                 break
             
             case ReportOptions.ChequesEnCartera:
                 response = await fetchApi(
                     `/cheques?orderBy=fechaEntrega`
                 )
-            
                 break
             
             case ReportOptions.Ai:
@@ -83,7 +82,15 @@ export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
                 console.log('Opción no válida')
                 return
         }
-
+        console.log(response)
+        if (response?.data?.length === 0) {
+            alert('No hay datos para mostrar')
+            return
+        }
+        if (response?.data?.error) {
+            alert(response.data.error)
+            return
+        }
         const newWindow = window.open('', '')
         
         if (newWindow && response?.data) {
