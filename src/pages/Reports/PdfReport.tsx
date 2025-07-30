@@ -125,7 +125,9 @@ export const OrderPDF: React.FC<PdfReportProps> = ({
     reportOptions,
     inputValue,
 }) => {
-    console.log(inputValue)
+    if (!data || data.length === 0) {
+        return <Text>No hay datos para mostrar</Text>
+    }
 
     const sumaCheques = data?.reduce(
         (acc, curr) => acc + Number(curr.importe),
@@ -136,6 +138,8 @@ export const OrderPDF: React.FC<PdfReportProps> = ({
             <Page size="A4" style={styles.page}>
                 <View style={styles.section}>
                     <Text style={styles.header}>Listado de Cheques</Text>
+                    <Text style={styles.text}>Total de Cheques: {data.length}</Text>
+                    <Text style={styles.text}>Monto Total: {formatCurrency(sumaCheques)}</Text>
                     <Text style={styles.header2}>{reportOptions}</Text>
                     {inputValue && (
                         <Text style={styles.text}>Cliente: {inputValue}</Text>
@@ -165,6 +169,7 @@ export const OrderPDF: React.FC<PdfReportProps> = ({
                         </View>
                         {data.map((elem: Check, index: number) => {
                             return (
+                                data.length > 0 ? (    
                                 <View style={styles.tableRow} key={index}>
                                     <Text style={styles.tableCell}>
                                         {elem.numero}
@@ -181,7 +186,9 @@ export const OrderPDF: React.FC<PdfReportProps> = ({
                                         ).toLocaleDateString('es-AR')}
                                     </Text>
                                 </View>
-                            )
+                            ) : (
+                                <Text style={styles.text}>No hay datos para mostrar</Text>
+                            ) )
                         })}
                     </View>
                 </View>

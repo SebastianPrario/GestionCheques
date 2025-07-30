@@ -1,179 +1,110 @@
 import { createRoot } from 'react-dom/client'
-import { Button, Col, Form, Modal, Row } from 'react-bootstrap'
+import { Button, Form, Modal } from 'react-bootstrap'
 import { CustomModal } from '../CustomModal/CustomModal'
-import React, { useState } from 'react'
+import React from 'react'
 import PdfReport from './PdfReport'
-import {
-    fetchApi,
-} from '../../services/apiService'
-import { formatDateByReport } from '../../librery/helpers'
+import ReportByClient from '../../components/ReportByClient/ReportByClient'
+import ReportByAi from '../../components/ReportByAi/ReportByAi'
+import { useReports } from '../../hooks/useReports'
+import { GiArtificialIntelligence } from 'react-icons/gi'
+import { BsFileEarmarkCheck } from 'react-icons/bs'
 
-interface EnterCheckProps {
+interface ReportsProps {
     show: boolean
     onClose: () => void
 }
-enum ReportOptions {
-    ChequesEnCartera = 'Cheques en Cartera',
-    ChequesPorCliente = 'Cheques por Cliente',
-}
 
-interface InputValue {
-    cliente: string
-    desde: string
-    hasta: string
-}
-export const Reports: React.FC<EnterCheckProps> = ({ show, onClose }) => {
-    const [inputValue, setInputValue] = useState<InputValue>({
-        cliente: '',
-        desde: '',
-        hasta: '',
-    })
-    const [reportOptions, setReportOptions] = useState<ReportOptions | null>(
-        null
-    )
-
-    const handleOptionClick = (event: React.MouseEvent<HTMLInputElement>) => {
-        const selectedOption = (event.target as HTMLInputElement)
-            .value as ReportOptions
-        setReportOptions(selectedOption)
-    }
+export const Reports: React.FC<ReportsProps> = ({ show, onClose }) => {
+    const {
+        inputValue,
+        reportOptions,
+        handleInputValue,
+        handleOptionClick,
+        fetchReportData,
+        resetForm,
+        ReportOptions
+    } = useReports()
 
     const handleClickSelection = async () => {
-        let response
-        const dataStart =  formatDateByReport(inputValue.desde)
-        const dataEnd = formatDateByReport(inputValue.hasta)
-        if (reportOptions === 'Cheques por Cliente') {
-            response = await fetchApi(
-                `/cheques/cliente?cliente=${inputValue.cliente}&desde=${dataStart}&hasta=${dataEnd}`,
-                'GET')
-        } else if (reportOptions === 'Cheques en Cartera') {
-            response = await fetchApi(
-                `/cheques?orderBy='fecheEntrega`
-            )
+        const response = await fetchReportData()
+        
+        if (!response?.data || response.data.length === 0) {
+            alert('No hay datos para mostrar')
+            return
         }
-        const newWindow = window.open('', '')
 
-        if (newWindow && response?.data) {
+        if (response.data.error) {
+            alert(response.data.error)
+            return
+        }
+
+        const newWindow = window.open('', '')
+        if (newWindow && response.data) {
             newWindow.document.write('<div id="pdf-order-root"></div>')
             newWindow.document.title = 'PDF Order'
             newWindow.document.close()
 
-            const container =
-                newWindow.document.getElementById('pdf-order-root')
+            const container = newWindow.document.getElementById('pdf-order-root')
             if (container) {
-                const root = createRoot(container) // Crear un contenedor raíz
-                root.render(
+                createRoot(container).render(
                     <PdfReport
-                        data={response?.data}
-                        reportOptions={reportOptions ? reportOptions : ''}
+                        data={response.data}
+                        reportOptions={reportOptions || ''}
                         inputValue={inputValue.cliente}
                     />
                 )
             }
-            setReportOptions(null)
-            setInputValue({
-                cliente: '',
-                desde: '',
-                hasta: '',
-            })
+            resetForm()
             onClose()
+            
         }
     }
-    const handleInputValue = (event: any) => {
-        const value = event.target.value
-        const name = event.target.name
-        console.log(event.target.value, event.target.name)
-        setInputValue({ ...inputValue, [name]: value })
-    }
-  
+
     return (
         <CustomModal show={show} onClose={onClose}>
             <Modal.Header closeButton onHide={onClose}>
-                <Row>
-                    <Modal.Title className="col-12">
-                        Cheques en Cartera
-                    </Modal.Title>
-                </Row>
+                <Modal.Title>Informes</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <div>
                     {Object.values(ReportOptions).map((type) => (
                         <div key={`default-${type}`} className="mb-3">
-                            <Form.Check
+                            <Form.Check 
                                 type="radio"
                                 id={`default-${type}`}
-                                label={type}
+                                label={
+                                    <span className="d-flex align-items-center">
+                                        {type === ReportOptions.Ai && 
+                                            <GiArtificialIntelligence className="me-2" />}
+                                        {type === ReportOptions.ChequesPorCliente && 
+                                            <BsFileEarmarkCheck className="me-2" />}
+                                        {type}
+                                    </span>
+                                }
                                 name="reportOptions"
                                 value={type}
                                 onClick={handleOptionClick}
                             />
-                            {reportOptions === type &&
-                                reportOptions === 'Cheques por Cliente' && (
-                                    <>
-                                        <Row className="d-flex mt-2">
-                                            <Col className="col-8">
-                                                <Form.Label
-                                                    htmlFor={`input-${type}`}
-                                                >
-                                                    Cliente
-                                                </Form.Label>
-                                                <Form.Control
-                                                    className="col-4"
-                                                    type="text"
-                                                    name="cliente"
-                                                    aria-describedby={`detailsHelpBlock-${type}`}
-                                                    value={inputValue.cliente}
-                                                    onChange={(e) =>
-                                                        handleInputValue(e)
-                                                    }
-                                                />
-                                            </Col>
-                                        </Row>
-                                        <Row className="d-flex mt-2">
-                                            <Col className="col-6">
-                                                <Form.Label
-                                                    htmlFor={`input-${type}`}
-                                                >
-                                                    desde
-                                                </Form.Label>
-                                                <Form.Control
-                                                    className="col-6"
-                                                    type="date"
-                                                    name="desde"
-                                                    aria-describedby={`detailsHelpBlock-${type}`}
-                                                    value={inputValue.desde}
-                                                    onChange={(e) =>
-                                                        handleInputValue(e)
-                                                    }
-                                                />
-                                            </Col>
-                                            <Col>
-                                                <Form.Label
-                                                    htmlFor={`input-${type}`}
-                                                >
-                                                    hasta
-                                                </Form.Label>
-                                                <Form.Control
-                                                    className="col-6"
-                                                    type="date"
-                                                    name="hasta"
-                                                    aria-describedby={`detailsHelpBlock-${type}`}
-                                                    value={inputValue.hasta}
-                                                    onChange={(e) =>
-                                                        handleInputValue(e)
-                                                    }
-                                                />
-                                            </Col>
-                                        </Row>
-                                    </>
-                                )}
+                            {reportOptions === type && type === ReportOptions.ChequesPorCliente && (
+                                <ReportByClient
+                                    inputValue={inputValue}
+                                    handleInputValue={handleInputValue}
+                                    type={type}
+                                />
+                            )}
+                            {reportOptions === type && type === ReportOptions.Ai && (
+                                <ReportByAi
+                                    inputValue={inputValue}
+                                    handleInputValue={handleInputValue}
+                                    type={type}
+                                />
+                            )}
                         </div>
                     ))}
                     <Button
                         disabled={!reportOptions}
                         onClick={handleClickSelection}
                     >
-                        {' '}
                         Listar
                     </Button>
                 </div>
