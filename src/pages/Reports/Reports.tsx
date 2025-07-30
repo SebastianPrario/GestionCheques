@@ -8,6 +8,7 @@ import ReportByAi from '../../components/ReportByAi/ReportByAi'
 import { useReports } from '../../hooks/useReports'
 import { GiArtificialIntelligence } from 'react-icons/gi'
 import { BsFileEarmarkCheck } from 'react-icons/bs'
+import Swal from 'sweetalert2'
 
 interface ReportsProps {
     show: boolean
@@ -27,17 +28,18 @@ export const Reports: React.FC<ReportsProps> = ({ show, onClose }) => {
 
     const handleClickSelection = async () => {
         const response = await fetchReportData()
+        console.log('Response from fetchReportData:', response)
+        if (!response?.data || response.data.length === 0 || response.data.error) {
+            Swal.fire({
+                icon: 'info',
+                title: 'No hay datos',
+                text: 'No se encontraron datos para generar el informe.',
+            })
+            resetForm()
+            return
+        }
         
-        if (!response?.data || response.data.length === 0) {
-            alert('No hay datos para mostrar')
-            return
-        }
-
-        if (response.data.error) {
-            alert(response.data.error)
-            return
-        }
-
+    
         const newWindow = window.open('', '')
         if (newWindow && response.data) {
             newWindow.document.write('<div id="pdf-order-root"></div>')
