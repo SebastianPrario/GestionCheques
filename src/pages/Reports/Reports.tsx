@@ -56,6 +56,7 @@ export const Reports: React.FC<ReportsProps> = ({ show, onClose }) => {
             }
             resetForm()
             onClose()
+            
         }
     }
 
@@ -68,7 +69,7 @@ export const Reports: React.FC<ReportsProps> = ({ show, onClose }) => {
                 <div>
                     {Object.values(ReportOptions).map((type) => (
                         <div key={`default-${type}`} className="mb-3">
-                            <Form.Check
+                            <Form.Check 
                                 type="radio"
                                 id={`default-${type}`}
                                 label={
