@@ -11,6 +11,11 @@ export interface Bank {
     bank: string
     user: string
 }
+export interface Cliente {
+    id: string
+    name: string
+    user: string
+}
 export interface NewBank {
     bank: string
 }

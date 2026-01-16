@@ -13,6 +13,7 @@ import {
     OrderBy,
 } from '../../services/apiService'
 import SelectBank from './Bank/Bank'
+import SelectCliente from './Cliente/Cliente'
 import Swal from 'sweetalert2'
 import schema from './validationSchema'
 import { AxiosResponse } from 'axios'
@@ -61,7 +62,6 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
         response: AxiosResponse<any, any> | undefined,
         chequesInfo: any[] = []
     ) => {
-        console.log(response)
         const cheques: ChequesInfo[] = []
         const situation = (situation: []): number => {
             if (situation.length === 0) return 1
@@ -131,17 +131,17 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
         if (e.length === 11) {
             response = await getCuitInfo(
                 '/emisor/info',
-                { cuit: e}
+                { cuit: e }
             )
             chequesInfo = await getCuitInfo(
                 '/emisor/cheques',
-                {cuit:e}
+                { cuit: e }
             )
             if (chequesInfo !== null && response !== null) {
-            stateInfo(e, response ,chequesInfo?.data)
-        }
-      
-        return response?.data[0].denominacion
+                stateInfo(e, response, chequesInfo?.data)
+            }
+
+            return response?.data[0].denominacion
         }
     }
     useEffect(() => {
@@ -149,6 +149,7 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
             situation: 1,
             cheques: false,
             chequesInfo: [],
+
         })
     }, [show])
 
@@ -278,22 +279,17 @@ export const EnterCheck: React.FC<EnterCheckProps> = ({
                                 controlId="validationFormikUsername2"
                             >
                                 <Form.Label>Cliente</Form.Label>
-                                <InputGroup hasValidation>
-                                    <Form.Control
-                                        type="text"
-                                        aria-describedby="inputGroupPrepend"
-                                        name="cliente"
-                                        value={values.cliente}
-                                        onChange={handleChange}
-                                        isInvalid={!!errors.cliente}
-                                    />
-                                    <Form.Control.Feedback
-                                        type="invalid"
-                                        tooltip
-                                    >
+                                <SelectCliente
+                                    cliente={values.cliente}
+                                    setCliente={(value) =>
+                                        setFieldValue('cliente', value)
+                                    }
+                                />
+                                {errors.cliente && (
+                                    <div className="text-danger small mt-1">
                                         {errors.cliente}
-                                    </Form.Control.Feedback>
-                                </InputGroup>
+                                    </div>
+                                )}
                             </Form.Group>
                         </Row>
                         <Row className="my-1 py-2 px-2">

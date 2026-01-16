@@ -1,7 +1,9 @@
+import { useEffect } from 'react'
 import { Col, Form, Row } from 'react-bootstrap'
 
 export default function ReportByClient({ inputValue, handleInputValue  ,type}: any) {
-  return (
+  
+return (
      <>
                                         <Row className="d-flex mt-2">
                                             <Col className="col-12">
